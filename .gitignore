@@ -1,0 +1,95 @@
+# Compiled files
+*.log
+*.dll
+*.exe
+*.pdb
+*.dll.config
+
+# Dependency directories
+packages/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio files
+.vscode/
+*.suo
+*.user
+*.userprefs
+*.sln.docstates
+*.suo
+*.cache
+*.vs
+*_i.c
+*_p.c
+*.ilk
+*.ncb
+*.log
+*.htm
+*.html
+*.resx
+*.obj
+*.pch
+*.pdb
+*.idb
+*.gid
+*.dll
+*.exe
+*.manifest
+*.res
+*.aps
+*.pch
+*.resources
+*.cer
+*.pfx
+*.p12
+*.snk
+*.bak
+*.cache
+*.ilk
+*.clb
+*.ncb
+*.log
+*.scc
+*.bin
+[Tt]est[Rr]esult*/
+*.sqlite
+*.tt
+*.ttr
+*.tts
+*.testsettings
+!Performance*.testsettings
+*.generated.cs
+
+# Unity generated files
+Temp/
+Library/
+build/
+UnityGenerated/
+*.csproj
+
+# Rider generated files
+.idea/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+CommuniMerge/appsettings.json
+CommuniMerge/appsettings.Development.json
+CommuniMerge/bin/Debug/net8.0/appsettings.Development.json
+CommuniMerge/bin/Debug/net8.0/appsettings.json
+CommuniMerge/Properties/launchSettings.json
+# Binaries directory
+bin/
+# Compiled files
+*.dll
+*.exe
+*.pdb
+*.dll.config
+# Object files (Intermediate build artifacts)
+obj/
