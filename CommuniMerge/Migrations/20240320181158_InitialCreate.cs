@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CommuniMerge.Library.Migrations
+namespace CommuniMerge.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

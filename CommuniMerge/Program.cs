@@ -1,5 +1,5 @@
-using CommuniMerge.Data;
 using CommuniMerge.Hubs;
+using CommuniMerge.Library.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +12,11 @@ builder.Services.AddSignalR();
 
 
 builder.Services.AddDbContext<DataContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(b => b.MigrationsAssembly("CommuniMerge"));
+
+}
     );
 
 var app = builder.Build();
