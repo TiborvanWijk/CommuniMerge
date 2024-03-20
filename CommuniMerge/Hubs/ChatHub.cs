@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CommuniMerge.Hubs
 {
-    public class ChatHub : Hub
+    public class ChatHub : Hub<IChatClient>
     {
         public async Task SendMessage(string user, string message)
         {
-            Clients.All.SendAsync("ReceiveMessage", user, message, DateTime.Now.ToShortDateString());
+            Clients.All.ReceiveMessage(user, message, DateTime.Now.ToShortDateString());
         }
     }
 }
