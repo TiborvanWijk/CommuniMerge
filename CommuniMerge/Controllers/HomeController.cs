@@ -1,4 +1,4 @@
-using CommuniMerge.Models;
+using CommuniMerge.Library.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

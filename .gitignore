@@ -79,11 +79,9 @@ UnityGenerated/
 *.user
 *.userosscache
 *.sln.docstates
-CommuniMerge/appsettings.json
-CommuniMerge/appsettings.Development.json
-CommuniMerge/bin/Debug/net8.0/appsettings.Development.json
-CommuniMerge/bin/Debug/net8.0/appsettings.json
-CommuniMerge/Properties/launchSettings.json
+*appsettings.json
+*appsettings.Development.json
+*launchSettings.json
 # Binaries directory
 bin/
 # Compiled files

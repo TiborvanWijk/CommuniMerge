@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace CommuniMerge.Models
+namespace CommuniMerge.Library.Models
 {
     public class User : IdentityUser
     {

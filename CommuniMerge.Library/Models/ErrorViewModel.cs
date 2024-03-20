@@ -1,4 +1,4 @@
-namespace CommuniMerge.Models
+namespace CommuniMerge.Library.Models
 {
     public class ErrorViewModel
     {

@@ -1,8 +1,8 @@
-﻿using CommuniMerge.Models;
+﻿using CommuniMerge.Library.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CommuniMerge.Data
+namespace CommuniMerge.Library.Data
 {
     public class DataContext : IdentityDbContext<User>
     {
