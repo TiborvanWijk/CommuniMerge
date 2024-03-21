@@ -10,7 +10,8 @@
 
 
 
-<div class="container">
+@Html.Partial("_ChatPartial")
+<main class="index-main">
     <div class="row p-1">
         <div class="col-1">User</div>
         <div class="col-5"><input type="text" id="userInput" /></div>
@@ -34,5 +35,5 @@
             <ul id="messagesList"></ul>
         </div>
     </div>
-</div>
+</main>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>

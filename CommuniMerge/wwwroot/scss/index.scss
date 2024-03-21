@@ -1,0 +1,12 @@
+.index-main{
+    width: calc(100vw - min(400px, 100vw));
+    height: 100%;
+    padding: 2em;
+    background: 
+      radial-gradient(farthest-side at -33.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%) 0 calc(72px/2),
+      radial-gradient(farthest-side at 50% 133.33%,#0000 52%,#31363f 54% 57%,#0000 59%) calc(72px/2) 0,
+      radial-gradient(farthest-side at 133.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%),
+      radial-gradient(farthest-side at 50% -33.33%,#0000 52%,#31363f 54% 57%,#0000 59%),
+      #222831;
+      background-size: calc(72px/4.667) 72px,72px calc(72px/4.667);
+}

@@ -1,9 +1,197 @@
-*{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+body {
+  display: flex;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  height: 100vh;
 }
+
+:root {
+  --dark: #222831;
+  --light-dark: #31363F;
+  --light-blue: #76ABAE;
+  --white: #ececec;
+}
+
+.nav {
+  display: flex;
+  background-color: var(--light-dark);
+  width: min(400px, 100vw);
+  height: 100vh;
+}
+.nav ::-webkit-scrollbar {
+  width: 6px;
+}
+.nav ::-webkit-scrollbar-thumb {
+  background: var(--white);
+  border-radius: 3px;
+}
+
+.side-nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 1em;
+  justify-content: space-between;
+  background-color: var(--dark);
+}
+
+.title {
+  color: var(--white);
+  padding: 1em 1em 0 1em;
+}
+
+.profileIcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  width: 50px;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+  filter: blur(0.5px);
+}
+.profileIcon img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  font-size: 1.5em;
+  gap: 0.75em;
+}
+
+.option {
+  color: var(--white);
+  cursor: pointer;
+}
+
+.menu-btn {
+  transform: rotate(90deg);
+}
+
+.main-holder {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+}
+
+.nav-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 1em;
+  height: 4em;
+}
+
+.search-btn {
+  position: absolute;
+  font-size: 1em;
+  left: 1.5em;
+  cursor: pointer;
+}
+
+.nav-searchbar {
+  background: var(--white);
+  width: 100%;
+  border-radius: 10px;
+  height: 2.5em;
+  padding: 1em 1em 1em 2em;
+  border: none;
+  outline: none;
+  font-size: 1em;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.nav-searchbar:hover, .nav-searchbar:focus {
+  background: var(--light-blue);
+}
+
+.message-listingHolder {
+  display: flex;
+  flex-direction: column;
+  padding: 0em 1em 1em 1em;
+  height: 100%;
+  overflow: auto;
+}
+
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  position: relative;
+  list-style: none;
+}
+
+.message-item {
+  position: relative;
+  background-color: var(--white);
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 5em;
+  padding: 0em 0em 0em 5em;
+  border-radius: 10px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.message-item:hover {
+  background-color: var(--light-blue);
+}
+
+.user1 {
+  left: 10px;
+  top: 10px;
+}
+
+.user2 {
+  left: 30px;
+  top: 30px;
+}
+
+.message-profile {
+  display: flex;
+  position: absolute;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  cursor: pointer;
+  filter: blur(0.5px);
+}
+.message-profile img {
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.index-main {
+  width: calc(100vw - min(400px, 100vw));
+  height: 100%;
+  padding: 2em;
+  background: radial-gradient(farthest-side at -33.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 0 36px, radial-gradient(farthest-side at 50% 133.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 36px 0, radial-gradient(farthest-side at 133.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), radial-gradient(farthest-side at 50% -33.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), #222831;
+  background-size: 15.4274694665px 72px, 72px 15.4274694665px;
+}
+
+/*# sourceMappingURL=site.css.map */

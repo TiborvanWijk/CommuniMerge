@@ -1,0 +1,51 @@
+﻿<nav class="nav">
+    <section class="side-nav">
+
+        <div></div>
+        <ul class="options">
+            <li class="option"><i class="fa-solid fa-user-group"></i></i></li>
+            <li class="option"><i class="fa-regular fa-message create"></i></li>
+            <li class="option"><i class="fa-solid fa-gears"></i></i></li>
+        </ul>
+
+
+        <figure class="profileIcon">
+            <img src="~/img/profile.jpg" alt="" srcset="">
+        </figure>
+    </section>
+
+    <section class="main-holder">
+        <div class="title">
+            <h2>Chats</h2>
+        </div>
+        <div class="nav-search">
+            <i class="fa-solid fa-magnifying-glass search-btn"></i>
+            <input class="nav-searchbar" type="text" name="chat-search" id="chat-search" placeholder="Zoeken">
+        </div>
+
+        <div class="message-listingHolder">
+            <ul class="message-list">
+                @{
+                    for (int i = 0; i < 20; ++i)
+                    {
+                        <li class="message-item">
+
+                            <header class="message-profiles">
+                                <figure class="message-profile user1">
+                                    <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                </figure>
+                                <figure class="message-profile user2">
+                                    <img src="~/img/doggy.jpg" alt="" srcset="" draggable="false">
+                                </figure>
+                            </header>
+                            <h3>Tibor & user</h3>
+                            <p>Hello</p>
+                        </li>
+
+                    }
+                }
+
+            </ul>
+        </div>
+    </section>
+</nav>
