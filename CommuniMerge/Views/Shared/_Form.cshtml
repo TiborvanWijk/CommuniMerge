@@ -1,0 +1,15 @@
+﻿@{
+    Layout = "../Shared/_Layout.cshtml";
+}
+
+
+<main class="main-form">
+
+    <form class="form" asp-controller="@ViewData["controller"]" asp-action="@ViewData["action"]">
+
+        @RenderBody()
+
+
+    </form>
+
+</main>
