@@ -17,17 +17,78 @@
 
 }
 
+.form-title{
+    display: flex;
+    justify-content: center;
+    position: relative;
+    color: var(--white);
+    letter-spacing: 2px;
+}
+.form-title::before{
+    content: "";
+    position: absolute;
+    top: 110%;
+    background-color: var(--white);
+    height: 4px;
+    border-radius: 10px;
+    width: 50%;
+}
+
 .form{
     padding: 1em;
+    align-items: center;
     display: flex;
+    justify-content: space-around;
     flex-direction: column;
+    gap: 1em;
     height: min(70ch, 100vh);
     width: min(50ch, 100vw);
     background: var(--dark);
     border-radius: 10px;
     box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.2);
+
+}
+
+.form-fields{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 1em;
 }
 
 .form-field{
+    background-color: var(--light-dark);
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    padding: 1em;
+    width: 90%;
+    color: white;
+}
 
+.form-field:focus{
+    border: 2px solid var(--white);
+}
+
+.form-btns{
+    width: 100%;
+    display: flex;
+    gap: 3em;
+    justify-content: center;
+    align-items: center;
+}
+
+.submit-btn{
+    background-color: var(--light-blue); 
+    padding: 1.5em 2em;
+
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.redirect-subtle{
+    font-size: 100%;
+    color: var(--white);
 }

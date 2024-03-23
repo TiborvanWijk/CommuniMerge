@@ -4,12 +4,15 @@
     ViewData["action"] = "register";
 }
 
+<h1 class="form-title">Register</h1>
 
-
+<div class="form-fields">
 <input type="text" class="form-field" id="Username" name="Username" placeholder="Username">
 <input type="text" class="form-field" id="Email" name="Email" placeholder="Email">
-<input type="text" class="form-field" id="Password" name="Password" placeholder="Password">
+<input type="password" class="form-field" id="Password" name="Password" placeholder="Password">
+</div>
 
-
-
-<button type="submit"></button>
+<div class="form-btns">
+    <button class="submit-btn" type="submit">Register</button>
+    <a class="redirect-subtle" href="/authorize/login">Go to login</a>
+</div>

@@ -13,6 +13,7 @@
         background: var(--white);
         border-radius: 3px;
     }
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .side-nav{
@@ -26,7 +27,7 @@
 }
 .title{
     color: var(--white);
-    padding: 1em 1em 0 1em;
+    padding: 1em;
 }
 .profileIcon{
     display: flex;
@@ -63,8 +64,6 @@
     transform: rotate(90deg);
 }
 
-
-
 .main-holder{
     display: flex;
     flex-direction: column;
@@ -76,7 +75,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    padding: 1em;
+    padding: 0 1em 1em 1em;
     height: 4em;
 
 }

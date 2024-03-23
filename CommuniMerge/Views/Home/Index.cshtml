@@ -4,15 +4,42 @@
 
 
 
-
-
-
-
-
-
 @Html.Partial("_ChatPartial")
 <main class="index-main">
-    <div class="row p-1">
+
+
+
+    <header class="info-header">
+        <div class="userinfo-wrapper">
+            <figure class="user-pfp">
+                <img src="~/img/profile.jpg"/>
+            </figure>
+            <div class="userinfo">
+            <h3>User</h3>
+            <p>Last online 23-3-2024</p>
+            </div>
+        </div>
+
+        <ul class="message-menu">
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+
+
+    </header>
+
+    <section class="messages">
+
+    </section>
+
+    <footer class="message-sender-wrapper">
+        <button class="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
+        <input class="message-sender" type="text" placeholder="Send message to User">
+        @* <input type="text" placeholder="Send message to @ViewData[""]"> *@
+    </footer>
+
+@*     <div class="row p-1">
         <div class="col-1">User</div>
         <div class="col-5"><input type="text" id="userInput" /></div>
     </div>
@@ -34,6 +61,6 @@
         <div class="col-6">
             <ul id="messagesList"></ul>
         </div>
-    </div>
+    </div> *@
 </main>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>

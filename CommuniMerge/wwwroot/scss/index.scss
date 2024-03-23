@@ -1,12 +1,83 @@
+@use "./variables.scss";
+
 .index-main{
     width: calc(100vw - min(400px, 100vw));
     height: 100%;
-    padding: 2em;
     background: 
-      radial-gradient(farthest-side at -33.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%) 0 calc(72px/2),
-      radial-gradient(farthest-side at 50% 133.33%,#0000 52%,#31363f 54% 57%,#0000 59%) calc(72px/2) 0,
-      radial-gradient(farthest-side at 133.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%),
-      radial-gradient(farthest-side at 50% -33.33%,#0000 52%,#31363f 54% 57%,#0000 59%),
-      #222831;
-      background-size: calc(72px/4.667) 72px,72px calc(72px/4.667);
+    radial-gradient(farthest-side at -33.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%) 0 calc(72px/2),
+    radial-gradient(farthest-side at 50% 133.33%,#0000 52%,#31363f 54% 57%,#0000 59%) calc(72px/2) 0,
+    radial-gradient(farthest-side at 133.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%),
+    radial-gradient(farthest-side at 50% -33.33%,#0000 52%,#31363f 54% 57%,#0000 59%),
+    #222831;
+    background-size: calc(72px/4.667) 72px,72px calc(72px/4.667);
+}
+    
+    
+.info-header{
+    display: flex;
+    background: var(--light-dark);
+    height: 4em;
+    padding: 0 1em;
+}
+
+.message-menu{
+    list-style: none;
+}
+
+.userinfo-wrapper{
+    display: flex;
+    align-items: center;
+    color: white;
+    gap: 1em;
+
+    p{
+        color: rgba(255, 255, 255, 0.6);
+    }
+}
+
+.user-pfp{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+.messages{
+    height: calc(100% - 8em);
+}
+
+.userinfo{
+
+}
+
+.message-sender-wrapper{
+    position: relative;
+    padding: 0.5em 1em;
+    height: 4em;
+    background: var(--dark);
+}
+.add-file-btn{
+    position: absolute;
+    left: 1em;
+    top: 0.5em;
+    background: none;
+    border: none;
+    font-size: 1.8em;
+    color: var(--white);
+    cursor: pointer;
+}
+.message-sender{
+    background: var(--light-dark);
+    border: none;
+    border-radius: 10px;
+    padding: 1em 1em 1em 4em;
+    width: 100%;
+    color: var(--white);
 }
