@@ -68,7 +68,6 @@ Temp/
 Library/
 build/
 UnityGenerated/
-*.csproj
 
 # Rider generated files
 .idea/
