@@ -3,28 +3,67 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 //Disable the send button until connection is established.
-document.getElementById("sendButton").disabled = true;
 
 connection.on("ReceiveMessage", function (user, message, sentAt) {
-    var li = document.createElement("li");
-    document.getElementById("messagesList").appendChild(li);
+    var newMessage = document.createElement("div");
+    newMessage.classList.add("message-wrapper");
+    newMessage.innerHTML = `                    
+    <figure class="message-profile-picture">
+    </figure>
+    <div class="content-wrapper">
+        <div class="identifier-wrapper">
+            <h3>${user}</h3>
+            <p>${sentAt}</p>
+        </div>
+        <p class="message-text">${message}</p>
+    </div>
+    `;
+    console.log("received");
+    let messageHolder = document.querySelector("#messages");
+    let firstChild = messageHolder.firstChild;
+    if(firstChild != null){
+        messageHolder.insertBefore(newMessage, firstChild);
+    }
+    else{
+        messageHolder.appendChild(newMessage);
+    }
+
     // We can assign user-supplied strings to an element's textContent because it
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
-    li.textContent = `at ${sentAt} ${user} said: ${message}`;
+    //li.textContent = `at ${sentAt} ${user} said: ${message}`;
 });
 
 connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
+    console.log("connected");
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
-document.getElementById("sendButton").addEventListener("click", function (event) {
-    var user = document.getElementById("userInput").value;
-    var message = document.getElementById("messageInput").value;
+document.getElementById("message-sender").addEventListener("keyup", function (event) {
+    if(event.key != "Enter"){
+        return;
+    }
+    let input = document.getElementById("message-sender");
+    var user = "TEST";
+    var message = input.value;
+    input.value = "";
     connection.invoke("SendMessage", user, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
 });
+
+function clearMessageHolder(){
+    let messageHolder = document.querySelector("#messages");
+    messageHolder.innerHTML = "";
+}
+
+function addMessagesToMessageHolder(){
+
+}
+
+function openConversation(){
+    clearMessageHolder();
+    addMessagesToMessageHolder();
+}

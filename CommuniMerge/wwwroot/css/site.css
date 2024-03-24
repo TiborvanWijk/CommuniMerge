@@ -10,6 +10,15 @@ body {
   height: 100vh;
 }
 
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--white);
+  border-radius: 3px;
+}
+
 :root {
   --dark: #222831;
   --light-dark: #31363F;
@@ -23,13 +32,6 @@ body {
   width: min(400px, 100vw);
   height: 100vh;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
-}
-.nav ::-webkit-scrollbar {
-  width: 6px;
-}
-.nav ::-webkit-scrollbar-thumb {
-  background: var(--white);
-  border-radius: 3px;
 }
 
 .side-nav {
@@ -231,7 +233,12 @@ body {
 }
 
 .messages {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1em;
   height: calc(100% - 8em);
+  padding: 3em;
+  overflow: auto;
 }
 
 .message-sender-wrapper {
@@ -258,6 +265,56 @@ body {
   border-radius: 10px;
   padding: 1em 1em 1em 4em;
   width: 100%;
+  color: var(--white);
+}
+
+.message-wrapper {
+  display: flex;
+  gap: 1em;
+}
+
+.message-profile-picture {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+.message-profile-picture img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+.identifier-wrapper {
+  display: flex;
+  gap: 0.5em;
+  align-items: center;
+}
+.identifier-wrapper h3 {
+  color: var(--white);
+}
+.identifier-wrapper p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 75%;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--light-dark);
+  border-radius: 10px;
+  padding: 0.5em;
+  max-width: 75%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.message-text {
   color: var(--white);
 }
 
@@ -337,6 +394,7 @@ body {
 .submit-btn {
   background-color: var(--light-blue);
   padding: 1.5em 2em;
+  width: 10em;
   border-radius: 10px;
   border: none;
   cursor: pointer;

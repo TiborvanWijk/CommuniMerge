@@ -4,15 +4,6 @@
     background-color: var(--light-dark);
     width: min(400px, 100vw);
     height: 100vh;
-
-    ::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: var(--white);
-        border-radius: 3px;
-    }
     border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 

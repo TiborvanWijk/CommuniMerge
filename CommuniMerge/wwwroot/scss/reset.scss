@@ -10,5 +10,12 @@ body {
     height: 100vh;
 }
 
+::-webkit-scrollbar {
+    width: 6px;
+}
 
+::-webkit-scrollbar-thumb {
+    background: var(--white);
+    border-radius: 3px;
+}
 

@@ -12,11 +12,11 @@
     <header class="info-header">
         <div class="userinfo-wrapper">
             <figure class="user-pfp">
-                <img src="~/img/profile.jpg"/>
+                <img src="~/img/profile.jpg" />
             </figure>
             <div class="userinfo">
-            <h3>User</h3>
-            <p>Last online 23-3-2024</p>
+                <h3>User</h3>
+                <p>Last online 23-3-2024</p>
             </div>
         </div>
 
@@ -29,38 +29,72 @@
 
     </header>
 
-    <section class="messages">
+    <section id="messages" class="messages">
+
+
+        @* <div class="message-wrapper">
+            <figure class="message-profile-picture">
+                <img src="~/img/profile.jpg" />
+            </figure>
+            <div class="content-wrapper">
+                <div class="identifier-wrapper">
+                    <h3>Username</h3>
+                    <p>23-3-2024 15:41</p>
+                </div>
+                <p class="message-text">Hello</p>
+            </div>
+        </div>
+        @{
+            for (int i = 0; i < 20; ++i)
+            {
+                <div class="message-wrapper">
+                    <figure class="message-profile-picture">
+                        <img src="~/img/profile.jpg" />
+                    </figure>
+                    <div class="content-wrapper">
+                        <div class="identifier-wrapper">
+                            <h3>Username</h3>
+                            <p>23-3-2024 15:41</p>
+                        </div>
+                        <p class="message-text">TestingdhwauidhawuidhawuidhawiudawhudiawhadwiuhdwaiuTestingdhwauidhawuidhawuidhawiudawhudiawhadwiuhdwaiuTestingdhwauidhawuidhawuidhawiudawhudiawhadwiuhdwaiuTestingdhwauidhawuidhawuidhawiudawhudiawhadwiuhdwaiuTestingdhwauidhawuidhawuidhawiudawhudiawhadwiuhdwaiu</p>
+                    </div>
+                </div>
+
+            }
+        } *@
+
+
 
     </section>
 
     <footer class="message-sender-wrapper">
         <button class="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
-        <input class="message-sender" type="text" placeholder="Send message to User">
+        <input id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
         @* <input type="text" placeholder="Send message to @ViewData[""]"> *@
     </footer>
 
-@*     <div class="row p-1">
-        <div class="col-1">User</div>
-        <div class="col-5"><input type="text" id="userInput" /></div>
+    @*     <div class="row p-1">
+    <div class="col-1">User</div>
+    <div class="col-5"><input type="text" id="userInput" /></div>
     </div>
     <div class="row p-1">
-        <div class="col-1">Message</div>
-        <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
+    <div class="col-1">Message</div>
+    <div class="col-5"><input type="text" class="w-100" id="messageInput" /></div>
     </div>
     <div class="row p-1">
-        <div class="col-6 text-end">
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
+    <div class="col-6 text-end">
+    <input type="button" id="sendButton" value="Send Message" />
+    </div>
     </div>
     <div class="row p-1">
-        <div class="col-6">
-            <hr />
-        </div>
+    <div class="col-6">
+    <hr />
+    </div>
     </div>
     <div class="row p-1">
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
+    <div class="col-6">
+    <ul id="messagesList"></ul>
+    </div>
     </div> *@
 </main>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>
