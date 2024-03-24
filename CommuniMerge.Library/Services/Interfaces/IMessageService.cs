@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommuniMerge.Library.Repositories.Interfaces
+namespace CommuniMerge.Library.Services.Interfaces
 {
-    internal interface IUserInterface
+    public interface IMessageService
     {
     }
 }

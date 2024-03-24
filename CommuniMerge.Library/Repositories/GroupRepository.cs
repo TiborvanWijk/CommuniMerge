@@ -8,29 +8,29 @@ using System.Threading.Tasks;
 
 namespace CommuniMerge.Library.Repositories
 {
-    public class UserRepository : IUserRepository
+    public class GroupRepository : IGroupRepository
     {
-        public Task<bool> CreateUserAsync(User user)
+        public Task<bool> CreateGroupAsync(Group group)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> DeleteUserByIdAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> ExistsByIdAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> GetUserByIdAsync(string userId)
+        public Task<bool> DeleteGroupAsync(int groupId)
         {
             throw new NotImplementedException();
         }
 
         public Task<bool> SaveAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateGroupNameAsync(int groupId, string newName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> UpdateGroupOwnerAsync(int groupId, string newOwnerId)
         {
             throw new NotImplementedException();
         }
