@@ -33,6 +33,7 @@
     p{
         color: rgba(255, 255, 255, 0.6);
     }
+    cursor: pointer;
 }
 
 .user-pfp{
@@ -137,6 +138,10 @@
 }
 
 .message-text{
-
     color: var(--white);
+
+    a{
+        color: rgb(75, 75, 255);
+    }
+
 }

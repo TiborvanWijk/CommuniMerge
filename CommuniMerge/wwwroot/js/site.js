@@ -7,18 +7,23 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 connection.on("ReceiveMessage", function (user, message, sentAt) {
     var newMessage = document.createElement("div");
     newMessage.classList.add("message-wrapper");
+
+    let urlRegex = /(https?:\/\/[^\s]+)/g;
+    let messageWithLinks = message.replace(urlRegex, (url) =>{
+        return '<a href="' + url + '" target="_blank">' + url + '</a>';
+    });
     newMessage.innerHTML = `                    
     <figure class="message-profile-picture">
+        <img src="/img/profile.jpg">
     </figure>
     <div class="content-wrapper">
         <div class="identifier-wrapper">
             <h3>${user}</h3>
             <p>${sentAt}</p>
         </div>
-        <p class="message-text">${message}</p>
+        <div class="message-text">${messageWithLinks}</div>
     </div>
     `;
-    console.log("received");
     let messageHolder = document.querySelector("#messages");
     let firstChild = messageHolder.firstChild;
     if(firstChild != null){
@@ -35,7 +40,7 @@ connection.on("ReceiveMessage", function (user, message, sentAt) {
 });
 
 connection.start().then(function () {
-    console.log("connected");
+    console.log("Connected to the server succesfully");
 }).catch(function (err) {
     return console.error(err.toString());
 });
