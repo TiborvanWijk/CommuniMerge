@@ -50,14 +50,19 @@
         object-fit: cover;
     }
 }
-.messages{
+.messages-holder{
     display: flex;
     flex-direction: column-reverse;
-    gap: 1em;
     height: calc(100% - 8em);
     padding: 3em;
     overflow: auto;
-    
+} 
+
+.messages{
+    display: flex;
+    flex-direction: column-reverse;
+
+    gap: 1em;
 
 }
 
@@ -141,7 +146,7 @@
     color: var(--white);
 
     a{
-        color: rgb(75, 75, 255);
+        color: var(--light-blue);
     }
 
 }

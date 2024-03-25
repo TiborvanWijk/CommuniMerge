@@ -1,11 +1,26 @@
+using CommuniMerge.Library.Data;
+using CommuniMerge.Library.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<DataContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<User>(options =>
+{
+    // Configure options here if needed
+})
+.AddRoles<IdentityRole>()
+.AddEntityFrameworkStores<DataContext>();
 
 var app = builder.Build();
 
@@ -17,8 +32,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
+
+// Map the identity API endpoints
+app.MapGroup("/api/account").MapIdentityApi<User>().AllowAnonymous();
 
 app.MapControllers();
 

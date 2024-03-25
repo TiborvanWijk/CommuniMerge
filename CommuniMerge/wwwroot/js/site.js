@@ -5,7 +5,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 //Disable the send button until connection is established.
 
 connection.on("ReceiveMessage", function (user, message, sentAt) {
-    var newMessage = document.createElement("div");
+    var newMessage = document.createElement("li");
     newMessage.classList.add("message-wrapper");
 
     let urlRegex = /(https?:\/\/[^\s]+)/g;
