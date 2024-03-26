@@ -23,7 +23,7 @@ namespace CommuniMerge.Library.Data
 
             builder.Entity<PrivateConversationLink>()
                 .HasKey(x => x.Id);
-            
+
             builder.Entity<PrivateConversationLink>()
                 .HasOne(pc => pc.User1)
                 .WithMany()

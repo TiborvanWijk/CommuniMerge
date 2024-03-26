@@ -1,5 +1,7 @@
-﻿using CommuniMerge.Library.Models;
+﻿using CommuniMerge.Library.Data;
+using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +12,27 @@ namespace CommuniMerge.Library.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        public Task<bool> CreateUserAsync(User user)
+        private readonly DataContext dataContext;
+
+        public UserRepository(DataContext dataContext)
         {
-            throw new NotImplementedException();
+            this.dataContext = dataContext;
+        }
+
+        public async Task<bool> CreateUserAsync(User user)
+        {
+            await dataContext.Users.AddAsync(user);
+            return await SaveAsync();
         }
 
         public Task<bool> DeleteUserByIdAsync(string userId)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<bool> ExistsByEmailAsync(string email)
+        {
+            return await dataContext.Users.AnyAsync(x => x.Email == email);
         }
 
         public Task<bool> ExistsByIdAsync(string userId)
@@ -30,9 +45,10 @@ namespace CommuniMerge.Library.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<bool> SaveAsync()
+        public async Task<bool> SaveAsync()
         {
-            throw new NotImplementedException();
+            var saved = dataContext.SaveChangesAsync();
+            return await saved > 0;
         }
     }
 }

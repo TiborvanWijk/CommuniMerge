@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommuniMerge.Library.Models;
+using CommuniMerge.Library.ResultObjects;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +10,7 @@ namespace CommuniMerge.Library.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<bool> Register(string username, string email, string password);
+        Task<RegistrationResult> Register(RegisterModel registerModel);
         Task<bool> Login(string username, string password);
     }
 }
