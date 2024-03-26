@@ -4,12 +4,11 @@
     ViewData["action"] = "login";
 }
 
-
 <h1 class="form-title">Login</h1>
 
 <div class="form-fields">
     <input type="text" class="form-field" id="Username" name="Username" placeholder="Username">
-    <input type="password" class="form-field" id="Password" name="Password" placeholder="Password">
+    <input asp-validation type="password" class="form-field" id="Password" name="Password" placeholder="Password">
 </div>
 
 <div class="form-btns">
