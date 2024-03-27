@@ -26,12 +26,7 @@ namespace CommuniMerge.Library.Services
             this.passwordHasher = new PasswordHasher<User>();
         }
 
-        public Task<bool> Login(string username, string password)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<RegistrationResult> Register(RegisterModel registerModel)
+        public async Task<RegistrationResult> RegisterAsync(RegisterModel registerModel)
         {
             var errorResult = await ValidateRegistrationAndGetError(registerModel);
             if (errorResult != RegistrationError.None)
@@ -92,6 +87,29 @@ namespace CommuniMerge.Library.Services
         private async Task<bool> IsValidEmail(string email)
         {
             return true;
+        }
+
+        public Task<bool> Login(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<LoginResult> LoginAsync(LoginModel loginModel)
+        {
+            var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
+            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
+
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return new LoginResult { Error = LoginError.InvalidCombination };
+            }
+
+            return new LoginResult { Error = LoginError.None };
+        }
+
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            return await userRepository.GetUserByUsernameAsync(username);
         }
     }
 }

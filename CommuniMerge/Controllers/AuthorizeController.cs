@@ -4,6 +4,8 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
+using CommuniMerge.Library.Data.Dtos;
+using System.Net;
 
 namespace CommuniMerge.Controllers
 {
@@ -23,7 +25,31 @@ namespace CommuniMerge.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
         {
-            return View(model);
+
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/login", jsonContent);
+
+            if(response.StatusCode != HttpStatusCode.OK)
+            {
+                return View(model);
+            }
+
+            var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync());
+
+            if (resultContent.Type.Equals("Bearer"))
+            {
+                var cookieOptions = new CookieOptions()
+                {
+                    Path = "/",
+                    Expires = DateTime.Now.AddHours(1),
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                };
+                Response.Cookies.Append("BearerToken", resultContent.Token, cookieOptions);
+            }
+
+            return Redirect("/");
         }
 
         public async Task<IActionResult> Register()
@@ -35,7 +61,6 @@ namespace CommuniMerge.Controllers
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"); 
             var result = await client.PostAsync("/register", jsonContent);
-            var code = result.StatusCode;
 
             return View(model);
         }

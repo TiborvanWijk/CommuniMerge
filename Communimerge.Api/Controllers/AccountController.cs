@@ -1,5 +1,7 @@
-﻿using CommuniMerge.Library.Enums;
+﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.Services;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +12,12 @@ namespace Communimerge.Api.Controllers
     public class AccountController : Controller
     {
         private readonly IAccountService accountService;
+        private readonly TokenService tokenService;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IAccountService accountService, TokenService tokenService)
         {
             this.accountService = accountService;
+            this.tokenService = tokenService;
         }
 
 
@@ -29,9 +33,17 @@ namespace Communimerge.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var loginResult = await accountService.LoginAsync(loginModel);
 
+            if (loginResult.Error == LoginError.InvalidCombination)
+            {
+                return BadRequest("Invalid combination");
+            }
+            var user = await accountService.GetUserByUsernameAsync(loginModel.Username);
+            string bearerToken = tokenService.GenerateBearerToken(user.Id, user.UserName);
+            var loginResponseDto = new LoginResponseDto() { Type = "Bearer", Token = bearerToken };
 
-            return Ok();
+            return Ok(loginResponseDto);
         }
 
         [HttpPost("/register")]
@@ -45,7 +57,7 @@ namespace Communimerge.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            var registrationResult = await accountService.Register(registerModel);
+            var registrationResult = await accountService.RegisterAsync(registerModel);
 
             if (registrationResult.Error != RegistrationError.None)
             {

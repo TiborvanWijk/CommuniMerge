@@ -12,6 +12,7 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> ExistsByIdAsync(string userId);
         Task<bool> CreateUserAsync(User user);
         Task<User> GetUserByIdAsync(string userId);
+        Task<User> GetUserByUsernameAsync(string username);
         Task<bool> DeleteUserByIdAsync(string userId);
         Task<bool> SaveAsync();
         Task<bool> ExistsByEmailAsync(string email);

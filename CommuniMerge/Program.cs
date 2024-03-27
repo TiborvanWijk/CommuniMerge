@@ -1,5 +1,7 @@
 using CommuniMerge.Hubs;
 using CommuniMerge.Library.Data;
+using CommuniMerge.Library.Models;
+using CommuniMerge.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 
-
+builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -28,7 +30,7 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+app.UseMiddleware<AuthorizationMiddleware>();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

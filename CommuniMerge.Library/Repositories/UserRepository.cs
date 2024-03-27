@@ -45,6 +45,11 @@ namespace CommuniMerge.Library.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<User> GetUserByUsernameAsync(string username)
+        {
+            return await dataContext.Users.FirstAsync(x => x.UserName == username);
+        }
+
         public async Task<bool> SaveAsync()
         {
             var saved = dataContext.SaveChangesAsync();

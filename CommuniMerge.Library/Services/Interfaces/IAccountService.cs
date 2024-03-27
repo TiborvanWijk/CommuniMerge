@@ -10,7 +10,9 @@ namespace CommuniMerge.Library.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<RegistrationResult> Register(RegisterModel registerModel);
+        Task<RegistrationResult> RegisterAsync(RegisterModel registerModel);
         Task<bool> Login(string username, string password);
+        Task<LoginResult> LoginAsync(LoginModel loginModel);
+        Task<User> GetUserByUsernameAsync(string username);
     }
 }

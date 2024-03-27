@@ -2,6 +2,7 @@ using CommuniMerge.Library.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace CommuniMerge.Controllers
 {
@@ -13,8 +14,10 @@ namespace CommuniMerge.Controllers
         {
             _logger = logger;
         }
+        [Authorize]
         public IActionResult Index()
         {
+            var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return View();
         }
 
