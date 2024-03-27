@@ -2,8 +2,6 @@
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-//Disable the send button until connection is established.
-
 connection.on("ReceiveMessage", function (user, message, sentAt) {
     var newMessage = document.createElement("li");
     newMessage.classList.add("message-wrapper");
@@ -33,10 +31,6 @@ connection.on("ReceiveMessage", function (user, message, sentAt) {
         messageHolder.appendChild(newMessage);
     }
 
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
-    //li.textContent = `at ${sentAt} ${user} said: ${message}`;
 });
 
 connection.start().then(function () {

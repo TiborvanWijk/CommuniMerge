@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 using System.Text;
 using CommuniMerge.Library.Data.Dtos;
 using System.Net;
+using Azure;
+using CommuniMerge.Library.Mappers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace CommuniMerge.Controllers
 {
@@ -44,7 +47,6 @@ namespace CommuniMerge.Controllers
                     Expires = DateTime.Now.AddHours(1),
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.None
                 };
                 Response.Cookies.Append("BearerToken", resultContent.Token, cookieOptions);
             }
@@ -57,12 +59,35 @@ namespace CommuniMerge.Controllers
             return View(new RegisterModel() { Email = "", Password = "", Username = "" });
         }
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"); 
-            var result = await client.PostAsync("/register", jsonContent);
+            var registerJson = new StringContent(JsonConvert.SerializeObject(registerModel), Encoding.UTF8, "application/json"); 
+            var result = await client.PostAsync("/register", registerJson);
 
-            return View(model);
+            if(result.StatusCode != HttpStatusCode.OK)
+            {
+                return View(registerModel);
+            }
+
+            var loginModel = Map.ToLoginModelFromRegisterModel(registerModel);
+            var loginJson = new StringContent(JsonConvert.SerializeObject(loginModel), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/login", loginJson);
+
+            var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync());
+
+            if (resultContent.Type.Equals("Bearer"))
+            {
+                var cookieOptions = new CookieOptions()
+                {
+                    Path = "/",
+                    Expires = DateTime.Now.AddHours(1),
+                    HttpOnly = true,
+                    Secure = true,
+                };
+                Response.Cookies.Append("BearerToken", resultContent.Token, cookieOptions);
+            }
+
+            return Redirect("/");
         }
     }
 }
