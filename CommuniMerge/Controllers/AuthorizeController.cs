@@ -39,17 +39,14 @@ namespace CommuniMerge.Controllers
 
             var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync());
 
-            if (resultContent.Type.Equals("Bearer"))
+            var cookieOptions = new CookieOptions()
             {
-                var cookieOptions = new CookieOptions()
-                {
-                    Path = "/",
-                    Expires = DateTime.Now.AddHours(1),
-                    HttpOnly = true,
-                    Secure = true,
-                };
-                Response.Cookies.Append("BearerToken", resultContent.Token, cookieOptions);
-            }
+                Path = "/",
+                Expires = null,
+                HttpOnly = true,
+                Secure = true,
+            };
+            Response.Cookies.Append("BearerToken", resultContent.Token, cookieOptions);
 
             return Redirect("/");
         }

@@ -41,6 +41,7 @@ namespace Communimerge.Api.Controllers
             }
             var user = await accountService.GetUserByUsernameAsync(loginModel.Username);
             string bearerToken = tokenService.GenerateBearerToken(user.Id, user.UserName);
+
             var loginResponseDto = new LoginResponseDto() { Type = "Bearer", Token = bearerToken };
 
             return Ok(loginResponseDto);

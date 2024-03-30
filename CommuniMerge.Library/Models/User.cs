@@ -5,6 +5,7 @@ namespace CommuniMerge.Library.Models
     public class User : IdentityUser
     {
         public ICollection<UserGroupLink> UserGroupsLinks { get; set; }
-        public ICollection<PrivateConversationLink> PrivateConversations { get; set; }
+        public ICollection<UserFriend> FriendsLink { get; set; }
+
     }
 }

@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CommuniMerge.Migrations
+namespace CommuniMerge.Library.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class DatacontextMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,54 +171,53 @@ namespace CommuniMerge.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FriendsLink",
+                columns: table => new
+                {
+                    User1Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    FriendId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FriendsLink", x => new { x.User1Id, x.FriendId });
+                    table.ForeignKey(
+                        name: "FK_FriendsLink_AspNetUsers_FriendId",
+                        column: x => x.FriendId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_FriendsLink_AspNetUsers_User1Id",
+                        column: x => x.User1Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    ReceiverId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    SenderUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SenderId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    GroupId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Messages_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PrivateConversations",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    User1Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    User2Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PrivateConversations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PrivateConversations_AspNetUsers_User1Id",
-                        column: x => x.User1Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PrivateConversations_AspNetUsers_User2Id",
-                        column: x => x.User2Id,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_PrivateConversations_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Messages_AspNetUsers_SenderUserId",
+                        column: x => x.SenderUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                 });
@@ -272,30 +271,6 @@ namespace CommuniMerge.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "PrivateConversationMessageLinks",
-                columns: table => new
-                {
-                    PrivateConversationId = table.Column<int>(type: "int", nullable: false),
-                    MessageId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PrivateConversationMessageLinks", x => new { x.PrivateConversationId, x.MessageId });
-                    table.ForeignKey(
-                        name: "FK_PrivateConversationMessageLinks_Messages_MessageId",
-                        column: x => x.MessageId,
-                        principalTable: "Messages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_PrivateConversationMessageLinks_PrivateConversations_PrivateConversationId",
-                        column: x => x.PrivateConversationId,
-                        principalTable: "PrivateConversations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -336,35 +311,25 @@ namespace CommuniMerge.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_FriendsLink_FriendId",
+                table: "FriendsLink",
+                column: "FriendId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GroupMessageLinks_MessageId",
                 table: "GroupMessageLinks",
                 column: "MessageId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_UserId",
+                name: "IX_Messages_ReceiverId",
                 table: "Messages",
-                column: "UserId");
+                column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrivateConversationMessageLinks_MessageId",
-                table: "PrivateConversationMessageLinks",
-                column: "MessageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PrivateConversations_User1Id",
-                table: "PrivateConversations",
-                column: "User1Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PrivateConversations_User2Id",
-                table: "PrivateConversations",
-                column: "User2Id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PrivateConversations_UserId",
-                table: "PrivateConversations",
-                column: "UserId");
+                name: "IX_Messages_SenderUserId",
+                table: "Messages",
+                column: "SenderUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_userGroupLinks_GroupId",
@@ -391,10 +356,10 @@ namespace CommuniMerge.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "GroupMessageLinks");
+                name: "FriendsLink");
 
             migrationBuilder.DropTable(
-                name: "PrivateConversationMessageLinks");
+                name: "GroupMessageLinks");
 
             migrationBuilder.DropTable(
                 name: "userGroupLinks");
@@ -404,9 +369,6 @@ namespace CommuniMerge.Migrations
 
             migrationBuilder.DropTable(
                 name: "Messages");
-
-            migrationBuilder.DropTable(
-                name: "PrivateConversations");
 
             migrationBuilder.DropTable(
                 name: "groups");

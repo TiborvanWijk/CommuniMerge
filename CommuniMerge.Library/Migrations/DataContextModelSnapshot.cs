@@ -4,19 +4,16 @@ using CommuniMerge.Library.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace CommuniMerge.Migrations
+namespace CommuniMerge.Library.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240320181158_InitialCreate")]
-    partial class InitialCreate
+    partial class DataContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,69 +67,33 @@ namespace CommuniMerge.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ReceiverId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Text")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenderUserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("SenderUserId");
 
                     b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("CommuniMerge.Library.Models.PrivateConversationLink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("User1Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("User2Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("User1Id");
-
-                    b.HasIndex("User2Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("PrivateConversations");
-                });
-
-            modelBuilder.Entity("CommuniMerge.Library.Models.PrivateConversationMessageLink", b =>
-                {
-                    b.Property<int>("PrivateConversationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PrivateConversationId", "MessageId");
-
-                    b.HasIndex("MessageId");
-
-                    b.ToTable("PrivateConversationMessageLinks");
                 });
 
             modelBuilder.Entity("CommuniMerge.Library.Models.User", b =>
@@ -198,6 +159,21 @@ namespace CommuniMerge.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("CommuniMerge.Library.Models.UserFriend", b =>
+                {
+                    b.Property<string>("User1Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FriendId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("User1Id", "FriendId");
+
+                    b.HasIndex("FriendId");
+
+                    b.ToTable("FriendsLink");
                 });
 
             modelBuilder.Entity("CommuniMerge.Library.Models.UserGroupLink", b =>
@@ -372,53 +348,36 @@ namespace CommuniMerge.Migrations
 
             modelBuilder.Entity("CommuniMerge.Library.Models.Message", b =>
                 {
-                    b.HasOne("CommuniMerge.Library.Models.User", "User")
+                    b.HasOne("CommuniMerge.Library.Models.User", "Receiver")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("ReceiverId");
 
-                    b.Navigation("User");
+                    b.HasOne("CommuniMerge.Library.Models.User", "SenderUser")
+                        .WithMany()
+                        .HasForeignKey("SenderUserId");
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("SenderUser");
                 });
 
-            modelBuilder.Entity("CommuniMerge.Library.Models.PrivateConversationLink", b =>
+            modelBuilder.Entity("CommuniMerge.Library.Models.UserFriend", b =>
                 {
-                    b.HasOne("CommuniMerge.Library.Models.User", "User1")
+                    b.HasOne("CommuniMerge.Library.Models.User", "Friend")
                         .WithMany()
+                        .HasForeignKey("FriendId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CommuniMerge.Library.Models.User", "User1")
+                        .WithMany("FriendsLink")
                         .HasForeignKey("User1Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("CommuniMerge.Library.Models.User", "User2")
-                        .WithMany()
-                        .HasForeignKey("User2Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("CommuniMerge.Library.Models.User", null)
-                        .WithMany("PrivateConversations")
-                        .HasForeignKey("UserId");
+                    b.Navigation("Friend");
 
                     b.Navigation("User1");
-
-                    b.Navigation("User2");
-                });
-
-            modelBuilder.Entity("CommuniMerge.Library.Models.PrivateConversationMessageLink", b =>
-                {
-                    b.HasOne("CommuniMerge.Library.Models.Message", "Message")
-                        .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CommuniMerge.Library.Models.PrivateConversationLink", "PrivateConversation")
-                        .WithMany("PrivateConversationMessageLinks")
-                        .HasForeignKey("PrivateConversationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Message");
-
-                    b.Navigation("PrivateConversation");
                 });
 
             modelBuilder.Entity("CommuniMerge.Library.Models.UserGroupLink", b =>
@@ -503,14 +462,9 @@ namespace CommuniMerge.Migrations
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("CommuniMerge.Library.Models.PrivateConversationLink", b =>
-                {
-                    b.Navigation("PrivateConversationMessageLinks");
-                });
-
             modelBuilder.Entity("CommuniMerge.Library.Models.User", b =>
                 {
-                    b.Navigation("PrivateConversations");
+                    b.Navigation("FriendsLink");
 
                     b.Navigation("UserGroupsLinks");
                 });

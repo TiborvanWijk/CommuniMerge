@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
+using Communimerge.Api.CustomAttribute;
 
 namespace CommuniMerge.Controllers
 {
@@ -14,7 +15,7 @@ namespace CommuniMerge.Controllers
         {
             _logger = logger;
         }
-        [Authorize]
+        [CustomAuthorize]
         public IActionResult Index()
         {
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;

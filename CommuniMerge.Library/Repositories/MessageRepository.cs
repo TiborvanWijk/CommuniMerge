@@ -1,6 +1,7 @@
 ﻿using CommuniMerge.Library.Data;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,9 +35,9 @@ namespace CommuniMerge.Library.Repositories
             return dataContext.Messages.Any(x => x.Id == id);
         }
 
-        public async Task<ICollection<Message>> GetAllMessagesOfConversationAsync(string currentUser, string otherUser)
+        public async Task<ICollection<Message>> GetAllMessagesOfConversationAsync(string currentUserId, string otherUserId)
         {
-            throw new NotImplementedException();
+            return dataContext.Messages.Where(x => (x.SenderId == currentUserId && x.Receiver.Id == otherUserId) || (x.SenderId == otherUserId && x.SenderId == currentUserId)).ToList();
         }
 
         public Task<ICollection<Message>> GetAllMessagesOfGroupAsync(int groupId)

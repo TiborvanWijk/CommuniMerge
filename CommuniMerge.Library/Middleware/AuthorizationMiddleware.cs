@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommuniMerge.Library.Middleware.Objects;
 using CommuniMerge.Library.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -13,19 +14,20 @@ namespace CommuniMerge.Middleware
     public class AuthorizationMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly TokenSettings _tokenSettings;
+        private readonly ILogger<AuthorizationMiddleware> logger;
+        private readonly TokenSettings tokenSettings;
 
-        public AuthorizationMiddleware(RequestDelegate next, IOptions<TokenSettings> tokenSettings)
+        public AuthorizationMiddleware(RequestDelegate next, IOptions<TokenSettings> tokenSettings, ILogger<AuthorizationMiddleware> logger)
         {
-            _next = next;
-            _tokenSettings = tokenSettings.Value;
+            this._next = next;
+            this.logger = logger;
+            this.tokenSettings = tokenSettings.Value;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             var token = context.Request.Cookies["BearerToken"];
-
-            var allcookies = context.Request.Cookies;
+            var refreshToken = context.Request.Cookies["RefreshToken"];
 
             if (!string.IsNullOrEmpty(token))
             {
@@ -40,7 +42,7 @@ namespace CommuniMerge.Middleware
                     };
 
                     var identity = new ClaimsIdentity(claims, "Bearer");
-                    context.User.AddIdentity(identity);
+                    context.User = new ClaimsPrincipal(identity);
                 }
             }
 
@@ -56,7 +58,7 @@ namespace CommuniMerge.Middleware
                 var validationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(_tokenSettings.SecretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(tokenSettings.SecretKey)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                 };
@@ -73,8 +75,13 @@ namespace CommuniMerge.Middleware
                     Username = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.UniqueName)?.Value
                 };
             }
+            catch(SecurityTokenValidationException stve)
+            {
+                return null;
+            }
             catch (Exception ex)
             {
+                logger.LogError($"[{DateTime.UtcNow}] AuthorizationMiddleware - decode token: {ex}");
                 return null;
             }
         }

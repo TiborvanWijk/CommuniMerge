@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommuniMerge.Library.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,5 +9,6 @@ namespace CommuniMerge.Library.Services.Interfaces
 {
     public interface IMessageService
     {
+        Task<ICollection<Message>> getPrivateMessages(string userId, string otherUserId);
     }
 }
