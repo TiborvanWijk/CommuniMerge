@@ -19,6 +19,19 @@ namespace CommuniMerge.Library.Repositories
             this.dataContext = dataContext;
         }
 
+        public async Task<bool> AreFriends(string user1Id, string user2Id)
+        {
+            return await dataContext.FriendsLink.AnyAsync(x => 
+            (x.User1Id == user1Id && x.FriendId == user2Id)  
+            || (x.FriendId == user1Id && x.User1Id == user2Id));
+        }
+
+        public async Task<bool> CreateFriendRequest(FriendRequest friendRequest)
+        {
+            await dataContext.FriendRequests.AddAsync(friendRequest);
+            return await SaveAsync();
+        }
+
         public async Task<bool> CreateUserAsync(User user)
         {
             await dataContext.Users.AddAsync(user);
@@ -40,14 +53,22 @@ namespace CommuniMerge.Library.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<User> GetUserByIdAsync(string userId)
+        public async Task<bool> FriendRequestExists(string user1Id, string user2Id)
         {
-            throw new NotImplementedException();
+            return await dataContext.FriendRequests.AnyAsync(x => 
+            x.SenderId == user1Id && x.ReceiverId == user2Id 
+            || x.ReceiverId == user1Id && x.SenderId == user2Id);
         }
 
-        public async Task<User> GetUserByUsernameAsync(string username)
+        public async Task<User> GetUserByIdAsync(string userId)
         {
-            return await dataContext.Users.FirstAsync(x => x.UserName == username);
+            return await dataContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        }
+
+
+        public async Task<User?> GetUserByUsernameAsync(string username)
+        {
+            return await dataContext.Users.FirstOrDefaultAsync(x => x.UserName == username);
         }
 
         public async Task<bool> SaveAsync()

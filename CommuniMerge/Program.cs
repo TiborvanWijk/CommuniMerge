@@ -41,7 +41,16 @@ app.UseRouting();
 app.UseMiddleware<AuthorizationMiddleware>();
 app.UseAuthorization();
 
+using(var scope = app.Services.CreateScope())
+{
+    var datacontext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
+    var user = new User()
+    {
+
+    };
+
+} 
 
 
 app.MapHub<ChatHub>("/chatHub");

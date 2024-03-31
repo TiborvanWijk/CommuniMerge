@@ -63,7 +63,7 @@ namespace Communimerge.Api.Controllers
             if (registrationResult.Error != RegistrationError.None)
             {
                 //TEMP NEEDS UPDATING
-                return BadRequest();
+                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
             }
 
             return Ok();

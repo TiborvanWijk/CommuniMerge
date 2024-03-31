@@ -124,10 +124,7 @@
     position: relative;
     background-color: var(--white);
     display: flex;
-    justify-content: center;
-    flex-direction: column;
     height: 5em;
-    padding: 0em 0em 0em 5em;
     border-radius: 10px;
     user-select: none;
     cursor: pointer;
@@ -145,7 +142,9 @@
     left: 30px;
     top: 30px;
 }
-
+.message-profile-header{
+    width: 30%;
+}
 .message-profile{
     display: flex;
     position: absolute;
@@ -164,6 +163,37 @@
         -moz-user-select: none;
         -o-user-select: none;
         user-select: none;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+    }
+}
+
+.message-information{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+
+.group-profile-header{
+    display: flex;
+    padding: 0 0 0 10px;
+    align-items: center;
+    height: 100%;
+    width: 30%;
+}
+
+
+.group-profile{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 50%;
+    height: 75%;
+    img{
         height: 100%;
         width: 100%;
         object-fit: cover;

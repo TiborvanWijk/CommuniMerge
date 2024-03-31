@@ -111,5 +111,46 @@ namespace CommuniMerge.Library.Services
         {
             return await userRepository.GetUserByUsernameAsync(username);
         }
+
+        public async Task<User?> GetUserByIdAsync(string? userId)
+        {
+            return await userRepository.GetUserByIdAsync(userId);
+        }
+
+        public async Task<FriendRequestResult> SendFriendRequest(string senderId, string receiverId)
+        {
+            try
+            {
+
+                if(await userRepository.FriendRequestExists(senderId, receiverId))
+                {
+                    return new FriendRequestResult { Error = FriendRequestError.RequestExists };
+                }
+                if(await userRepository.AreFriends(senderId, receiverId))
+                {
+                    return new FriendRequestResult { Error = FriendRequestError.AlreadyFriends };
+                }
+
+                var friendRequest = new FriendRequest
+                {
+                    ReceiverId = receiverId,
+                    Receiver = await userRepository.GetUserByIdAsync(receiverId),
+                    SenderId = senderId,
+                    Sender = await userRepository.GetUserByIdAsync(senderId)
+                };
+                
+                if(!await userRepository.CreateFriendRequest(friendRequest))
+                {
+                    return new FriendRequestResult { Error = FriendRequestError.CreateRequestFailed };
+                }
+
+                return new FriendRequestResult { Error = FriendRequestError.None };
+
+            }catch (Exception ex)
+            {
+                logger.LogError("Temp", ex);
+                return new FriendRequestResult { Error = FriendRequestError.UnknownError };
+            }
+        }
     }
 }

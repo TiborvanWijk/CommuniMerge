@@ -13,6 +13,8 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<RegistrationResult> RegisterAsync(RegisterModel registerModel);
         Task<bool> Login(string username, string password);
         Task<LoginResult> LoginAsync(LoginModel loginModel);
-        Task<User> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByUsernameAsync(string username);
+        Task<User?> GetUserByIdAsync(string userId);
+        Task<FriendRequestResult> SendFriendRequest(string senderId, string receiverId);
     }
 }

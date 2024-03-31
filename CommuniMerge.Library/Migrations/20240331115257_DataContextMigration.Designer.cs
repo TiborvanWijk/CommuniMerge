@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CommuniMerge.Library.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240330210402_DatacontextMigration")]
-    partial class DatacontextMigration
+    [Migration("20240331115257_DataContextMigration")]
+    partial class DataContextMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace CommuniMerge.Library.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CommuniMerge.Library.Models.FriendRequest", b =>
+                {
+                    b.Property<string>("SenderId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ReceiverId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("SenderId", "ReceiverId");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.ToTable("FriendRequests");
+                });
 
             modelBuilder.Entity("CommuniMerge.Library.Models.Group", b =>
                 {
@@ -330,6 +345,25 @@ namespace CommuniMerge.Library.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("CommuniMerge.Library.Models.FriendRequest", b =>
+                {
+                    b.HasOne("CommuniMerge.Library.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CommuniMerge.Library.Models.User", "Sender")
+                        .WithMany("FriendRequests")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("Sender");
+                });
+
             modelBuilder.Entity("CommuniMerge.Library.Models.GroupMessageLink", b =>
                 {
                     b.HasOne("CommuniMerge.Library.Models.Group", "Group")
@@ -467,6 +501,8 @@ namespace CommuniMerge.Library.Migrations
 
             modelBuilder.Entity("CommuniMerge.Library.Models.User", b =>
                 {
+                    b.Navigation("FriendRequests");
+
                     b.Navigation("FriendsLink");
 
                     b.Navigation("UserGroupsLinks");

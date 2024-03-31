@@ -62,7 +62,20 @@ function addMessagesToMessageHolder(){
 
 }
 
-function openConversation(){
+
+
+let messageDisplays = document.querySelectorAll(".message-item");
+
+messageDisplays.forEach((messageDisplay) =>{
+    messageDisplay.addEventListener("onclick", (event) =>{
+        openConversation(event);
+    });
+});
+
+
+
+
+function openConversation(event){
     clearMessageHolder();
     addMessagesToMessageHolder();
 }

@@ -15,6 +15,7 @@ namespace CommuniMerge.Library.Data
         public DbSet<Message> Messages { get; set; }
         public DbSet<UserGroupLink> userGroupLinks { get; set; }
         public DbSet<UserFriend> FriendsLink { get; set; }
+        public DbSet<FriendRequest> FriendRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -52,7 +53,19 @@ namespace CommuniMerge.Library.Data
                 .WithMany()
                 .HasForeignKey(x => x.FriendId)
                 .OnDelete(DeleteBehavior.Restrict);
-                
+
+            builder.Entity<FriendRequest>()
+                .HasKey(x => new { x.SenderId, x.ReceiverId});
+            builder.Entity<FriendRequest>()
+                .HasOne(x => x.Sender)
+                .WithMany(x => x.FriendRequests)
+                .HasForeignKey(x => x.SenderId)
+                .OnDelete(DeleteBehavior.Cascade);
+            builder.Entity<FriendRequest>()
+                .HasOne(x => x.Receiver)
+                .WithMany()
+                .HasForeignKey(x => x.ReceiverId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
