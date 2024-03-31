@@ -43,5 +43,32 @@ namespace Communimerge.Api.Controllers
             return Created();
         }
 
+        [HttpPost("/acceptFriendRequest/{username}")]
+        public async Task<IActionResult> AcceptFriendRequest([FromRoute] string username)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            var requestingUser = await accountService.GetUserByUsernameAsync(username);
+            if(requestingUser == null)
+            {
+                return NotFound();
+            }
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var result = await accountService.AcceptFriendRequest(currentUserId, requestingUser.Id);
+
+            if(result.Error != AcceptFriendRequestError.None)
+            {
+                return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
+            }
+
+            return Created();
+        }
+
+
+
     }
 }

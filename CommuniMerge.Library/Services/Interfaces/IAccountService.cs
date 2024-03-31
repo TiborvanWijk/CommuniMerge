@@ -16,5 +16,6 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<User?> GetUserByUsernameAsync(string username);
         Task<User?> GetUserByIdAsync(string userId);
         Task<FriendRequestResult> SendFriendRequest(string senderId, string receiverId);
+        Task<AcceptFriendRequestResult> AcceptFriendRequest(string? currentUserId, string id);
     }
 }

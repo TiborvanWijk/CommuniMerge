@@ -19,5 +19,7 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> CreateFriendRequest(FriendRequest friendRequest);
         Task<bool> FriendRequestExists(string user1Id, string user2Id);
         Task<bool> AreFriends(string user1Id, string user2Id);
+        Task<bool> AddFriend(UserFriend userFriend);
+        Task<bool> DeleteRequest(string currentUserId, string requestingUserId);
     }
 }

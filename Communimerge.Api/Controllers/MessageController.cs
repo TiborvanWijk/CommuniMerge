@@ -51,7 +51,10 @@ namespace Communimerge.Api.Controllers
         [HttpPost("/createPersonalMessage")]
         public async Task<IActionResult> CreatePersonalMessage([FromBody] PersonalMessageCreateDto messageCreateDto)
         {
-
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
             return Created();
         }

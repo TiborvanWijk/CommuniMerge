@@ -19,10 +19,16 @@ namespace CommuniMerge.Library.Repositories
             this.dataContext = dataContext;
         }
 
+        public async Task<bool> AddFriend(UserFriend userFriend)
+        {
+            await dataContext.FriendsLink.AddAsync(userFriend);
+            return await SaveAsync();
+        }
+
         public async Task<bool> AreFriends(string user1Id, string user2Id)
         {
-            return await dataContext.FriendsLink.AnyAsync(x => 
-            (x.User1Id == user1Id && x.FriendId == user2Id)  
+            return dataContext.FriendsLink.Any(x => 
+            (x.User1Id == user1Id && x.FriendId == user2Id)
             || (x.FriendId == user1Id && x.User1Id == user2Id));
         }
 
@@ -35,6 +41,14 @@ namespace CommuniMerge.Library.Repositories
         public async Task<bool> CreateUserAsync(User user)
         {
             await dataContext.Users.AddAsync(user);
+            return await SaveAsync();
+        }
+
+        public async Task<bool> DeleteRequest(string currentUserId, string requestingUserId)
+        {
+            dataContext.FriendRequests.Remove(await dataContext.FriendRequests.FirstAsync(x => 
+                (x.SenderId == currentUserId && x.ReceiverId == requestingUserId)
+                || (x.SenderId == requestingUserId && x.ReceiverId == currentUserId)));
             return await SaveAsync();
         }
 

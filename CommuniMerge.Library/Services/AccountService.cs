@@ -74,7 +74,7 @@ namespace CommuniMerge.Library.Services
             {
                 return RegistrationError.InvalidEmailFormat;
             }
-            if(!await IsValidPassword(registerModel.Password))
+            if (!await IsValidPassword(registerModel.Password))
             {
                 return RegistrationError.WeakPassword;
             }
@@ -122,11 +122,11 @@ namespace CommuniMerge.Library.Services
             try
             {
 
-                if(await userRepository.FriendRequestExists(senderId, receiverId))
+                if (await userRepository.FriendRequestExists(senderId, receiverId))
                 {
                     return new FriendRequestResult { Error = FriendRequestError.RequestExists };
                 }
-                if(await userRepository.AreFriends(senderId, receiverId))
+                if (await userRepository.AreFriends(senderId, receiverId))
                 {
                     return new FriendRequestResult { Error = FriendRequestError.AlreadyFriends };
                 }
@@ -138,18 +138,58 @@ namespace CommuniMerge.Library.Services
                     SenderId = senderId,
                     Sender = await userRepository.GetUserByIdAsync(senderId)
                 };
-                
-                if(!await userRepository.CreateFriendRequest(friendRequest))
+
+                if (!await userRepository.CreateFriendRequest(friendRequest))
                 {
                     return new FriendRequestResult { Error = FriendRequestError.CreateRequestFailed };
                 }
 
                 return new FriendRequestResult { Error = FriendRequestError.None };
 
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError("Temp", ex);
                 return new FriendRequestResult { Error = FriendRequestError.UnknownError };
+            }
+        }
+
+        public async Task<AcceptFriendRequestResult> AcceptFriendRequest(string currentUserId, string requestingUserId)
+        {
+            try
+            {
+
+                if(!await userRepository.FriendRequestExists(currentUserId, requestingUserId))
+                {
+                    return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.RequestNotFound };
+                }
+                if(await userRepository.AreFriends(currentUserId, requestingUserId))
+                {
+                    return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.AlreadyFriends };
+                }
+                var userFriend = new UserFriend
+                {
+                    User1Id = currentUserId,
+                    User1 = await userRepository.GetUserByIdAsync(currentUserId),
+                    FriendId = requestingUserId,
+                    Friend = await userRepository.GetUserByIdAsync(requestingUserId),
+                };
+
+                if (!await userRepository.AddFriend(userFriend))
+                {
+                    return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.AcceptRequestFailed };
+                }
+                if(!await userRepository.DeleteRequest(currentUserId, requestingUserId))
+                {
+                    return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.DeleteRequestFailed };
+                }
+
+                return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.None };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("Temp", ex);
+                return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.UnknownError };
             }
         }
     }
