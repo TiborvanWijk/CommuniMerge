@@ -1,4 +1,7 @@
-﻿using CommuniMerge.Library.Enums;
+﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Mappers;
+using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -67,8 +70,35 @@ namespace Communimerge.Api.Controllers
 
             return Created();
         }
+        [HttpGet("friends")]
+        public async Task<IActionResult> GetAllFriends([FromQuery] bool withLatestMessage)
+        {
+
+            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            ICollection<User> friends = await accountService.GetAllFriends(loggedInUserId);
 
 
+            if(!withLatestMessage)
+            {
+                var friendsDto = friends.Select(Map.ToFriendDto);
+                return Ok(friendsDto);
+            }
+
+
+            var friendsWithMessageDto = await Task.WhenAll(friends.Select(async x =>
+            {
+                FriendDisplayDto friendDisplayDto = new FriendDisplayDto()
+                {
+                    Username = x.UserName,
+                    LatestMessage = Map.ToMessageDisplayDto(await accountService.GetLatestMessage(loggedInUserId, x.Id))
+                };
+                return friendDisplayDto;
+            }));
+
+
+            return Ok(friendsWithMessageDto.ToList());
+        }
 
     }
 }

@@ -192,5 +192,30 @@ namespace CommuniMerge.Library.Services
                 return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.UnknownError };
             }
         }
+
+        public async Task<ICollection<User>> GetAllFriends(string userId)
+        {
+            try
+            {
+                return await userRepository.getAllFriendsById(userId);
+            }catch(Exception ex)
+            {
+                logger.LogError("TEMP", ex);
+                return null;
+            }
+        }
+
+        public async Task<Message> GetLatestMessage(string loggedInUserId, string id)
+        {
+            try
+            {
+                return await userRepository.GetLatestMessage(loggedInUserId, id);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("TEMP", ex);
+                return null;
+            }
+        }
     }
 }

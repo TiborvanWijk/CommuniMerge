@@ -53,14 +53,6 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     event.preventDefault();
 });
 
-function clearMessageHolder(){
-    let messageHolder = document.querySelector("#messages");
-    messageHolder.innerHTML = "";
-}
-
-function addMessagesToMessageHolder(){
-
-}
 
 
 
@@ -75,7 +67,21 @@ messageDisplays.forEach((messageDisplay) =>{
 
 
 
-function openConversation(event){
+function openConversation(username){
     clearMessageHolder();
-    addMessagesToMessageHolder();
+    let messages = getMessages(username);
+    addMessagesToMessageHolder(messages);
+}
+
+function getMessages(username){
+    
+}
+
+function clearMessageHolder(){
+    let messageHolder = document.querySelector("#messages");
+    messageHolder.innerHTML = "";
+}
+
+function addMessagesToMessageHolder(){
+
 }

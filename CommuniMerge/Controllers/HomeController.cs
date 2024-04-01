@@ -4,26 +4,49 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
 using Communimerge.Api.CustomAttribute;
+using CommuniMerge.ViewModels;
+using Newtonsoft.Json;
+using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Services.Interfaces;
+using CommuniMerge.Library.Services;
+using System.Net;
 
 namespace CommuniMerge.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly HttpClient client;
         private readonly ILogger<HomeController> _logger;
+        private readonly IAccountService accountService;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(ILogger<HomeController> logger, IAccountService accountService)
         {
-            client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:7129");
             _logger = logger;
+            this.accountService = accountService;
         }
         [CustomAuthorize]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var cookieContainer = new CookieContainer();
+
+            var handler = new HttpClientHandler { CookieContainer = cookieContainer };
+
+            var httpClient = new HttpClient(handler);
+
+            var cookie = Request.Cookies["BearerToken"];
+
+            if (!string.IsNullOrEmpty(cookie))
+            {
+                cookieContainer.Add(new Uri("https://localhost:7129"), new Cookie("BearerToken", cookie));
+            }
+
+            var result = await httpClient.GetAsync("https://localhost:7129/api/User/friends?withLatestMessage=true");
+
+            List<FriendDisplayDto> content = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await result.Content.ReadAsStringAsync());
 
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            return View();
+            var currentUser = await accountService.GetUserByIdAsync(id);
+            return View(new IndexView() { Friends = content, CurrentUserUsername = currentUser.UserName });
         }
 
         public IActionResult Privacy()

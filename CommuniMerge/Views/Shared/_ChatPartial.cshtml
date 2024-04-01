@@ -1,4 +1,7 @@
-﻿<nav class="nav">
+﻿@using CommuniMerge.ViewModels;
+@model IndexView;
+
+<nav class="nav">
     <section class="side-nav">
 
         <div></div>
@@ -26,9 +29,9 @@
         <div class="message-listingHolder">
             <ul class="message-list">
                 @{
-                    for (int i = 0; i < 20; ++i)
+                    foreach(var friend in Model.Friends)
                     {
-                        <li class="message-item">
+                        <li class="message-item" onclick="openConversation(@friend.Username)">
 
                             <header class="message-profile-header">
                                 <figure class="message-profile user1">
@@ -39,21 +42,9 @@
                                 </figure>
                             </header>
                             <div class="message-information">
-                                <h3>Tibor & user</h3>
-                                <p>Hello</p>
+                                <h3>@Model.CurrentUserUsername & @friend.Username</h3>
+                                <p>@friend.LatestMessage.Content </p>
                             </div>
-                        </li>
-                        <li class="message-item">
-
-                            <header class="group-profile-header">
-                                <figure class="group-profile">
-                                    <img src="~/img/doggy.jpg" alt="" srcset="" draggable="false">
-                                </figure>
-                            </header>
-                            <div class="message-information">
-                                <h3>Group 1</h3>
-                                <p>Hello</p>
-                            <div>
                         </li>
                     }
                 }

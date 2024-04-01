@@ -21,5 +21,7 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> AreFriends(string user1Id, string user2Id);
         Task<bool> AddFriend(UserFriend userFriend);
         Task<bool> DeleteRequest(string currentUserId, string requestingUserId);
+        Task<ICollection<User>> getAllFriendsById(string userId);
+        Task<Message> GetLatestMessage(string loggedInUserId, string id);
     }
 }

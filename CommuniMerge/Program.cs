@@ -2,10 +2,21 @@ using CommuniMerge.Hubs;
 using CommuniMerge.Library.Data;
 using CommuniMerge.Library.Middleware;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.Repositories.Interfaces;
+using CommuniMerge.Library.Repositories;
+using CommuniMerge.Library.Services;
+using CommuniMerge.Library.Services.Interfaces;
 using CommuniMerge.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

@@ -10,6 +10,14 @@ namespace CommuniMerge.Library.Mappers
 {
     public abstract class Map
     {
+        public static FriendDto ToFriendDto(User user)
+        {
+            return new FriendDto
+            {
+                Username = user.UserName
+            };
+        }
+
         public static LoginModel ToLoginModelFromRegisterModel(RegisterModel registerModel)
         {
             return new LoginModel { Username = registerModel.Username, Password = registerModel.Password };

@@ -1,4 +1,5 @@
-﻿using CommuniMerge.Library.Models;
+﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Models;
 using CommuniMerge.Library.ResultObjects;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,7 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<User?> GetUserByIdAsync(string userId);
         Task<FriendRequestResult> SendFriendRequest(string senderId, string receiverId);
         Task<AcceptFriendRequestResult> AcceptFriendRequest(string? currentUserId, string id);
+        Task<ICollection<User>> GetAllFriends(string userId);
+        Task<Message> GetLatestMessage(string loggedInUserId, string id);
     }
 }

@@ -74,6 +74,22 @@ namespace CommuniMerge.Library.Repositories
             || x.ReceiverId == user1Id && x.SenderId == user2Id);
         }
 
+        public async Task<ICollection<User>> getAllFriendsById(string userId)
+        {
+            return await dataContext.FriendsLink.Where(x => 
+            x.User1Id == userId || x.FriendId == userId)
+                .Select(x => x.User1Id == userId ? x.Friend : x.User1)
+                .ToListAsync();
+        }
+
+        public async Task<Message> GetLatestMessage(string loggedInUserId, string id)
+        {
+            return await dataContext.Messages.Where(x =>
+                (x.SenderId == loggedInUserId && x.ReceiverId == id)
+                || (x.SenderId == id && x.ReceiverId == loggedInUserId)
+         ).OrderByDescending(x => x.TimeStamp).FirstOrDefaultAsync();
+        }
+
         public async Task<User> GetUserByIdAsync(string userId)
         {
             return await dataContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
