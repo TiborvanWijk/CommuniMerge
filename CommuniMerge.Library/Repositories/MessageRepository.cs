@@ -37,7 +37,10 @@ namespace CommuniMerge.Library.Repositories
 
         public async Task<ICollection<Message>> GetAllMessagesOfConversationAsync(string currentUserId, string otherUserId)
         {
-            return dataContext.Messages.Where(x => (x.SenderId == currentUserId && x.Receiver.Id == otherUserId) || (x.SenderId == otherUserId && x.SenderId == currentUserId)).ToList();
+            return dataContext.Messages.Where(x =>
+            (x.SenderId == currentUserId && x.ReceiverId == otherUserId)
+            || (x.SenderId == otherUserId && x.ReceiverId == currentUserId))
+                .OrderBy(x => x.TimeStamp).ToList();
         }
 
         public Task<ICollection<Message>> GetAllMessagesOfGroupAsync(int groupId)

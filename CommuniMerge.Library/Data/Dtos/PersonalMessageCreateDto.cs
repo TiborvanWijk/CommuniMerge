@@ -8,7 +8,7 @@ namespace CommuniMerge.Library.Data.Dtos
 {
     public class PersonalMessageCreateDto
     {
-        public string ReceiverId { get; set; }
+        public string ReceiverUsername { get; set; }
         public string Content { get; set; }
     }
 }

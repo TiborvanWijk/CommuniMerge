@@ -9,15 +9,19 @@ namespace CommuniMerge.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly HttpClient client;
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
         {
+            client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7129");
             _logger = logger;
         }
         [CustomAuthorize]
         public IActionResult Index()
         {
+
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             return View();
         }
