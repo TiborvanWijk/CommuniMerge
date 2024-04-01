@@ -20,6 +20,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
+builder.Services.AddCors();
+
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 builder.Services.AddSingleton<TokenSettings>();
 builder.Services.AddSingleton<TokenService>();
@@ -47,6 +49,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseMiddleware<AuthorizationMiddleware>();
+
+
+app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:7286"));
+
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

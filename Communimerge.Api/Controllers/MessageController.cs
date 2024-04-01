@@ -5,6 +5,7 @@ using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -13,6 +14,7 @@ namespace Communimerge.Api.Controllers
     [ApiController]
     [Route("/api/messages")]
     [Authorize]
+    [EnableCors]
     public class MessageController : Controller
     {
         private readonly IMessageService messageService;
