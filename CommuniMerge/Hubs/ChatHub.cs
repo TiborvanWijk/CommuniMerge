@@ -7,6 +7,14 @@ namespace CommuniMerge.Hubs
     [CustomAuthorize]
     public class ChatHub : Hub<IChatClient>
     {
+        private HttpClient client { get; }
+
+        public ChatHub()
+        {
+            client = new HttpClient();
+        }
+
+
         public async Task SendMessage(string user, string message)
         {
             Clients.All.ReceiveMessage(user, message, DateTime.Now.ToShortDateString());

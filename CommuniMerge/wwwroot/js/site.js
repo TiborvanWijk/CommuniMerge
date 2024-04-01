@@ -70,7 +70,9 @@ messageDisplays.forEach((messageDisplay) => {
 async function openConversation(username) {
     clearMessageHolder();
     let messages = await getMessages(username);
-    addMessagesToMessageHolder(messages, username);
+    if(messages != null){
+        addMessagesToMessageHolder(messages, username);
+    }
 }
 
 function addMessagesToMessageHolder(messageObjects, username) {

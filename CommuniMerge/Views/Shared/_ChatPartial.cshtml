@@ -31,6 +31,7 @@
                 @{
                     foreach(var friend in Model.Friends)
                     {
+
                         <li class="message-item" onclick="openConversation('@friend.Username')">
 
                             <header class="message-profile-header">
@@ -43,7 +44,12 @@
                             </header>
                             <div class="message-information">
                                 <h3>@Model.CurrentUserUsername & @friend.Username</h3>
-                                <p>@friend.LatestMessage.Content </p>
+                                @{
+                                        if(friend.LatestMessage != null)
+                                        {
+                                            <p>@friend.LatestMessage.Content</p>
+                                        }
+                                }
                             </div>
                         </li>
                     }

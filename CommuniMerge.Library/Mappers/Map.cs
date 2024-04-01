@@ -30,7 +30,7 @@ namespace CommuniMerge.Library.Mappers
                 Content = message.Content,
                 Id = message.Id,
                 SenderId = message.SenderId,
-                TimeStamp = message.TimeStamp,
+                TimeStamp = message.TimeStamp.ToShortDateString(),
             };
         }
     }

@@ -88,10 +88,11 @@ namespace Communimerge.Api.Controllers
 
             var friendsWithMessageDto = await Task.WhenAll(friends.Select(async x =>
             {
+                var latestMessage = await accountService.GetLatestMessage(loggedInUserId, x.Id);
                 FriendDisplayDto friendDisplayDto = new FriendDisplayDto()
                 {
                     Username = x.UserName,
-                    LatestMessage = Map.ToMessageDisplayDto(await accountService.GetLatestMessage(loggedInUserId, x.Id))
+                    LatestMessage = latestMessage == null ? null : Map.ToMessageDisplayDto(latestMessage)
                 };
                 return friendDisplayDto;
             }));
