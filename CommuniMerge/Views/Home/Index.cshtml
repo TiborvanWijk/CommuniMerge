@@ -1,7 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Home page";
 }
-
+@using CommuniMerge.ViewModels;
+@model IndexView;
 
 
 @Html.Partial("_ChatPartial")
@@ -9,7 +10,7 @@
 
 
 
-    <header class="info-header">
+    <header class="info-header" id="info-header">
         <div class="userinfo-wrapper">
             <figure class="user-pfp">
                 <img src="~/img/profile.jpg" />

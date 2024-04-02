@@ -8,6 +8,10 @@ using CommuniMerge.Library.Services;
 using CommuniMerge.Library.Services.Interfaces;
 using CommuniMerge.Middleware;
 using Microsoft.EntityFrameworkCore;
+using CommuniMerge.CookieRepositories.Interfaces;
+using CommuniMerge.CookieRepositories;
+using CommuniMerge.ApiServices.Interfaces;
+using CommuniMerge.ApiServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +21,8 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ICookieRepository, CookieRepository>();
+builder.Services.AddScoped<IMessageApiService, MessageApiService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

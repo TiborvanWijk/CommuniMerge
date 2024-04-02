@@ -1,4 +1,7 @@
 ﻿using Communimerge.Api.CustomAttribute;
+using CommuniMerge.ApiServices.Interfaces;
+using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
@@ -7,18 +10,32 @@ namespace CommuniMerge.Hubs
     [CustomAuthorize]
     public class ChatHub : Hub<IChatClient>
     {
-        private HttpClient client { get; }
+        private readonly IAccountService accountService;
+        private readonly IMessageApiService messageApiService;
 
-        public ChatHub()
+
+        public ChatHub(IAccountService accountService, IMessageApiService messageApiService)
         {
-            client = new HttpClient();
+            this.accountService = accountService;
+            this.messageApiService = messageApiService;
         }
 
 
-        public async Task SendMessage(string user, string message)
+        public async Task SendMessage(string receiverUsername, string message)
         {
-            Clients.All.ReceiveMessage(user, message, DateTime.Now.ToShortDateString());
             var id = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await accountService.GetUserByIdAsync(id);
+
+            HttpContext context = Context.GetHttpContext();
+
+            var result = await messageApiService.CreatePersonalMessage(context, new PersonalMessageCreateDto { ReceiverUsername = receiverUsername, Content = message });
+
+            if (!result.IsSuccessStatusCode)
+            {
+
+            }
+
+            Clients.All.ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
         }
     }
 }

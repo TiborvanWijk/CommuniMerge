@@ -44,10 +44,14 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
         return;
     }
     let input = document.getElementById("message-sender");
-    var user = "TEST";
-    var message = input.value;
+    let message = input.value;
     input.value = "";
-    connection.invoke("SendMessage", user, message).catch(function (err) {
+
+    let receiver = document.querySelector("#message-sender").dataset.receiver;
+    
+
+
+    connection.invoke("SendMessage", receiver, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -68,23 +72,65 @@ messageDisplays.forEach((messageDisplay) => {
 
 
 async function openConversation(username) {
+    clearInfoHeader();
+
+    updateInfoHeader(username);
+
+    updateReceiver(username);
+
     clearMessageHolder();
+
     let messages = await getMessages(username);
-    if(messages != null){
+    if (messages != null) {
         addMessagesToMessageHolder(messages, username);
     }
 }
 
+function updateReceiver(username){
+    let sender = document.querySelector("#message-sender");
+
+    if(!sender.hasAttribute("data-receiver")){
+        sender.setAttribute("data-receiver", "default value");
+    }
+
+    sender.dataset.receiver = username;
+}
+
+function updateInfoHeader(username) {
+    let infoHeader = document.querySelector("#info-header");
+    infoHeader.innerHTML = `
+            <div class="userinfo-wrapper">
+                <figure class="user-pfp">
+                    <img src="/img/profile.jpg" />
+                </figure>
+                <div class="userinfo">
+                    <h3>${username}</h3>
+                </div>
+            </div>
+
+            <ul class="message-menu">
+                <li></li>
+                <li></li>
+                <li></li>
+            </ul>`;
+}
+
+function clearInfoHeader() {
+    let infoHeader = document.querySelector("#info-header");
+    infoHeader.innerHTML = "";
+}
+
+
 function addMessagesToMessageHolder(messageObjects, username) {
     let messageHolder = document.querySelector("#messages");
 
-    for(let i = 0; i < messageObjects.length; ++i){
+    for (let i = 0; i < messageObjects.length; ++i) {
 
         let messageObject = messageObjects[i];
-        
+
         let newMessage = document.createElement("li");
         newMessage.classList.add("message-wrapper");
-        
+
         let urlRegex = /(https?:\/\/[^\s]+)/g;
         let messageWithLinks = messageObject.content.replace(urlRegex, (url) => {
             return '<a href="' + url + '" target="_blank">' + url + '</a>';
@@ -111,7 +157,7 @@ function addMessagesToMessageHolder(messageObjects, username) {
     }
 }
 async function getMessages(username) {
-    
+
     const url = `https://localhost:7129/get/${username}`;
     try {
         const response = await fetch(url, {
@@ -126,10 +172,10 @@ async function getMessages(username) {
 
         const data = await response.json();
 
-        return data; 
+        return data;
     } catch (error) {
         console.error('Error fetching messages:', error.message);
-        return null; 
+        return null;
     }
 }
 
@@ -139,7 +185,7 @@ function clearMessageHolder() {
 }
 
 
-function getCookie(cookieName){
+function getCookie(cookieName) {
     const cookies = document.cookie;
 
     for (let i = 0; i < cookies.length; i++) {
