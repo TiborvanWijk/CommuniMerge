@@ -29,7 +29,7 @@ namespace CommuniMerge.Library.Mappers
             {
                 Content = message.Content,
                 Id = message.Id,
-                SenderId = message.SenderId,
+                SenderUsername = message.SenderUser.UserName,
                 TimeStamp = message.TimeStamp.ToShortDateString(),
             };
         }

@@ -23,6 +23,7 @@ builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ICookieRepository, CookieRepository>();
 builder.Services.AddScoped<IMessageApiService, MessageApiService>();
+builder.Services.AddScoped<IUserApiService, UserApiService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

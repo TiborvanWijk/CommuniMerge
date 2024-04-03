@@ -86,5 +86,13 @@ namespace CommuniMerge.Controllers
 
             return Redirect("/");
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            Response.Cookies.Delete("BearerToken");
+
+            return Redirect("/Authorize/login");
+        }
     }
 }

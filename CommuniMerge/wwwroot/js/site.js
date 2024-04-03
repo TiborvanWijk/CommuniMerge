@@ -3,25 +3,9 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 connection.on("ReceiveMessage", function (user, message, sentAt) {
-    var newMessage = document.createElement("li");
-    newMessage.classList.add("message-wrapper");
 
-    let urlRegex = /(https?:\/\/[^\s]+)/g;
-    let messageWithLinks = message.replace(urlRegex, (url) => {
-        return '<a href="' + url + '" target="_blank">' + url + '</a>';
-    });
-    newMessage.innerHTML = `                    
-    <figure class="message-profile-picture">
-        <img src="/img/profile.jpg">
-    </figure>
-    <div class="content-wrapper">
-        <div class="identifier-wrapper">
-            <h3>${user}</h3>
-            <p>${sentAt}</p>
-        </div>
-        <div class="message-text">${messageWithLinks}</div>
-    </div>
-    `;
+    let newMessage = createMessageHtml(user, sentAt, message);
+
     let messageHolder = document.querySelector("#messages");
     let firstChild = messageHolder.firstChild;
     if (firstChild != null) {
@@ -39,12 +23,17 @@ connection.start().then(function () {
     return console.error(err.toString());
 });
 
+
+connection.on("ReceiveFriendRequest", function(sender){
+    console.log(sender);
+});
+
 document.getElementById("message-sender").addEventListener("keyup", function (event) {
-    if (event.key != "Enter") {
-        return;
-    }
     let input = document.getElementById("message-sender");
     let message = input.value;
+    if (event.key != "Enter" || message.length == 0) {
+        return;
+    }
     input.value = "";
 
     let receiver = document.querySelector("#message-sender").dataset.receiver;
@@ -57,7 +46,16 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     event.preventDefault();
 });
 
+let sendFriendRequestBtn = document.querySelector("#sendFriendRequestBtn");
+sendFriendRequestBtn.addEventListener("click", () =>{
+    let friendRequestInput = document.querySelector("#friendRequestInput")
+    let receiverUsername = friendRequestInput.value;
 
+    connection.invoke("SendFriendRequest", receiverUsername).catch(function (err){
+        return console.error(err.toString());
+    })
+    
+});
 
 
 let messageDisplays = document.querySelectorAll(".message-item");
@@ -71,7 +69,8 @@ messageDisplays.forEach((messageDisplay) => {
 
 
 
-async function openConversation(username) {
+async function openConversation(event, username) {
+    selectTab(event);
     clearInfoHeader();
 
     updateInfoHeader(username);
@@ -84,6 +83,17 @@ async function openConversation(username) {
     if (messages != null) {
         addMessagesToMessageHolder(messages, username);
     }
+}
+
+function selectTab(event){
+    
+    var messageItems = document.querySelectorAll(".message-item");
+
+    for(let i = 0; i < messageItems.length; ++i){
+        let messageItem = messageItems[i];
+        messageItem.style.backgroundColor = "var(--white)";
+    }
+    event.style.backgroundColor = "var(--light-blue)";
 }
 
 function updateReceiver(username){
@@ -121,18 +131,12 @@ function clearInfoHeader() {
 }
 
 
-function addMessagesToMessageHolder(messageObjects, username) {
-    let messageHolder = document.querySelector("#messages");
-
-    for (let i = 0; i < messageObjects.length; ++i) {
-
-        let messageObject = messageObjects[i];
-
-        let newMessage = document.createElement("li");
+function createMessageHtml(username, timeStamp, message){
+    let newMessage = document.createElement("li");
         newMessage.classList.add("message-wrapper");
 
         let urlRegex = /(https?:\/\/[^\s]+)/g;
-        let messageWithLinks = messageObject.content.replace(urlRegex, (url) => {
+        let messageWithLinks = message.replace(urlRegex, (url) => {
             return '<a href="' + url + '" target="_blank">' + url + '</a>';
         });
         newMessage.innerHTML = `                    
@@ -142,11 +146,23 @@ function addMessagesToMessageHolder(messageObjects, username) {
         <div class="content-wrapper">
         <div class="identifier-wrapper">
         <h3>${username}</h3>
-        <p>${messageObject.timeStamp}</p>
+        <p>${timeStamp}</p>
         </div>
         <div class="message-text">${messageWithLinks}</div>
         </div>
         `;
+    return newMessage;
+}
+
+function addMessagesToMessageHolder(messageObjects, username) {
+    let messageHolder = document.querySelector("#messages");
+
+    for (let i = 0; i < messageObjects.length; ++i) {
+
+        let messageObject = messageObjects[i];
+
+        let newMessage = createMessageHtml(messageObject.senderUsername, messageObject.timeStamp, messageObject.content);
+
         let firstChild = messageHolder.firstChild;
         if (firstChild != null) {
             messageHolder.insertBefore(newMessage, firstChild);
@@ -195,4 +211,27 @@ function getCookie(cookieName) {
         }
     }
     return null;
+}
+
+
+
+
+
+
+
+function hideMenu(){
+    document.querySelector("#menu-background").style.display = "none";
+}
+
+document.getElementById('menu-popup').addEventListener('click', function(event) {
+    event.stopPropagation();
+});
+
+function openFriendAddingMenu(event, username){
+    let menuBackground = document.querySelector("#menu-background");
+    menuBackground.style.display = "block";
+}
+
+function addHeaderToMenu(headerValue){
+
 }

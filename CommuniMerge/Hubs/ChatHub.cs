@@ -12,16 +12,33 @@ namespace CommuniMerge.Hubs
     {
         private readonly IAccountService accountService;
         private readonly IMessageApiService messageApiService;
+        private readonly IUserApiService userApiService;
 
-
-        public ChatHub(IAccountService accountService, IMessageApiService messageApiService)
+        public ChatHub(IAccountService accountService, IMessageApiService messageApiService, IUserApiService userApiService)
         {
             this.accountService = accountService;
             this.messageApiService = messageApiService;
+            this.userApiService = userApiService;
+        }
+
+        public async Task SendFriendRequest(string receiverUsername)
+        {
+            var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var result = await userApiService.SendFriendRequest(Context.GetHttpContext(), receiverUsername);
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return;
+            }
+            var sender = await accountService.GetUserByIdAsync(currentlyLoggedInUserId);
+            var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
+            await Clients.User(receiver.Id).ReceiveFriendRequest(sender.UserName);
         }
 
         public async Task SendMessage(string receiverUsername, string message)
         {
+
             var id = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var user = await accountService.GetUserByIdAsync(id);
             HttpContext context = Context.GetHttpContext();
@@ -30,7 +47,7 @@ namespace CommuniMerge.Hubs
 
             if (!result.IsSuccessStatusCode)
             {
-
+                return;
             }
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
 

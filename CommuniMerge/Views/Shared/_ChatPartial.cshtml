@@ -3,18 +3,21 @@
 
 <nav class="nav">
     <section class="side-nav">
-
         <div></div>
         <ul class="options">
-            <li class="option"><i class="fa-solid fa-user-group"></i></i></li>
-            <li class="option"><i class="fa-regular fa-message create"></i></li>
+            <li class="option" onclick="openFriendAddingMenu(this, '@Model.CurrentUserUsername')"><i class="fa-solid fa-user-group"></i></i></li>
+            <li class="option" onclick="openGroupCreationMenu('@Model.CurrentUserUsername')"><i class="fa-regular fa-message create"></i></li>
             <li class="option"><i class="fa-solid fa-gears"></i></i></li>
         </ul>
 
 
-        <figure class="profileIcon">
-            <img src="~/img/profile.jpg" alt="" srcset="">
-        </figure>
+        <div class="user-actions">
+
+            <figure class="profileIcon">
+                <img src="~/img/profile.jpg" alt="" srcset="">
+            </figure>
+            <a href="Authorize/logout" class="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+        </div>
     </section>
 
     <section class="main-holder">
@@ -29,10 +32,10 @@
         <div class="message-listingHolder">
             <ul class="message-list">
                 @{
-                    foreach(var friend in Model.Friends)
+                    foreach (var friend in Model.Friends)
                     {
 
-                        <li class="message-item" onclick="openConversation('@friend.Username')">
+                        <li class="message-item" onclick="openConversation(this, '@friend.Username')">
 
                             <header class="message-profile-header">
                                 <figure class="message-profile user1">
@@ -45,10 +48,10 @@
                             <div class="message-information">
                                 <h3>@Model.CurrentUserUsername & @friend.Username</h3>
                                 @{
-                                        if(friend.LatestMessage != null)
-                                        {
-                                            <p>@friend.LatestMessage.Content</p>
-                                        }
+                                    if (friend.LatestMessage != null)
+                                    {
+                                        <p class="truncate">@friend.LatestMessage.Content</p>
+                                    }
                                 }
                             </div>
                         </li>
@@ -57,5 +60,34 @@
 
             </ul>
         </div>
+
+
+
+
     </section>
+    
+    <section class="menu-background" id="menu-background" onclick="hideMenu()">
+        <div class="menu-popup" id="menu-popup">
+        <header class="menu-header">
+            <button class="back-btn" onclick="hideMenu()"><i class="fa-solid fa-xmark"></i></button>
+            
+            <h2 class="menu-header-title">Add friend</h2>
+        </header>
+
+
+        <div class="menu-body">
+        
+            <h3 class="body-info-title">Add your friend by username</h3>
+            
+            <input class="menu-form-field" type="text" placeholder="your friends username" id="friendRequestInput">
+
+            <input type="submit" class="submit-btn menu-submit-btn" id="sendFriendRequestBtn" value="Send friend request">
+        </div>
+
+
+        </div>
+
+    </section>
+
+
 </nav>

@@ -12,6 +12,6 @@ namespace CommuniMerge.Library.Data.Dtos
         public int Id { get; set; }
         public string Content { get; set; }
         public string TimeStamp { get; set; }
-        public string SenderId { get; set; }
+        public string SenderUsername { get; set; }
     }
 }
