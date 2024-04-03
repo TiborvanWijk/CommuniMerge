@@ -20,12 +20,10 @@ namespace CommuniMerge.Hubs
             this.messageApiService = messageApiService;
         }
 
-
         public async Task SendMessage(string receiverUsername, string message)
         {
             var id = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var user = await accountService.GetUserByIdAsync(id);
-
             HttpContext context = Context.GetHttpContext();
 
             var result = await messageApiService.CreatePersonalMessage(context, new PersonalMessageCreateDto { ReceiverUsername = receiverUsername, Content = message });
@@ -34,8 +32,10 @@ namespace CommuniMerge.Hubs
             {
 
             }
+            var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
 
-            Clients.All.ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
+            await Clients.User(receiver.Id).ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
+            await Clients.User(id).ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
         }
     }
 }

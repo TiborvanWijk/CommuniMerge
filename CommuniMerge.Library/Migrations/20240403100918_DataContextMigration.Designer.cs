@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CommuniMerge.Library.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240331115257_DataContextMigration")]
+    [Migration("20240403100918_DataContextMigration")]
     partial class DataContextMigration
     {
         /// <inheritdoc />
