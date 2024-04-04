@@ -22,7 +22,8 @@ body {
 :root {
   --dark: #222831;
   --light-dark: #31363F;
-  --light-blue: #76ABAE;
+  --light-blue: #4fbfc5;
+  --light-green: rgb(173, 228, 111);
   --white: #ececec;
   --layer1: 100;
   --layer2: 200;
@@ -99,7 +100,7 @@ body {
   border-radius: 50%;
 }
 
-.option:hover, .back-btn:hover {
+.option:hover {
   background: var(--light-dark);
 }
 
@@ -296,7 +297,7 @@ body {
   height: 8em;
 }
 
-.back-btn {
+.close-btn {
   align-self: flex-end;
   display: flex;
   align-items: center;
@@ -313,7 +314,7 @@ body {
   width: 55px;
 }
 
-.back-btn:hover {
+.close-btn:hover {
   background: var(--light-dark);
 }
 
@@ -323,13 +324,14 @@ body {
 }
 
 .menu-body {
-  display: flex;
+  display: none;
   flex-direction: column;
   padding: 25% 1em 1em 1em;
   align-items: center;
   justify-content: start;
   gap: 2em;
-  height: 100%;
+  height: calc(100% - 8em);
+  position: relative;
 }
 .menu-body input {
   width: 75%;
@@ -349,6 +351,88 @@ body {
 
 .menu-submit-btn {
   width: 75% !important;
+}
+
+.friends-back-btn {
+  background: none;
+  outline: none;
+  border: none;
+  color: white;
+  font-size: 2em;
+  position: absolute;
+  left: 0.5em;
+  top: 0.5em;
+  cursor: pointer;
+}
+
+.friend-menu-buttons-holder {
+  width: 75%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-btn, .friendRequest-btn {
+  padding: 1em 0.5em;
+  width: 45%;
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+
+.add-btn {
+  background: var(--light-blue);
+}
+
+.friendRequest-btn {
+  background: var(--light-green);
+}
+
+.menu-body-friends-overview {
+  display: none;
+  flex-direction: column;
+  padding: 1em;
+  align-items: center;
+  gap: 1em;
+  overflow: auto;
+}
+
+.friends-list {
+  width: 75%;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.friend-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--white);
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  border-radius: 10px;
+}
+
+.friend-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1em;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgb(182, 182, 182);
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: 200ms;
+}
+
+.friend-option:hover {
+  background: rgb(143, 143, 143);
 }
 
 @keyframes slideRight {

@@ -14,7 +14,7 @@ connection.on("ReceiveMessage", function (user, message, sentAt) {
     else {
         messageHolder.appendChild(newMessage);
     }
-
+    playAudio();
 });
 
 connection.start().then(function () {
@@ -67,7 +67,11 @@ messageDisplays.forEach((messageDisplay) => {
 });
 
 
-
+function playAudio(){
+    let audio = new Audio();
+    audio.src = "./Audio/mixkit-long-pop-2358.wav";
+    audio.play();
+}
 
 async function openConversation(event, username) {
     selectTab(event);
@@ -216,7 +220,36 @@ function getCookie(cookieName) {
 
 
 
+document.querySelector("#open-friendAddMenu").addEventListener("click", () =>{
+    clearFriendsMenu();
+    openFriendAddMenu();
+});
 
+function openFriendAddMenu(){
+    let addFriendMenu = document.querySelector("#add-friend-menu");
+    addFriendMenu.style.display = "flex";
+}
+function clearFriendsMenu(){
+    let friendsOverview = document.querySelector("#friendsOverView");
+    let addFriendMenu = document.querySelector("#add-friend-menu");
+
+
+    friendsOverview.style.display = "none";
+    addFriendMenu.style.display = "none";
+
+}
+
+function openFriendsOverviewMenu(){
+    let friendsOverview = document.querySelector("#friendsOverView");
+    friendsOverview.style.display = "flex";
+}
+
+function openFriendsMenu(){
+    let menu = document.querySelector("#menu-background");
+    clearFriendsMenu();
+    openFriendsOverviewMenu();
+    menu.style.display = "block";
+}
 
 
 function hideMenu(){
@@ -227,10 +260,6 @@ document.getElementById('menu-popup').addEventListener('click', function(event) 
     event.stopPropagation();
 });
 
-function openFriendAddingMenu(event, username){
-    let menuBackground = document.querySelector("#menu-background");
-    menuBackground.style.display = "block";
-}
 
 function addHeaderToMenu(headerValue){
 

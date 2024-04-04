@@ -5,7 +5,7 @@
     <section class="side-nav">
         <div></div>
         <ul class="options">
-            <li class="option" onclick="openFriendAddingMenu(this, '@Model.CurrentUserUsername')"><i class="fa-solid fa-user-group"></i></i></li>
+            <li class="option" onclick="openFriendsMenu()"><i class="fa-solid fa-user-group"></i></i></li>
             <li class="option" onclick="openGroupCreationMenu('@Model.CurrentUserUsername')"><i class="fa-regular fa-message create"></i></li>
             <li class="option"><i class="fa-solid fa-gears"></i></i></li>
         </ul>
@@ -68,21 +68,48 @@
     
     <section class="menu-background" id="menu-background" onclick="hideMenu()">
         <div class="menu-popup" id="menu-popup">
-        <header class="menu-header">
-            <button class="back-btn" onclick="hideMenu()"><i class="fa-solid fa-xmark"></i></button>
-            
-            <h2 class="menu-header-title">Add friend</h2>
-        </header>
+            <header class="menu-header">
+                <button class="close-btn" onclick="hideMenu()"><i class="fa-solid fa-xmark"></i></button>
+                
+                <h2 class="menu-header-title" id="menu-header-title">Friends</h2>
+            </header>
 
 
-        <div class="menu-body">
-        
-            <h3 class="body-info-title">Add your friend by username</h3>
-            
-            <input class="menu-form-field" type="text" placeholder="your friends username" id="friendRequestInput">
+            <div class="menu-body" id="add-friend-menu">
+                
+                <button class="friends-back-btn" onclick="openFriendsMenu()"><i class="fa-solid fa-arrow-left"></i></button>
 
-            <input type="submit" class="submit-btn menu-submit-btn" id="sendFriendRequestBtn" value="Send friend request">
-        </div>
+                <h3 class="body-info-title">Add your friend by username</h3>
+                
+                <input class="menu-form-field" type="text" placeholder="your friends username" id="friendRequestInput">
+
+                <input type="submit" class="submit-btn menu-submit-btn" id="sendFriendRequestBtn" value="Send friend request">
+            </div>
+
+            <div class="menu-body-friends-overview" id="friendsOverView">
+                
+                <div class="friend-menu-buttons-holder">
+                    <button class="friendRequest-btn">friend requests</button>
+                    <button class="add-btn" id="open-friendAddMenu">
+                        Add friend
+                    </button>
+                </div>
+
+                <ul class="friends-list">
+
+                    @{
+                        foreach(var friend in Model.Friends)
+                        {
+                            
+                        <li class="friend-list-item">
+                            <p>@friend.Username</p>
+                            <button class="friend-option"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                        </li>
+                        }
+                    }
+                </ul>
+
+            </div>
 
 
         </div>
