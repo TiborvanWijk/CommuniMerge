@@ -1,4 +1,5 @@
 ﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Models;
 
 namespace CommuniMerge.ViewModels
 {
@@ -6,5 +7,6 @@ namespace CommuniMerge.ViewModels
     {
         public ICollection<FriendDisplayDto> Friends { get; set; } = new List<FriendDisplayDto>();
         public string CurrentUserUsername { get; set; }
+        public ICollection<FriendRequestDto> FriendRequests { get; set; }
     }
 }

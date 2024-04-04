@@ -20,5 +20,6 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<AcceptFriendRequestResult> AcceptFriendRequest(string? currentUserId, string id);
         Task<ICollection<User>> GetAllFriends(string userId);
         Task<Message> GetLatestMessage(string loggedInUserId, string id);
+        Task<ICollection<FriendRequest>> GetAllFriendRequests(string loggedInUserId);
     }
 }

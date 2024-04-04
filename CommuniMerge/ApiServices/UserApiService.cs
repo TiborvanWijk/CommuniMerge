@@ -1,6 +1,7 @@
 ﻿using CommuniMerge.ApiServices.Interfaces;
 using CommuniMerge.CookieRepositories;
 using CommuniMerge.CookieRepositories.Interfaces;
+using CommuniMerge.Library.Models;
 using System.Net;
 
 namespace CommuniMerge.ApiServices
@@ -35,8 +36,36 @@ namespace CommuniMerge.ApiServices
             return result;
         }
 
+        public async Task<HttpResponseMessage> GetAllFriends(HttpContext httpContext, bool withLatestMessage)
+        {
 
+            string cookie = await cookieRepository.GetCookieByNameAsync(httpContext, "BearerToken");
 
+            await cookieRepository.AddBearerTokenAsCookieToContainer(cookieContainer, cookie);
 
+            string url = withLatestMessage
+                ? $"https://localhost:7129/api/User/friends?withLatestMessage={withLatestMessage}"
+                : $"https://localhost:7129/api/User/friends";
+
+            var result = await client.GetAsync(url);
+
+            await cookieRepository.RemoveAllCookieOfContainer(cookieContainer);
+            return result;
+        }
+
+        public async Task<HttpResponseMessage> GetAllFriendRequests(HttpContext httpContext)
+        {
+
+            string cookie = await cookieRepository.GetCookieByNameAsync(httpContext, "BearerToken");
+
+            await cookieRepository.AddBearerTokenAsCookieToContainer(cookieContainer, cookie);
+
+            string url = $"https://localhost:7129/api/User/friendrequests";
+
+            var result = await client.GetAsync(url);
+
+            await cookieRepository.RemoveAllCookieOfContainer(cookieContainer);
+            return result;
+        }
     }
 }

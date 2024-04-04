@@ -217,5 +217,17 @@ namespace CommuniMerge.Library.Services
                 return null;
             }
         }
+
+        public async Task<ICollection<FriendRequest>> GetAllFriendRequests(string userId)
+        {
+            try
+            {
+                return await userRepository.GetAllFriendRequestsById(userId);
+            }catch(Exception ex)
+            {
+                logger.LogError("TEMP", ex);
+                return null;
+            }
+        }
     }
 }

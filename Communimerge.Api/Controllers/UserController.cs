@@ -101,5 +101,22 @@ namespace Communimerge.Api.Controllers
             return Ok(friendsWithMessageDto.ToList());
         }
 
+        [HttpGet("friendRequests")]
+        public async Task<IActionResult> GetAllFriendRequests()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            ICollection<FriendRequest> friendRequests = await accountService.GetAllFriendRequests(loggedInUserId);
+
+            ICollection<FriendRequestDto> friendRequestDtos = friendRequests.Select(Map.ToFriendRequestDto).ToList();
+
+            return Ok(friendRequestDtos);
+        }
+
     }
 }

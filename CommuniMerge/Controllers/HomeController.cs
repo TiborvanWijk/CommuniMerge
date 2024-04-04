@@ -10,6 +10,7 @@ using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Services.Interfaces;
 using CommuniMerge.Library.Services;
 using System.Net;
+using CommuniMerge.ApiServices.Interfaces;
 
 namespace CommuniMerge.Controllers
 {
@@ -17,36 +18,27 @@ namespace CommuniMerge.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAccountService accountService;
+        private readonly IUserApiService userApiService;
 
-
-        public HomeController(ILogger<HomeController> logger, IAccountService accountService)
+        public HomeController(ILogger<HomeController> logger, IAccountService accountService, IUserApiService userApiService)
         {
             _logger = logger;
             this.accountService = accountService;
+            this.userApiService = userApiService;
         }
         [CustomAuthorize]
         public async Task<IActionResult> Index()
         {
-            var cookieContainer = new CookieContainer();
 
-            var handler = new HttpClientHandler { CookieContainer = cookieContainer };
+            var friendsResult = await userApiService.GetAllFriends(HttpContext, true);
+            var friendRequestsResult = await userApiService.GetAllFriendRequests(HttpContext);
 
-            var httpClient = new HttpClient(handler);
-
-            var cookie = Request.Cookies["BearerToken"];
-
-            if (!string.IsNullOrEmpty(cookie))
-            {
-                cookieContainer.Add(new Uri("https://localhost:7129"), new Cookie("BearerToken", cookie));
-            }
-
-            var result = await httpClient.GetAsync("https://localhost:7129/api/User/friends?withLatestMessage=true");
-
-            List<FriendDisplayDto> content = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await result.Content.ReadAsStringAsync());
+            List<FriendRequestDto> friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
+            List<FriendDisplayDto> friends = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await friendsResult.Content.ReadAsStringAsync());
 
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var currentUser = await accountService.GetUserByIdAsync(id);
-            return View(new IndexView() { Friends = content, CurrentUserUsername = currentUser.UserName });
+            return View(new IndexView() { Friends = friends, CurrentUserUsername = currentUser.UserName, FriendRequests = friendRequest });
         }
 
         public IActionResult Privacy()

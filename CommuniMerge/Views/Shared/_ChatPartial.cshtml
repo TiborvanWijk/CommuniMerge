@@ -88,8 +88,8 @@
 
             <div class="menu-body-friends-overview" id="friendsOverView">
                 
-                <div class="friend-menu-buttons-holder">
-                    <button class="friendRequest-btn">friend requests</button>
+                <div class="friend-menu-buttons-holder" >
+                    <button class="friendRequest-btn" onclick="openFriendRequestMenu()">friend requests</button>
                     <button class="add-btn" id="open-friendAddMenu">
                         Add friend
                     </button>
@@ -111,6 +111,27 @@
 
             </div>
 
+            <div class="menu-body-friendRequest-overview" id="friendRequestOverView">
+
+                <button class="friends-back-btn" onclick="openFriendsMenu()"><i class="fa-solid fa-arrow-left"></i></button>
+
+                <ul class="friendRequests-list">
+
+                    @{
+                        foreach (var friend in Model.FriendRequests)
+                        {
+
+                            <li class="friendRequest-list-item">
+                                <p>@friend.SenderUsername</p>
+                                <div class="friend-request-option-holder">
+                                    <button class="friend-request-option accept"><i class="fa-solid fa-check"></i></button>
+                                    <button class="friend-request-option decline"><i class="fa-solid fa-xmark"></i></button>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
 
         </div>
 

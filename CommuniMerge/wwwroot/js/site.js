@@ -232,8 +232,9 @@ function openFriendAddMenu(){
 function clearFriendsMenu(){
     let friendsOverview = document.querySelector("#friendsOverView");
     let addFriendMenu = document.querySelector("#add-friend-menu");
+    let friendRequestMenu = document.querySelector("#friendRequestOverView");
 
-
+    friendRequestMenu.style.display = "none";
     friendsOverview.style.display = "none";
     addFriendMenu.style.display = "none";
 
@@ -261,6 +262,11 @@ document.getElementById('menu-popup').addEventListener('click', function(event) 
 });
 
 
-function addHeaderToMenu(headerValue){
+function openFriendRequestMenu(){
 
+    clearFriendsMenu();
+    let menu = document.querySelector("#friendRequestOverView");
+
+    menu.style.display = "flex";
+    
 }

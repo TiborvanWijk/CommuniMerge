@@ -36,6 +36,10 @@ body {
   --layer9: 900;
   --layerNeg1: -100;
   --darkSeeThrough: rgba(0, 0, 0, 0.3);
+  --red: rgb(255, 99, 79);
+  --green: rgb(146, 201, 84);
+  --light-gray: rgb(182, 182, 182);
+  --gray: rgb(143, 143, 143);
 }
 
 .nav {
@@ -389,16 +393,24 @@ body {
   background: var(--light-green);
 }
 
-.menu-body-friends-overview {
+.menu-body-friends-overview, .menu-body-friendRequest-overview {
   display: none;
   flex-direction: column;
-  padding: 1em;
   align-items: center;
   gap: 1em;
   overflow: auto;
+  position: relative;
 }
 
-.friends-list {
+.menu-body-friends-overview {
+  padding: 1em;
+}
+
+.menu-body-friendRequest-overview {
+  padding: 4em 1em 1em 1em;
+}
+
+.friends-list, .friendRequests-list {
   width: 75%;
   list-style: none;
   display: flex;
@@ -406,14 +418,47 @@ body {
   gap: 1em;
 }
 
-.friend-list-item {
+.friend-list-item, .friendRequest-list-item {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   background: var(--white);
-  padding: 0.5em 0.5em 0.5em 0.5em;
   border-radius: 10px;
+}
+
+.friend-list-item {
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  justify-content: space-between;
+}
+
+.friendRequest-list-item {
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  justify-content: space-between;
+}
+
+.friend-request-option-holder {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.accept {
+  color: var(--green);
+}
+
+.decline {
+  color: var(--red);
+}
+
+.friend-request-option {
+  display: flex;
+  background: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
 }
 
 .friend-option {
@@ -424,7 +469,7 @@ body {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: rgb(182, 182, 182);
+  background: var(--light-gray);
   border: none;
   outline: none;
   cursor: pointer;
@@ -432,7 +477,7 @@ body {
 }
 
 .friend-option:hover {
-  background: rgb(143, 143, 143);
+  background: var(--gray);
 }
 
 @keyframes slideRight {

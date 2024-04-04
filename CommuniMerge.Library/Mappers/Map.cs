@@ -18,6 +18,14 @@ namespace CommuniMerge.Library.Mappers
             };
         }
 
+        public static FriendRequestDto ToFriendRequestDto(FriendRequest friendRequest)
+        {
+            return new FriendRequestDto
+            {
+                SenderUsername = friendRequest.Sender.UserName
+            };
+        }
+
         public static LoginModel ToLoginModelFromRegisterModel(RegisterModel registerModel)
         {
             return new LoginModel { Username = registerModel.Username, Password = registerModel.Password };
