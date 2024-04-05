@@ -75,7 +75,6 @@ function playAudio(){
 
 async function openConversation(event, username) {
     selectTab(event);
-    clearInfoHeader();
 
     updateInfoHeader(username);
 
@@ -112,21 +111,8 @@ function updateReceiver(username){
 
 function updateInfoHeader(username) {
     let infoHeader = document.querySelector("#info-header");
-    infoHeader.innerHTML = `
-            <div class="userinfo-wrapper">
-                <figure class="user-pfp">
-                    <img src="/img/profile.jpg" />
-                </figure>
-                <div class="userinfo">
-                    <h3>${username}</h3>
-                </div>
-            </div>
-
-            <ul class="message-menu">
-                <li></li>
-                <li></li>
-                <li></li>
-            </ul>`;
+    let headerUsername = document.querySelector("#info-header-username");
+    headerUsername.textContent = username;
 }
 
 function clearInfoHeader() {

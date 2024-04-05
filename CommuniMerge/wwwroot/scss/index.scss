@@ -15,13 +15,49 @@
     
 .info-header{
     display: flex;
+
+    justify-content: space-between;
     background: var(--light-dark);
     height: 4em;
+    width: 100%;
     padding: 0 1em;
 }
 
 .message-menu{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    gap: 1em;
+    height: 100%;
     list-style: none;
+    color: var(--white);
+    font-size: 1.4em;
+    padding: 0 1em;
+    li{
+        position: relative;
+    }
+}
+
+.message-option{
+    cursor: pointer;
+}
+
+.search-chat-input{
+    background: var(--dark);
+    border: none;
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    // height: 30px;
+}
+
+.chat-search{
+    position: absolute;
+    right: 10px;
+    bottom: 6px;
+    font-size: 0.6em;
+    cursor: pointer;
 }
 
 .userinfo-wrapper{
