@@ -205,18 +205,7 @@ namespace CommuniMerge.Library.Services
             }
         }
 
-        public async Task<Message> GetLatestMessage(string loggedInUserId, string id)
-        {
-            try
-            {
-                return await userRepository.GetLatestMessage(loggedInUserId, id);
-            }
-            catch (Exception ex)
-            {
-                logger.LogError("TEMP", ex);
-                return null;
-            }
-        }
+
 
         public async Task<ICollection<FriendRequest>> GetAllFriendRequests(string userId)
         {
@@ -227,6 +216,30 @@ namespace CommuniMerge.Library.Services
             {
                 logger.LogError("TEMP", ex);
                 return null;
+            }
+        }
+
+        public async Task<DeclineFriendRequestResult>  DeclineFriendRequest(string receiverId, string senderId)
+        {
+            try
+            {
+
+                if (!await userRepository.FriendRequestExists(receiverId, senderId))
+                {
+                    return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.RequestNotFound };
+                }
+
+                if (!await userRepository.DeleteRequest(receiverId, senderId))
+                {
+                    return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.DeleteRequestFailed };
+                }
+
+                return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.None };
+            }
+            catch (Exception ex) 
+            {
+                logger.LogError("TEMP", ex);
+                return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.UnknownError };
             }
         }
     }

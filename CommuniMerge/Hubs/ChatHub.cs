@@ -55,7 +55,18 @@ namespace CommuniMerge.Hubs
 
         public async Task DeclineFriendRequest(string username)
         {
+            var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
+            var httpContext = Context.GetHttpContext();
+
+            var result = await userApiService.DeclineFriendRequest(httpContext, username);
+
+            var receiver = await accountService.GetUserByUsernameAsync(username);
+
+            if (result.IsSuccessStatusCode)
+            {
+                Clients.User(receiver.Id).DeleteFriendRequest(username);
+            }
         }
 
         public async Task SendMessage(string receiverUsername, string message)

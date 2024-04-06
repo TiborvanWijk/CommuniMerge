@@ -82,5 +82,19 @@ namespace CommuniMerge.ApiServices
             await cookieRepository.RemoveAllCookieOfContainer(cookieContainer);
             return result;
         }
+
+        public async Task<HttpResponseMessage> DeclineFriendRequest(HttpContext httpContext, string username)
+        {
+            string cookie = await cookieRepository.GetCookieByNameAsync(httpContext, "BearerToken");
+
+            await cookieRepository.AddBearerTokenAsCookieToContainer(cookieContainer, cookie);
+
+            string url = $"https://localhost:7129/declineFriendRequest/{username}";
+
+            var result = await client.PostAsync(url, null);
+
+            await cookieRepository.RemoveAllCookieOfContainer(cookieContainer);
+            return result;
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<FriendRequestResult> SendFriendRequest(string senderId, string receiverId);
         Task<AcceptFriendRequestResult> AcceptFriendRequest(string? currentUserId, string id);
         Task<ICollection<User>> GetAllFriends(string userId);
-        Task<Message> GetLatestMessage(string loggedInUserId, string id);
         Task<ICollection<FriendRequest>> GetAllFriendRequests(string loggedInUserId);
+        Task<DeclineFriendRequestResult> DeclineFriendRequest(string receiverId, string senderId);
     }
 }

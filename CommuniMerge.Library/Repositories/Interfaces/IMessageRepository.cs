@@ -16,6 +16,6 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<ICollection<Message>> GetAllMessagesOfConversationAsync(string currentUser, string otherUser);
         Task<ICollection<Message>> GetAllMessagesOfGroupAsync(int groupId);
         Task<bool> SaveAsync();
-
+        Task<Message> GetLatestMessage(string loggedInUserId, string id);
     }
 }

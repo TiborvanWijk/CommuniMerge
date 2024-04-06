@@ -51,7 +51,7 @@ function acceptFriendRequest(username){
 }
 
 function declineFriendRequest(username){ 
-    console.log(username + " DECLINED");
+    connection.invoke("DeclineFriendRequest", username);
 }
 
 connection.on("UpdateFriend", function(username){

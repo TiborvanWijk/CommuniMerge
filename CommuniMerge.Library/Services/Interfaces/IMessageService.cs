@@ -11,6 +11,7 @@ namespace CommuniMerge.Library.Services.Interfaces
 {
     public interface IMessageService
     {
+        Task<Message> GetLatestMessage(string loggedInUserId, string id);
         Task<MessageCreateResult> CreatePersonalMessage(string senderId, PersonalMessageCreateDto messageCreateDto);
         Task<ICollection<Message>> getPrivateMessages(string userId, string otherUserId);
     }

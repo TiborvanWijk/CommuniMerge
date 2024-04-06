@@ -15,10 +15,12 @@ namespace Communimerge.Api.Controllers
     public class UserController : Controller
     {
         private readonly IAccountService accountService;
+        private readonly IMessageService messageService;
 
-        public UserController(IAccountService accountService)
+        public UserController(IAccountService accountService, IMessageService messageService)
         {
             this.accountService = accountService;
+            this.messageService = messageService;
         }
 
         [HttpPost("/sendFriendRequest/{receiverUsername}")]
@@ -49,13 +51,13 @@ namespace Communimerge.Api.Controllers
         [HttpPost("/acceptFriendRequest/{username}")]
         public async Task<IActionResult> AcceptFriendRequest([FromRoute] string username)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            
+
             var requestingUser = await accountService.GetUserByUsernameAsync(username);
-            if(requestingUser == null)
+            if (requestingUser == null)
             {
                 return NotFound();
             }
@@ -63,13 +65,40 @@ namespace Communimerge.Api.Controllers
 
             var result = await accountService.AcceptFriendRequest(currentUserId, requestingUser.Id);
 
-            if(result.Error != AcceptFriendRequestError.None)
+            if (result.Error != AcceptFriendRequestError.None)
             {
                 return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
             }
 
             return Created();
         }
+
+
+        [HttpPost("/declineFriendRequest/{username}")]
+        public async Task<IActionResult> DeclineFriendRequest([FromRoute] string username)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var requestingUser = await accountService.GetUserByUsernameAsync(username);
+            if (requestingUser == null)
+            {
+                return NotFound();
+            }
+            var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var result = await accountService.DeclineFriendRequest(currentUserId, requestingUser.Id);
+
+            if (result.Error != DeclineFriendRequestError.None )
+            {
+                return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
+            }
+
+            return Created();
+        }
+
         [HttpGet("friends")]
         public async Task<IActionResult> GetAllFriends([FromQuery] bool withLatestMessage)
         {
@@ -88,7 +117,7 @@ namespace Communimerge.Api.Controllers
 
             var friendsWithMessageDto = await Task.WhenAll(friends.Select(async x =>
             {
-                var latestMessage = await accountService.GetLatestMessage(loggedInUserId, x.Id);
+                var latestMessage = await messageService.GetLatestMessage(loggedInUserId, x.Id);
                 FriendDisplayDto friendDisplayDto = new FriendDisplayDto()
                 {
                     Username = x.UserName,

@@ -70,5 +70,18 @@ namespace CommuniMerge.Library.Services
         {
             return await messageRepository.GetAllMessagesOfConversationAsync(userId, otherUserId);
         }
+
+        public async Task<Message> GetLatestMessage(string loggedInUserId, string id)
+        {
+            try
+            {
+                return await messageRepository.GetLatestMessage(loggedInUserId, id);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("TEMP", ex);
+                return null;
+            }
+        }
     }
 }
