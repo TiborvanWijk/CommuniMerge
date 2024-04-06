@@ -25,8 +25,41 @@ connection.start().then(function () {
 
 
 connection.on("ReceiveFriendRequest", function(sender){
+
+    let friendRequestList = document.querySelector("#friendRequest-list");
+
+
+
+    let friendRequestListItem = document.createElement("li");
+    friendRequestListItem.innerHTML = `
+                                
+        <p>${sender}</p>
+        <div class="friend-request-option-holder">
+            <button class="friend-request-option accept"><i class="fa-solid fa-check"></i></button>
+            <button class="friend-request-option decline"><i class="fa-solid fa-xmark"></i></button>
+        </div>`
+
+
+    friendRequestList.appendChild()
+
+
     console.log(sender);
 });
+
+function acceptFriendRequest(username){
+    connection.invoke("AcceptFriendRequest", username);
+}
+
+function declineFriendRequest(username){ 
+    console.log(username + " DECLINED");
+}
+
+connection.on("UpdateFriend", function(username){
+    console.log(username + " has added you");
+});
+
+
+
 
 document.getElementById("message-sender").addEventListener("keyup", function (event) {
     let input = document.getElementById("message-sender");

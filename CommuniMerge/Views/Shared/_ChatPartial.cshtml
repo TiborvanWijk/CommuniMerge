@@ -124,8 +124,8 @@
                             <li class="friendRequest-list-item">
                                 <p>@friend.SenderUsername</p>
                                 <div class="friend-request-option-holder">
-                                    <button class="friend-request-option accept"><i class="fa-solid fa-check"></i></button>
-                                    <button class="friend-request-option decline"><i class="fa-solid fa-xmark"></i></button>
+                                    <button class="friend-request-option accept" onclick="acceptFriendRequest('@friend.SenderUsername')"><i class="fa-solid fa-check"></i></button>
+                                    <button class="friend-request-option decline" onclick="declineFriendRequest('@friend.SenderUsername')"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </li>
                         }

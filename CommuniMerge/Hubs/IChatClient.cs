@@ -5,5 +5,6 @@
         Task ReceiveMessage(string username, string message, string sendTime);
         Task ErrorSendingMessage();
         Task ReceiveFriendRequest(string username);
+        Task UpdateFriend(string username);
     }
 }

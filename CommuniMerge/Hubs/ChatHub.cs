@@ -36,6 +36,28 @@ namespace CommuniMerge.Hubs
             await Clients.User(receiver.Id).ReceiveFriendRequest(sender.UserName);
         }
 
+        public async Task AcceptFriendRequest(string username)
+        {
+            var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var httpContext = Context.GetHttpContext();
+
+            var result = await userApiService.AcceptFriendRequest(httpContext, username);
+
+            var receiver = await accountService.GetUserByUsernameAsync(username);
+
+            if(result.IsSuccessStatusCode)
+            {
+                Clients.User(receiver.Id).UpdateFriend(username);
+                //Clients.User(currentlyLoggedInUserId).UpdateFriend(username);
+            }
+        }
+
+        public async Task DeclineFriendRequest(string username)
+        {
+
+        }
+
         public async Task SendMessage(string receiverUsername, string message)
         {
 

@@ -7,5 +7,6 @@ namespace CommuniMerge.ApiServices.Interfaces
         Task<HttpResponseMessage> SendFriendRequest(HttpContext httpContext, string receiverUsername);
         Task<HttpResponseMessage> GetAllFriends(HttpContext httpContext, bool withLatestMessage);
         Task<HttpResponseMessage> GetAllFriendRequests(HttpContext httpContext);
+        Task<HttpResponseMessage> AcceptFriendRequest(HttpContext httpContext, string username);
     }
 }
