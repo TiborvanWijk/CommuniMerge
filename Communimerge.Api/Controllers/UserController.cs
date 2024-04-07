@@ -121,7 +121,14 @@ namespace Communimerge.Api.Controllers
             }));
 
             var orderedFriends = friendMessages
-                .OrderByDescending(x => x.LatestMessage.TimeStamp)
+                .OrderByDescending(x =>
+                {
+                    if(x.LatestMessage == null)
+                    {
+                        return DateTime.MinValue;
+                    }
+                    return x.LatestMessage.TimeStamp;
+                })
                 .ToList();
             List<FriendDisplayDto> friendsWithMessageDto = orderedFriends.Select(x => new FriendDisplayDto
             {

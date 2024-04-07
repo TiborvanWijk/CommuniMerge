@@ -3,7 +3,7 @@
     public interface IFriendClient
     {
         Task ReceiveFriendRequest(string username);
-        Task UpdateFriend(string username);
-        Task DeleteFriendRequest(string username);
+        Task UpdateFriendListing(string username);
+        Task DeleteFriendRequestListing(string username);
     }
 }

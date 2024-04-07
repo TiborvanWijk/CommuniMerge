@@ -79,16 +79,17 @@ friendhub.on("ReceiveFriendRequest", function(sender){
 
 
     let friendRequestListItem = document.createElement("li");
+    friendRequestListItem.classList.add("friendRequest-list-item");
     friendRequestListItem.innerHTML = `
                                 
         <p>${sender}</p>
         <div class="friend-request-option-holder">
             <button class="friend-request-option accept"><i class="fa-solid fa-check"></i></button>
             <button class="friend-request-option decline"><i class="fa-solid fa-xmark"></i></button>
-        </div>`
+        </div>`;
 
 
-    friendRequestList.appendChild()
+    friendRequestList.appendChild(friendRequestListItem);
 
 
     console.log(sender);

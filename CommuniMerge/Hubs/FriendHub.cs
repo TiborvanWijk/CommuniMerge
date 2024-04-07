@@ -34,36 +34,35 @@ namespace CommuniMerge.Hubs
             await Clients.User(receiver.Id).ReceiveFriendRequest(sender.UserName);
         }
 
-        public async Task AcceptFriendRequest(string username)
+        public async Task AcceptFriendRequest(string senderUsername)
         {
-            var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var receiverId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var httpContext = Context.GetHttpContext();
 
-            var result = await userApiService.AcceptFriendRequest(httpContext, username);
+            var result = await userApiService.AcceptFriendRequest(httpContext, senderUsername);
 
-            var receiver = await accountService.GetUserByUsernameAsync(username);
-
+            var sender = await accountService.GetUserByUsernameAsync(senderUsername);
+            var receiver = await accountService.GetUserByIdAsync(receiverId);
             if (result.IsSuccessStatusCode)
             {
-                Clients.User(receiver.Id).UpdateFriend(username);
-                //Clients.User(currentlyLoggedInUserId).UpdateFriend(username);
+                await Clients.User(receiverId).DeleteFriendRequestListing(senderUsername);
+                await Clients.User(sender.Id).UpdateFriendListing(receiver.UserName);
+                await Clients.User(receiverId).UpdateFriendListing(senderUsername);
             }
         }
 
-        public async Task DeclineFriendRequest(string username)
+        public async Task DeclineFriendRequest(string senderUsername)
         {
             var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var httpContext = Context.GetHttpContext();
 
-            var result = await userApiService.DeclineFriendRequest(httpContext, username);
-
-            var receiver = await accountService.GetUserByUsernameAsync(username);
+            var result = await userApiService.DeclineFriendRequest(httpContext, senderUsername);
 
             if (result.IsSuccessStatusCode)
             {
-                Clients.User(receiver.Id).DeleteFriendRequest(username);
+                await Clients.User(currentlyLoggedInUserId).DeleteFriendRequestListing(senderUsername);
             }
         }
     }
