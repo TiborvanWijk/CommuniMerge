@@ -55,7 +55,7 @@ function updateLatestMessageListing(receiverUsername, currentUsername, latestMes
             messageContent.classList.add(".truncate");
             informationHolder.appendChild(messageContent);
         }
-
+        list.prepend(listItem);
     }
 }
 

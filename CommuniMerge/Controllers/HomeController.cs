@@ -35,7 +35,6 @@ namespace CommuniMerge.Controllers
 
             List<FriendRequestDto> friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
             List<FriendDisplayDto> friends = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await friendsResult.Content.ReadAsStringAsync());
-
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var currentUser = await accountService.GetUserByIdAsync(id);
             return View(new IndexView() { Friends = friends, CurrentUserUsername = currentUser.UserName, FriendRequests = friendRequest });

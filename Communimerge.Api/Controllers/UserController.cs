@@ -114,19 +114,22 @@ namespace Communimerge.Api.Controllers
                 return Ok(friendsDto);
             }
 
-            var friendsWithMessageDto = await Task.WhenAll(friends.Select(async x =>
+            var friendMessages = await Task.WhenAll(friends.Select(async x =>
             {
                 var latestMessage = await messageService.GetLatestMessage(loggedInUserId, x.Id);
-                FriendDisplayDto friendDisplayDto = new FriendDisplayDto()
-                {
-                    Username = x.UserName,
-                    LatestMessage = latestMessage == null ? null : Map.ToMessageDisplayDto(latestMessage)
-                };
-                return friendDisplayDto;
+                return new { User = x, LatestMessage = latestMessage };
             }));
 
+            var orderedFriends = friendMessages
+                .OrderByDescending(x => x.LatestMessage.TimeStamp)
+                .ToList();
+            List<FriendDisplayDto> friendsWithMessageDto = orderedFriends.Select(x => new FriendDisplayDto
+            {
+                Username = x.User.UserName,
+                LatestMessage = x.LatestMessage == null ? null : Map.ToMessageDisplayDto(x.LatestMessage)
+            }).ToList();
 
-            return Ok(friendsWithMessageDto.ToList());
+            return Ok(friendsWithMessageDto);
         }
 
         [HttpGet("friendRequests")]
