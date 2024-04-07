@@ -34,7 +34,7 @@
 
     <section class="messages-holder">
 
-        <ul class="messages" id="messages">
+        <ul class="messages" id="messages" >
         
         </ul>
 
@@ -44,7 +44,7 @@
 
     <footer class="message-sender-wrapper">
         <button class="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
-        <input id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
+        <input data-sender="@Model.CurrentUserUsername" data-receiver="" id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
         @* <input type="text" placeholder="Send message to @ViewData[""]"> *@
     </footer>
 </main>

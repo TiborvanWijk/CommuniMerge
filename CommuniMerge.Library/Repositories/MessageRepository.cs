@@ -59,12 +59,5 @@ namespace CommuniMerge.Library.Repositories
             dataContext.Messages.Update(message);
             return await SaveAsync();
         }
-        public async Task<Message> GetLatestMessage(string loggedInUserId, string id)
-        {
-            return await dataContext.Messages.Where(x =>
-                (x.SenderId == loggedInUserId && x.ReceiverId == id)
-                || (x.SenderId == id && x.ReceiverId == loggedInUserId)
-         ).OrderByDescending(x => x.TimeStamp).FirstOrDefaultAsync();
-        }
     }
 }

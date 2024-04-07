@@ -114,7 +114,6 @@ namespace Communimerge.Api.Controllers
                 return Ok(friendsDto);
             }
 
-
             var friendsWithMessageDto = await Task.WhenAll(friends.Select(async x =>
             {
                 var latestMessage = await messageService.GetLatestMessage(loggedInUserId, x.Id);

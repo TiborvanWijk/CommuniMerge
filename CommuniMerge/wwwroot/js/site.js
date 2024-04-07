@@ -3,20 +3,61 @@
 let chathub = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 let friendhub = new signalR.HubConnectionBuilder().withUrl("/friendHub").build();
 
-chathub.on("ReceiveMessage", function (user, message, sentAt) {
+chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message, sentAt) {
 
-    let newMessage = createMessageHtml(user, sentAt, message);
-    
-    let messageHolder = document.querySelector("#messages");
-    let firstChild = messageHolder.firstChild;
-    if (firstChild != null) {
-        messageHolder.insertBefore(newMessage, firstChild);
-    }
-    else {
-        messageHolder.appendChild(newMessage);
-    }
+    let newMessage = createMessageHtml(senderUsername, sentAt, message);
+
+    updateLatestMessageListing(receiverUsername, senderUsername, message);
+
+    addMessageToChatIfActive(senderUsername, receiverUsername, newMessage);
+
     playAudio();
 });
+
+function addMessageToChatIfActive(senderUsername, receiverUsername, message) {
+    let messageHolder = document.querySelector("#messages");
+    let messageSender = document.querySelector("#message-sender");
+
+    const chatIdentifier1 = `${senderUsername}/${receiverUsername}`;
+    const chatIdentifier2 = `${receiverUsername}/${senderUsername}`;
+
+    let activeReceiver = messageSender.getAttribute("data-receiver");
+    let activeSender = messageSender.getAttribute("data-sender");
+    let activeChatIdentifier = activeReceiver + "/" + activeSender;
+    if (activeChatIdentifier != chatIdentifier1 && activeChatIdentifier != chatIdentifier2) {
+        return;
+    }
+
+    let firstChild = messageHolder.firstChild;
+    if (firstChild != null) {
+        messageHolder.insertBefore(message, firstChild);
+    }
+    else {
+        messageHolder.appendChild(message);
+    }
+}
+
+function updateLatestMessageListing(receiverUsername, currentUsername, latestMessage) {
+
+    const chatIdentifier1 = `${currentUsername}/${receiverUsername}`;
+    const chatIdentifier2 = `${receiverUsername}/${currentUsername}`;
+    const list = document.querySelector("#user-list");
+    const listItem = list.querySelector(`li[data-chat="${chatIdentifier1}"], li[data-chat="${chatIdentifier2}"]`);
+    if (listItem) {
+        let messageContent = listItem.querySelector('.truncate');
+        if (messageContent) {
+            messageContent.textContent = latestMessage;
+        }
+        else {
+            let informationHolder = listItem.querySelector(".message-information");
+            messageContent = document.createElement("p");
+            messageContent.textContent = latestMessage;
+            messageContent.classList.add(".truncate");
+            informationHolder.appendChild(messageContent);
+        }
+
+    }
+}
 
 chathub.start().then(function () {
     console.log("Connected to the server succesfully");
@@ -158,7 +199,7 @@ function clearInfoHeader() {
 }
 
 
-function createMessageHtml(username, timeStamp, message){
+function createMessageHtml(senderUsername, timeStamp, message){
     let newMessage = document.createElement("li");
         newMessage.classList.add("message-wrapper");
 
@@ -172,7 +213,7 @@ function createMessageHtml(username, timeStamp, message){
         </figure>
         <div class="content-wrapper">
         <div class="identifier-wrapper">
-        <h3>${username}</h3>
+        <h3>${senderUsername}</h3>
         <p>${timeStamp}</p>
         </div>
         <div class="message-text">${messageWithLinks}</div>

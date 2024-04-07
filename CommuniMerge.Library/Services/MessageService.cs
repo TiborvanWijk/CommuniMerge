@@ -75,7 +75,9 @@ namespace CommuniMerge.Library.Services
         {
             try
             {
-                return await messageRepository.GetLatestMessage(loggedInUserId, id);
+                var allMessages = await messageRepository.GetAllMessagesOfConversationAsync(loggedInUserId, id);
+                var latestMessage = allMessages.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+                return latestMessage;
             }
             catch (Exception ex)
             {

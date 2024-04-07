@@ -39,8 +39,8 @@ namespace CommuniMerge.Hubs
             }
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
 
-            await Clients.User(receiver.Id).ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
-            await Clients.User(id).ReceiveMessage(user.UserName, message, DateTime.Now.ToShortDateString());
+            await Clients.User(receiver.Id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToShortDateString());
+            await Clients.User(id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToShortDateString());
         }
     }
 }

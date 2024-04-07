@@ -30,12 +30,12 @@
         </div>
 
         <div class="message-listingHolder">
-            <ul class="message-list">
+            <ul class="message-list" id="user-list">
                 @{
                     foreach (var friend in Model.Friends)
                     {
 
-                        <li class="message-item" onclick="openConversation(this, '@friend.Username')">
+                        <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openConversation(this, '@friend.Username')">
 
                             <header class="message-profile-header">
                                 <figure class="message-profile user1">

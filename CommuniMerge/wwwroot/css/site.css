@@ -503,7 +503,7 @@ body {
   width: 100%;
   background: radial-gradient(farthest-side at -33.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 0 36px, radial-gradient(farthest-side at 50% 133.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 36px 0, radial-gradient(farthest-side at 133.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), radial-gradient(farthest-side at 50% -33.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), #222831;
   background-size: 15.4274694665px 72px, 72px 15.4274694665px;
-  z-index: var(--layer10);
+  z-index: var(--layer1);
 }
 
 .info-header {
