@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace CommuniMerge.Library.Services
@@ -28,14 +29,14 @@ namespace CommuniMerge.Library.Services
 
         public async Task<RegistrationResult> RegisterAsync(RegisterModel registerModel)
         {
-            var errorResult = await ValidateRegistrationAndGetError(registerModel);
-            if (errorResult != RegistrationError.None)
-            {
-                return new RegistrationResult { Error = errorResult };
-            }
-
             try
             {
+                var errorResult = await ValidateRegistrationAndGetError(registerModel);
+                if (errorResult != RegistrationError.None)
+                {
+                    return new RegistrationResult { Error = errorResult };
+                }
+
                 string normalizedEmail = registerModel.Email.ToUpper().Trim();
                 string normalizedUsername = registerModel.Username.ToUpper().Trim();
                 var user = new User()
@@ -82,7 +83,10 @@ namespace CommuniMerge.Library.Services
         }
         private async Task<bool> IsValidPassword(string password)
         {
-            return true;
+            string pattern = @"^(?=.*[!@#$%^&*()-_+=])[A-Za-z0-9!@#$%^&*()-_+=]{8,}$";
+            bool isValid = Regex.IsMatch(password, pattern);
+
+            return isValid;
         }
         private async Task<bool> IsValidEmail(string email)
         {
@@ -96,15 +100,29 @@ namespace CommuniMerge.Library.Services
 
         public async Task<LoginResult> LoginAsync(LoginModel loginModel)
         {
-            var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
-            var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
-
-            if (result == PasswordVerificationResult.Failed)
+            try
             {
-                return new LoginResult { Error = LoginError.InvalidCombination };
-            }
+                var user = await userRepository.GetUserByUsernameAsync(loginModel.Username);
 
-            return new LoginResult { Error = LoginError.None };
+                if (user == null)
+                {
+                    return new LoginResult { Error = LoginError.InvalidCombination };
+                }
+
+                var result = passwordHasher.VerifyHashedPassword(user, user.PasswordHash, loginModel.Password);
+
+                if (result == PasswordVerificationResult.Failed)
+                {
+                    return new LoginResult { Error = LoginError.InvalidCombination };
+                }
+
+                return new LoginResult { Error = LoginError.None };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError("TEMP", ex);
+                return new LoginResult { Error = LoginError.UnExpected };
+            }
         }
 
         public async Task<User> GetUserByUsernameAsync(string username)
@@ -159,11 +177,11 @@ namespace CommuniMerge.Library.Services
             try
             {
 
-                if(!await userRepository.FriendRequestExists(currentUserId, requestingUserId))
+                if (!await userRepository.FriendRequestExists(currentUserId, requestingUserId))
                 {
                     return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.RequestNotFound };
                 }
-                if(await userRepository.AreFriends(currentUserId, requestingUserId))
+                if (await userRepository.AreFriends(currentUserId, requestingUserId))
                 {
                     return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.AlreadyFriends };
                 }
@@ -179,7 +197,7 @@ namespace CommuniMerge.Library.Services
                 {
                     return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.AcceptRequestFailed };
                 }
-                if(!await userRepository.DeleteRequest(currentUserId, requestingUserId))
+                if (!await userRepository.DeleteRequest(currentUserId, requestingUserId))
                 {
                     return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.DeleteRequestFailed };
                 }
@@ -198,7 +216,8 @@ namespace CommuniMerge.Library.Services
             try
             {
                 return await userRepository.getAllFriendsById(userId);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError("TEMP", ex);
                 return null;
@@ -212,14 +231,15 @@ namespace CommuniMerge.Library.Services
             try
             {
                 return await userRepository.GetAllFriendRequestsById(userId);
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError("TEMP", ex);
                 return null;
             }
         }
 
-        public async Task<DeclineFriendRequestResult>  DeclineFriendRequest(string receiverId, string senderId)
+        public async Task<DeclineFriendRequestResult> DeclineFriendRequest(string receiverId, string senderId)
         {
             try
             {
@@ -236,7 +256,7 @@ namespace CommuniMerge.Library.Services
 
                 return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.None };
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 logger.LogError("TEMP", ex);
                 return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.UnknownError };

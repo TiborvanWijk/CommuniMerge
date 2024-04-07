@@ -9,6 +9,7 @@ namespace CommuniMerge.Library.Enums
     public enum LoginError
     {
         None,
-        InvalidCombination
+        InvalidCombination,
+        UnExpected
     }
 }

@@ -1,11 +1,12 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+let chathub = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+let friendhub = new signalR.HubConnectionBuilder().withUrl("/friendHub").build();
 
-connection.on("ReceiveMessage", function (user, message, sentAt) {
+chathub.on("ReceiveMessage", function (user, message, sentAt) {
 
     let newMessage = createMessageHtml(user, sentAt, message);
-
+    
     let messageHolder = document.querySelector("#messages");
     let firstChild = messageHolder.firstChild;
     if (firstChild != null) {
@@ -17,14 +18,20 @@ connection.on("ReceiveMessage", function (user, message, sentAt) {
     playAudio();
 });
 
-connection.start().then(function () {
+chathub.start().then(function () {
     console.log("Connected to the server succesfully");
 }).catch(function (err) {
     return console.error(err.toString());
 });
 
+friendhub.start().then(function () {
+    console.log("Connected to the server succesfully");
+}).catch(function (err) {
+    return console.error(err.toString());
+})
 
-connection.on("ReceiveFriendRequest", function(sender){
+
+friendhub.on("ReceiveFriendRequest", function(sender){
 
     let friendRequestList = document.querySelector("#friendRequest-list");
 
@@ -47,14 +54,14 @@ connection.on("ReceiveFriendRequest", function(sender){
 });
 
 function acceptFriendRequest(username){
-    connection.invoke("AcceptFriendRequest", username);
+    friendhub.invoke("AcceptFriendRequest", username);
 }
 
 function declineFriendRequest(username){ 
-    connection.invoke("DeclineFriendRequest", username);
+    friendhub.invoke("DeclineFriendRequest", username);
 }
 
-connection.on("UpdateFriend", function(username){
+friendhub.on("UpdateFriend", function(username){
     console.log(username + " has added you");
 });
 
@@ -73,7 +80,7 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     
 
 
-    connection.invoke("SendMessage", receiver, message).catch(function (err) {
+    chathub.invoke("SendMessage", receiver, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
@@ -84,21 +91,17 @@ sendFriendRequestBtn.addEventListener("click", () =>{
     let friendRequestInput = document.querySelector("#friendRequestInput")
     let receiverUsername = friendRequestInput.value;
 
-    connection.invoke("SendFriendRequest", receiverUsername).catch(function (err){
+    friendhub.invoke("SendFriendRequest", receiverUsername).catch(function (err){
         return console.error(err.toString());
     })
     
 });
 
 
-let messageDisplays = document.querySelectorAll(".message-item");
-
-messageDisplays.forEach((messageDisplay) => {
-    messageDisplay.addEventListener("onclick", (event) => {
-        openConversation(event);
-    });
-});
-
+function hideScreenBlocker(){
+    let screenBlocker = document.querySelector("#screenBlocker");
+    screenBlocker.style.display = "none";
+}
 
 function playAudio(){
     let audio = new Audio();
@@ -107,6 +110,7 @@ function playAudio(){
 }
 
 async function openConversation(event, username) {
+    hideScreenBlocker();
     selectTab(event);
 
     updateInfoHeader(username);

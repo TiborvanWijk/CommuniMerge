@@ -9,32 +9,33 @@ using System.Net;
 using Azure;
 using CommuniMerge.Library.Mappers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using CommuniMerge.ViewModels;
+using CommuniMerge.ApiServices.Interfaces;
 
 namespace CommuniMerge.Controllers
 {
     public class AuthorizeController : Controller
     {
-        private readonly HttpClient client;
+        private readonly IAccountApiService accountApiService;
 
-        public AuthorizeController()
+        public AuthorizeController(IAccountApiService accountApiService)
         {
-            this.client = new HttpClient();
-            this.client.BaseAddress = new Uri("https://localhost:7129");
+            this.accountApiService = accountApiService;
         }
         public IActionResult Login()
         {
-            return View(new LoginModel() { Username = "", Password = ""});
+            var loginModel = new LoginModel() { Username = "", Password = "" };
+            return View(new LoginView { LoginModel = loginModel, FeedbackMessage = null });
         }
         [HttpPost]
-        public async Task<IActionResult> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel loginModel)
         {
 
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/login", jsonContent);
-
-            if(response.StatusCode != HttpStatusCode.OK)
+            var response = await accountApiService.Login(HttpContext, loginModel);
+            if (response.StatusCode != HttpStatusCode.OK)
             {
-                return View(model);
+                var FeedbackMessage = "Invalid combination!";
+                return View(new LoginView { LoginModel = loginModel, FeedbackMessage = FeedbackMessage });
             }
 
             var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync());
@@ -53,24 +54,25 @@ namespace CommuniMerge.Controllers
 
         public async Task<IActionResult> Register()
         {
-            return View(new RegisterModel() { Email = "", Password = "", Username = "" });
+            var registerModel = new RegisterModel() { Email = "", Password = "", Username = "" };
+            return View(new RegisterView { RegisterModel = registerModel, FeedbackMessage = null});
         }
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
-            var registerJson = new StringContent(JsonConvert.SerializeObject(registerModel), Encoding.UTF8, "application/json"); 
-            var result = await client.PostAsync("/register", registerJson);
 
-            if(result.StatusCode != HttpStatusCode.OK)
+            var registerResult = await accountApiService.Register(HttpContext, registerModel);
+
+            if (registerResult.StatusCode != HttpStatusCode.OK)
             {
-                return View(registerModel);
+                var feedbackMessage = "Invalid Temp";
+                return View(new RegisterView { RegisterModel = registerModel, FeedbackMessage = feedbackMessage});
             }
 
             var loginModel = Map.ToLoginModelFromRegisterModel(registerModel);
-            var loginJson = new StringContent(JsonConvert.SerializeObject(loginModel), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("/login", loginJson);
+            var loginResult = await accountApiService.Login(HttpContext, loginModel);
 
-            var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await response.Content.ReadAsStringAsync());
+            var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await loginResult.Content.ReadAsStringAsync());
 
             if (resultContent.Type.Equals("Bearer"))
             {

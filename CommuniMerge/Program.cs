@@ -24,6 +24,7 @@ builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ICookieRepository, CookieRepository>();
 builder.Services.AddScoped<IMessageApiService, MessageApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
+builder.Services.AddScoped<IAccountApiService, AccountApiService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -68,9 +69,9 @@ using(var scope = app.Services.CreateScope())
 
     };
 
-} 
+}
 
-
+app.MapHub<FriendHub>("/friendHub");
 app.MapHub<ChatHub>("/chatHub");
 app.MapControllerRoute(
     name: "default",
