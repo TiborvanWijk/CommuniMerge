@@ -5,5 +5,7 @@
         Task ReceiveFriendRequest(string username);
         Task UpdateFriendListing(string username);
         Task DeleteFriendRequestListing(string username);
+        Task SuccesSendingFriendRequest();
+        Task FailSendingFriendRequest();
     }
 }

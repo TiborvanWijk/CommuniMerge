@@ -52,7 +52,7 @@ function updateLatestMessageListing(receiverUsername, currentUsername, latestMes
             let informationHolder = listItem.querySelector(".message-information");
             messageContent = document.createElement("p");
             messageContent.textContent = latestMessage;
-            messageContent.classList.add(".truncate");
+            messageContent.classList.add("truncate");
             informationHolder.appendChild(messageContent);
         }
         list.prepend(listItem);
@@ -334,4 +334,14 @@ function openFriendRequestMenu(){
 
     menu.style.display = "flex";
     
+}
+
+function apendChatLoadingScreen(){
+    let messageList = document.querySelector("#messages");
+
+    for(let i = 0; i < 20; ++i){
+        let li = document.createElement("li");
+        
+        
+    }
 }
