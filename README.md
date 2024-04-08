@@ -37,3 +37,10 @@ As Communimerge is still under development, detailed installation instructions w
 We value your feedback! If you have any suggestions, feature requests, or encounter any issues while using Communimerge, please don't hesitate to reach out through our GitHub repository.
 
 Thank you for your interest in Communimerge. We look forward to bringing you a seamless chatting experience!
+
+
+
+
+## UI Examples
+
+![Image of the chatting UI](<./ReadMeImages/IndexPage.png>)
