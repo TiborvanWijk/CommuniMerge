@@ -1,5 +1,6 @@
 ﻿using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Loggers.Interfaces;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
 using CommuniMerge.Library.ResultObjects;
@@ -17,10 +18,10 @@ namespace CommuniMerge.Library.Services
     public class MessageService : IMessageService
     {
         private readonly IMessageRepository messageRepository;
-        private readonly ILogger<MessageService> logger;
+        private readonly ICustomLogger logger;
         private readonly IUserRepository userRepository;
 
-        public MessageService(IMessageRepository messageRepository, ILogger<MessageService> logger, IUserRepository userRepository)
+        public MessageService(IMessageRepository messageRepository, ICustomLogger logger, IUserRepository userRepository)
         {
             this.messageRepository = messageRepository;
             this.logger = logger;
@@ -62,7 +63,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(CreatePersonalMessage));
                 return new MessageCreateResult { Error = MessageCreateError.UnknownError };
             }
         }
@@ -78,11 +79,12 @@ namespace CommuniMerge.Library.Services
             {
                 var allMessages = await messageRepository.GetAllMessagesOfConversationAsync(loggedInUserId, id);
                 var latestMessage = allMessages.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+
                 return latestMessage;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(GetLatestMessage));
                 return null;
             }
         }

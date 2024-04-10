@@ -61,7 +61,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(RegisterAsync));
                 return new RegistrationResult { Error = RegistrationError.UnknownError };
             }
         }
@@ -122,7 +122,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(LoginAsync));
                 return new LoginResult { Error = LoginError.UnExpected };
             }
         }
@@ -169,7 +169,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(SendFriendRequest));
                 return new FriendRequestResult { Error = FriendRequestError.UnknownError };
             }
         }
@@ -208,7 +208,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(AcceptFriendRequest));
                 return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.UnknownError };
             }
         }
@@ -221,7 +221,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(GetAllFriends));
                 return null;
             }
         }
@@ -236,7 +236,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(GetAllFriendRequests));
                 return null;
             }
         }
@@ -260,7 +260,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
+                logger.LogError(ex.Message, GetType().Name, nameof(DeclineFriendRequest));
                 return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.UnknownError };
             }
         }
