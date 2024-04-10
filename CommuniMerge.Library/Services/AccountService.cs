@@ -1,4 +1,5 @@
 ﻿using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Loggers.Interfaces;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
 using CommuniMerge.Library.ResultObjects;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -17,10 +19,10 @@ namespace CommuniMerge.Library.Services
     public class AccountService : IAccountService
     {
         private readonly IUserRepository userRepository;
-        private readonly ILogger<AccountService> logger;
+        private readonly ICustomLogger logger;
         private readonly PasswordHasher<User> passwordHasher;
 
-        public AccountService(IUserRepository userRepository, ILogger<AccountService> logger)
+        public AccountService(IUserRepository userRepository, ICustomLogger logger)
         {
             this.userRepository = userRepository;
             this.logger = logger;
@@ -59,7 +61,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError($"[{DateTime.UtcNow}] AccountService.Register: {ex}");
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new RegistrationResult { Error = RegistrationError.UnknownError };
             }
         }
@@ -120,7 +122,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new LoginResult { Error = LoginError.UnExpected };
             }
         }
@@ -167,7 +169,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("Temp", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new FriendRequestResult { Error = FriendRequestError.UnknownError };
             }
         }
@@ -206,7 +208,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("Temp", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new AcceptFriendRequestResult { Error = AcceptFriendRequestError.UnknownError };
             }
         }
@@ -219,7 +221,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return null;
             }
         }
@@ -234,7 +236,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return null;
             }
         }
@@ -258,7 +260,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.UnknownError };
             }
         }

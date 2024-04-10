@@ -1,5 +1,7 @@
 ﻿using CommuniMerge.Library.Data;
 using CommuniMerge.Library.Loggers.Interfaces;
+using CommuniMerge.Library.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,55 +14,60 @@ namespace CommuniMerge.Library.Loggers
     public class LogService : ICustomLogger
     {
         private readonly LogContext logContext;
-
-        public LogService(LogContext logContext)
+        private readonly LogLevel logLevel;
+        public LogService(LogContext logContext, IConfiguration configuration)
         {
             this.logContext = logContext;
-        }
-
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-        {
-            throw new NotImplementedException();
+            this.logLevel = configuration.GetValue<LogLevel>("Logging:LogLevel:Default");
         }
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            throw new NotImplementedException();
+            return this.logLevel <= logLevel;
         }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        private void Log(string exceptionMessage, string className, string methodName, LogLevel logLevel)
         {
-            throw new NotImplementedException();
+            var logEntry = new LogEntry
+            {
+                TimeStamp = DateTime.UtcNow,
+                LogLevel = logLevel,
+                ClassName = className,
+                MethodName = methodName,
+                Message = exceptionMessage,
+            };
+            logContext.Add(logEntry);
+            logContext.SaveChanges();
         }
 
-        public void LogCritical(string message)
+        public void LogCritical(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Critical);
         }
 
-        public void LogDebug(string message)
+        public void LogDebug(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Debug);
         }
 
-        public void LogError(string message)
+        public void LogError(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Error);
         }
 
-        public void LogInformation(string message)
+        public void LogInformation(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Information);
         }
 
-        public void LogTrace(string message)
+        public void LogTrace(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Trace);
         }
 
-        public void LogWarning(string message)
+        public void LogWarning(string exceptionMessage, string className, string methodName)
         {
-            throw new NotImplementedException();
+            Log(exceptionMessage, className, methodName, LogLevel.Warning);
         }
     }
 }

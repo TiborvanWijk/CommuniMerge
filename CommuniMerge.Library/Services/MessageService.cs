@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -61,7 +62,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return new MessageCreateResult { Error = MessageCreateError.UnknownError };
             }
         }
@@ -81,7 +82,7 @@ namespace CommuniMerge.Library.Services
             }
             catch (Exception ex)
             {
-                logger.LogError("TEMP", ex);
+                logger.LogError(ex.Message, GetType().Name, MethodBase.GetCurrentMethod().Name);
                 return null;
             }
         }

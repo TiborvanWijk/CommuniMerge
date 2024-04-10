@@ -1,5 +1,7 @@
 using Communimerge.Api;
 using CommuniMerge.Library.Data;
+using CommuniMerge.Library.Loggers.Interfaces;
+using CommuniMerge.Library.Loggers;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories;
 using CommuniMerge.Library.Repositories.Interfaces;
@@ -19,6 +21,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<ICustomLogger, LogService>();
 
 builder.Services.AddCors();
 

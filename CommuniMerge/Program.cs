@@ -12,6 +12,8 @@ using CommuniMerge.CookieRepositories.Interfaces;
 using CommuniMerge.CookieRepositories;
 using CommuniMerge.ApiServices.Interfaces;
 using CommuniMerge.ApiServices;
+using CommuniMerge.Library.Loggers.Interfaces;
+using CommuniMerge.Library.Loggers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,7 @@ builder.Services.AddScoped<ICookieRepository, CookieRepository>();
 builder.Services.AddScoped<IMessageApiService, MessageApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
 builder.Services.AddScoped<IAccountApiService, AccountApiService>();
+builder.Services.AddScoped<ICustomLogger, LogService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

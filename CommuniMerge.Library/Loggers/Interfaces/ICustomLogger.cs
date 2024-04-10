@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace CommuniMerge.Library.Loggers.Interfaces
 {
-    public interface ICustomLogger : ILogger
+    public interface ICustomLogger
     {
-        void LogTrace(string message);
-        void LogDebug(string message);
-        void LogInformation(string message);
-        void LogWarning(string message);
-        void LogError(string message);
-        void LogCritical(string message);
+        void LogTrace(string exceptionMessage, string className, string methodName);
+        void LogDebug(string exceptionMessage, string className, string methodName);
+        void LogInformation(string exceptionMessage, string className, string methodName);
+        void LogWarning(string exceptionMessage, string className, string methodName);
+        void LogError(string exceptionMessage, string className, string methodName);
+        void LogCritical(string exceptionMessage, string className, string methodName);
+        bool IsEnabled(LogLevel logLevel);
     }
 }
