@@ -71,29 +71,69 @@ friendhub.start().then(function () {
     return console.error(err.toString());
 })
 
+friendhub.on("DeleteFriendRequestListing", function (username) {
+    deleteFriendRequestOfListing(username);
+});
+
+function deleteFriendRequestOfListing(username) {
+    let ul = document.querySelector("#friendRequest-list");
+    var listItem = ul.querySelector('li[data-user="' + username + '"]');
+    if (listItem) {
+        listItem.remove();
+    } else {
+        console.error("Friend request not found.");
+    }
+}
 
 friendhub.on("ReceiveFriendRequest", function(sender){
 
     let friendRequestList = document.querySelector("#friendRequest-list");
 
-
-
-    let friendRequestListItem = document.createElement("li");
-    friendRequestListItem.classList.add("friendRequest-list-item");
-    friendRequestListItem.innerHTML = `
-                                
-        <p>${sender}</p>
-        <div class="friend-request-option-holder">
-            <button class="friend-request-option accept"><i class="fa-solid fa-check"></i></button>
-            <button class="friend-request-option decline"><i class="fa-solid fa-xmark"></i></button>
-        </div>`;
-
+    let friendRequestListItem = createLiFriendRequestHTML(sender);
 
     friendRequestList.appendChild(friendRequestListItem);
-
-
-    console.log(sender);
 });
+function createLiFriendRequestHTML(sender) {
+    let friendRequestListItem = document.createElement("li");
+    friendRequestListItem.classList.add("friendRequest-list-item");
+    friendRequestListItem.setAttribute("data-user", sender);
+    friendRequestListItem.innerHTML= `               
+        <p>${sender}</p>
+        <div class="friend-request-option-holder">
+            <button class="friend-request-option accept" onclick="acceptFriendRequest('${sender}')"><i class="fa-solid fa-check"></i></button>
+            <button class="friend-request-option decline" onclick="declineFriendRequest('${sender}')"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+    return friendRequestListItem;
+}
+function createFriendListItemHTML(currentUser, friend) {
+    let li = document.createElement("li");
+    li.classList.add("message-item");
+    li.setAttribute("data-chat", `${friend}/${currentUser}`);
+    li.onclick = function () { openConversation(this, friend) };
+    li.innerHTML =    `
+            <header class="message-profile-header">
+                <figure class="message-profile user1">
+                    <img src="/img/profile.jpg" alt="" srcset="" draggable="false">
+                </figure>
+                <figure class="message-profile user2">
+                    <img src="/img/doggy.jpg" alt="" srcset="" draggable="false">
+                </figure>
+            </header>
+            <div class="message-information">
+                <h3>${currentUser} & ${friend}</h3>
+            </div>
+        `;
+    return li;
+}
+
+friendhub.on("UpdateFriendListing", function (currentUsersname, friendUsername) {
+    let friendListItem = createFriendListItemHTML(currentUsersname, friendUsername);
+    addListItemToFriendListing(friendListItem);
+});
+function addListItemToFriendListing(listItem) {
+    let friendListing = document.querySelector("#user-list");
+    friendListing.prepend(listItem);
+}
 
 function acceptFriendRequest(username){
     friendhub.invoke("AcceptFriendRequest", username);
@@ -103,9 +143,6 @@ function declineFriendRequest(username){
     friendhub.invoke("DeclineFriendRequest", username);
 }
 
-friendhub.on("UpdateFriend", function(username){
-    console.log(username + " has added you");
-});
 
 
 

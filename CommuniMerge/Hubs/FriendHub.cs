@@ -1,4 +1,5 @@
-﻿using CommuniMerge.ApiServices;
+﻿using Communimerge.Api.CustomAttribute;
+using CommuniMerge.ApiServices;
 using CommuniMerge.ApiServices.Interfaces;
 using CommuniMerge.Hubs.ClientInterfaces;
 using CommuniMerge.Library.Services;
@@ -8,6 +9,7 @@ using System.Security.Claims;
 
 namespace CommuniMerge.Hubs
 {
+    [CustomAuthorize]
     public class FriendHub : Hub<IFriendClient>
     {
         private readonly IUserApiService userApiService;
@@ -47,8 +49,8 @@ namespace CommuniMerge.Hubs
             if (result.IsSuccessStatusCode)
             {
                 await Clients.User(receiverId).DeleteFriendRequestListing(senderUsername);
-                await Clients.User(sender.Id).UpdateFriendListing(receiver.UserName);
-                await Clients.User(receiverId).UpdateFriendListing(senderUsername);
+                await Clients.User(sender.Id).UpdateFriendListing(sender.UserName, receiver.UserName);
+                await Clients.User(receiverId).UpdateFriendListing(receiver.UserName, sender.UserName);
             }
         }
 
