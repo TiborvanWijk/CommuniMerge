@@ -6,6 +6,6 @@
         Task UpdateFriendListing(string currentUsersname, string friendUsername);
         Task DeleteFriendRequestListing(string username);
         Task SuccesSendingFriendRequest();
-        Task FailSendingFriendRequest();
+        Task FailSendingFriendRequest(string feedbackMessage);
     }
 }

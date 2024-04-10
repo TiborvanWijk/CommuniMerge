@@ -29,11 +29,18 @@ namespace CommuniMerge.Hubs
 
             if (!result.IsSuccessStatusCode)
             {
+                
+                
+                //Maybe use the api response 
+                string message = "Check if the username is correct.";
+                await Clients.User(currentlyLoggedInUserId).FailSendingFriendRequest(message);
+                
                 return;
             }
             var sender = await accountService.GetUserByIdAsync(currentlyLoggedInUserId);
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
             await Clients.User(receiver.Id).ReceiveFriendRequest(sender.UserName);
+            await Clients.User(currentlyLoggedInUserId).SuccesSendingFriendRequest();
         }
 
         public async Task AcceptFriendRequest(string senderUsername)

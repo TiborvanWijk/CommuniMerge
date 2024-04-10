@@ -286,9 +286,6 @@
     gap: 2em;
     height: calc(100% - 8em);
     position: relative;
-    input{
-        width: 75%;
-    }
 }
 
 .menu-form-field{
@@ -297,6 +294,7 @@
     border: none;
     color: white;
     border-radius: 10px;
+    width: 100%;
 }
 
 .body-info-title{
@@ -437,7 +435,19 @@
 
 //end of friends-list of menu
 
-
+.add-friend-input-holder{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+    input, p{
+        width: 70%;
+    }
+    p{
+        color: var(--red);
+    }
+}
 
 
 @keyframes slideRight{

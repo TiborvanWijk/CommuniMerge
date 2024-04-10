@@ -14,6 +14,28 @@ chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message
     playAudio();
 });
 
+friendhub.on("FailSendingFriendRequest", function (feedbackMessage) {
+    addFeedbackMessageToFriendsAddMenu(feedbackMessage);
+});
+friendhub.on("SuccesSendingFriendRequest", function () {
+    addSuccesStateToFriendsAddMenu();
+});
+
+function addSuccesStateToFriendsAddMenu() {
+}
+
+function addFeedbackMessageToFriendsAddMenu(feedbackMessage) {
+    let holder = document.querySelector("#add-friend-input-holder");
+    let exists = holder.querySelector("p");
+    if (exists) {
+        return;
+    }
+    
+    let message = document.createElement("p");
+    message.textContent = feedbackMessage;
+    holder.prepend(message);
+}
+
 function addMessageToChatIfActive(senderUsername, receiverUsername, message) {
     let messageHolder = document.querySelector("#messages");
     let messageSender = document.querySelector("#message-sender");

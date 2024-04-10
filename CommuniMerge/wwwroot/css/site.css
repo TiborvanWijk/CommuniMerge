@@ -338,9 +338,6 @@ body {
   height: calc(100% - 8em);
   position: relative;
 }
-.menu-body input {
-  width: 75%;
-}
 
 .menu-form-field {
   padding: 1em;
@@ -348,6 +345,7 @@ body {
   border: none;
   color: white;
   border-radius: 10px;
+  width: 100%;
 }
 
 .body-info-title {
@@ -479,6 +477,20 @@ body {
 
 .friend-option:hover {
   background: var(--gray);
+}
+
+.add-friend-input-holder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+.add-friend-input-holder input, .add-friend-input-holder p {
+  width: 70%;
+}
+.add-friend-input-holder p {
+  color: var(--red);
 }
 
 @keyframes slideRight {
