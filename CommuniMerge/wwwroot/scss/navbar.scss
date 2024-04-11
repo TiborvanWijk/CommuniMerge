@@ -423,14 +423,13 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: var(--light-gray);
     border: none;
     outline: none;
     cursor: pointer;
     transition: 200ms;
 }
 .friend-option:hover{
-    background: var(--gray); 
+    background: var(--light-gray);
 }
 
 //end of friends-list of menu
@@ -444,11 +443,13 @@
     input, p{
         width: 70%;
     }
-    p{
-        color: var(--red);
-    }
 }
-
+.succes{
+    color: var(--green);
+}
+.fail{
+    color: var(--red);
+}
 
 @keyframes slideRight{
     from{

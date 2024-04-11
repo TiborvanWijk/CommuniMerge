@@ -119,14 +119,14 @@
                 <ul class="friendRequests-list" id="friendRequest-list">
 
                     @{
-                        foreach (var friend in Model.FriendRequests)
+                        foreach (var friendRequest in Model.FriendRequests)
                         {
 
-                            <li class="friendRequest-list-item">
-                                <p>@friend.SenderUsername</p>
+                            <li class="friendRequest-list-item" data-user="@friendRequest.SenderUsername">
+                                <p>@friendRequest.SenderUsername</p>
                                 <div class="friend-request-option-holder">
-                                    <button class="friend-request-option accept" onclick="acceptFriendRequest('@friend.SenderUsername')"><i class="fa-solid fa-check"></i></button>
-                                    <button class="friend-request-option decline" onclick="declineFriendRequest('@friend.SenderUsername')"><i class="fa-solid fa-xmark"></i></button>
+                                    <button class="friend-request-option accept" onclick="acceptFriendRequest('@friendRequest.SenderUsername')"><i class="fa-solid fa-check"></i></button>
+                                    <button class="friend-request-option decline" onclick="declineFriendRequest('@friendRequest.SenderUsername')"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </li>
                         }

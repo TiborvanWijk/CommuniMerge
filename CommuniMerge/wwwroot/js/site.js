@@ -15,25 +15,44 @@ chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message
 });
 
 friendhub.on("FailSendingFriendRequest", function (feedbackMessage) {
-    addFeedbackMessageToFriendsAddMenu(feedbackMessage);
+
+    let messageHTML = createFeedbackMessage(feedbackMessage, false);
+    addMessageToFriendAddMenu(messageHTML);
+    addFriendMenuFailStyle();
 });
-friendhub.on("SuccesSendingFriendRequest", function () {
-    addSuccesStateToFriendsAddMenu();
+friendhub.on("SuccesSendingFriendRequest", function (feedbackMessage) {
+    let messageHTML = createFeedbackMessage(feedbackMessage, true);
+    addMessageToFriendAddMenu(messageHTML);
+    addFriendMenuSuccesStyle();
 });
 
-function addSuccesStateToFriendsAddMenu() {
+function addFriendMenuFailStyle() {
+    let friendRequestInput = document.querySelector("#friendRequestInput");
+    friendRequestInput.style.border = "2px solid var(--red)";
 }
-
-function addFeedbackMessageToFriendsAddMenu(feedbackMessage) {
+function addFriendMenuSuccesStyle() {
+    let friendRequestInput = document.querySelector("#friendRequestInput");
+    friendRequestInput.value = "";
+    friendRequestInput.style.border = "2px solid var(--green)";
+}
+function addMessageToFriendAddMenu(messageHTML) {
     let holder = document.querySelector("#add-friend-input-holder");
-    let exists = holder.querySelector("p");
-    if (exists) {
-        return;
+    let existingP = holder.querySelector("p");
+    if (existingP) {
+        existingP.remove();
     }
-    
+    holder.prepend(messageHTML);
+}
+function createFeedbackMessage(feedbackMessage, isSucces) {
     let message = document.createElement("p");
     message.textContent = feedbackMessage;
-    holder.prepend(message);
+    if (isSucces) {
+        message.classList.add("succes");
+    }
+    else {
+        message.classList.add("fail");
+    }
+    return message;
 }
 
 function addMessageToChatIfActive(senderUsername, receiverUsername, message) {
@@ -167,8 +186,16 @@ function declineFriendRequest(username){
 
 
 
-
-
+document.querySelector("#friendRequestInput").addEventListener("keyup", resetFriendRequestHolder);
+function resetFriendRequestHolder() {
+    let holder = document.querySelector("#add-friend-input-holder");
+    let p = holder.querySelector("p");
+    if (p) {
+        p.remove();
+    }
+    let input = holder.querySelector("#friendRequestInput");
+    input.style.border = "none";
+}
 document.getElementById("message-sender").addEventListener("keyup", function (event) {
     let input = document.getElementById("message-sender");
     let message = input.value;

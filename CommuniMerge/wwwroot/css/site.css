@@ -468,7 +468,6 @@ body {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  background: var(--light-gray);
   border: none;
   outline: none;
   cursor: pointer;
@@ -476,7 +475,7 @@ body {
 }
 
 .friend-option:hover {
-  background: var(--gray);
+  background: var(--light-gray);
 }
 
 .add-friend-input-holder {
@@ -489,7 +488,12 @@ body {
 .add-friend-input-holder input, .add-friend-input-holder p {
   width: 70%;
 }
-.add-friend-input-holder p {
+
+.succes {
+  color: var(--green);
+}
+
+.fail {
   color: var(--red);
 }
 

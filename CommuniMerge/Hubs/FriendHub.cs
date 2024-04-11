@@ -37,10 +37,11 @@ namespace CommuniMerge.Hubs
                 
                 return;
             }
+            string feedbackMessage = "Friend request succesfully sent.";
             var sender = await accountService.GetUserByIdAsync(currentlyLoggedInUserId);
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
             await Clients.User(receiver.Id).ReceiveFriendRequest(sender.UserName);
-            await Clients.User(currentlyLoggedInUserId).SuccesSendingFriendRequest();
+            await Clients.User(currentlyLoggedInUserId).SuccesSendingFriendRequest(feedbackMessage);
         }
 
         public async Task AcceptFriendRequest(string senderUsername)
