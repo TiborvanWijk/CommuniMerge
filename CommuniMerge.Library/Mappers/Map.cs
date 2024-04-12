@@ -26,6 +26,15 @@ namespace CommuniMerge.Library.Mappers
             };
         }
 
+        public static GroupDto ToGroupDto(Group group)
+        {
+            return new GroupDto
+            {
+                Id = group.Id,
+                Name = group.Name,
+            };
+        }
+
         public static LoginModel ToLoginModelFromRegisterModel(RegisterModel registerModel)
         {
             return new LoginModel { Username = registerModel.Username, Password = registerModel.Password };

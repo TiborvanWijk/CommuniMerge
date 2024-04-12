@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CommuniMerge.Library.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20240403100918_DataContextMigration")]
+    [Migration("20240412142427_DataContextMigration")]
     partial class DataContextMigration
     {
         /// <inheritdoc />
@@ -61,22 +61,6 @@ namespace CommuniMerge.Library.Migrations
                     b.ToTable("groups");
                 });
 
-            modelBuilder.Entity("CommuniMerge.Library.Models.GroupMessageLink", b =>
-                {
-                    b.Property<int>("GroupId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MessageId")
-                        .HasColumnType("int");
-
-                    b.HasKey("GroupId", "MessageId");
-
-                    b.HasIndex("MessageId")
-                        .IsUnique();
-
-                    b.ToTable("GroupMessageLinks");
-                });
-
             modelBuilder.Entity("CommuniMerge.Library.Models.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -106,6 +90,8 @@ namespace CommuniMerge.Library.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
 
                     b.HasIndex("ReceiverId");
 
@@ -364,27 +350,12 @@ namespace CommuniMerge.Library.Migrations
                     b.Navigation("Sender");
                 });
 
-            modelBuilder.Entity("CommuniMerge.Library.Models.GroupMessageLink", b =>
-                {
-                    b.HasOne("CommuniMerge.Library.Models.Group", "Group")
-                        .WithMany("GroupMessageLinks")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CommuniMerge.Library.Models.Message", "Message")
-                        .WithOne("Group")
-                        .HasForeignKey("CommuniMerge.Library.Models.GroupMessageLink", "MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Message");
-                });
-
             modelBuilder.Entity("CommuniMerge.Library.Models.Message", b =>
                 {
+                    b.HasOne("CommuniMerge.Library.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId");
+
                     b.HasOne("CommuniMerge.Library.Models.User", "Receiver")
                         .WithMany()
                         .HasForeignKey("ReceiverId");
@@ -392,6 +363,8 @@ namespace CommuniMerge.Library.Migrations
                     b.HasOne("CommuniMerge.Library.Models.User", "SenderUser")
                         .WithMany()
                         .HasForeignKey("SenderUserId");
+
+                    b.Navigation("Group");
 
                     b.Navigation("Receiver");
 
@@ -489,14 +462,7 @@ namespace CommuniMerge.Library.Migrations
 
             modelBuilder.Entity("CommuniMerge.Library.Models.Group", b =>
                 {
-                    b.Navigation("GroupMessageLinks");
-
                     b.Navigation("UserGroupsLinks");
-                });
-
-            modelBuilder.Entity("CommuniMerge.Library.Models.Message", b =>
-                {
-                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("CommuniMerge.Library.Models.User", b =>

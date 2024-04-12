@@ -20,12 +20,14 @@ namespace CommuniMerge.Library.Services
         private readonly IMessageRepository messageRepository;
         private readonly ICustomLogger logger;
         private readonly IUserRepository userRepository;
+        private readonly IGroupRepository groupRepository;
 
-        public MessageService(IMessageRepository messageRepository, ICustomLogger logger, IUserRepository userRepository)
+        public MessageService(IMessageRepository messageRepository, ICustomLogger logger, IUserRepository userRepository, IGroupRepository groupRepository)
         {
             this.messageRepository = messageRepository;
             this.logger = logger;
             this.userRepository = userRepository;
+            this.groupRepository = groupRepository;
         }
 
         public async Task<MessageCreateResult> CreatePersonalMessage(string senderId, PersonalMessageCreateDto messageCreateDto)
@@ -86,6 +88,67 @@ namespace CommuniMerge.Library.Services
             {
                 logger.LogError(ex.Message, GetType().Name, nameof(GetLatestMessage));
                 return null;
+            }
+        }
+
+        public async Task<Message> GetLatestGroupMessage(int groupId)
+        {
+            try
+            {
+
+                var allMessages = await messageRepository.GetAllMessagesOfGroupAsync(groupId);
+                var latestMessage = allMessages.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
+
+                return latestMessage;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(GetLatestGroupMessage));
+                return null;
+            }
+        }
+
+        public async Task<MessageCreateResult> CreateGroupMessage(string senderId, GroupMessageCreateDto messageCreateDto)
+        {
+            try
+            {
+
+                Group group = await groupRepository.getGroupById(messageCreateDto.GroupId);
+                if (group == null)
+                {
+                    return new MessageCreateResult { Error = MessageCreateError.GroupNotFound };
+                }
+                if(!await groupRepository.IsInGroup(senderId, group.Id))
+                {
+                    return new MessageCreateResult { Error = MessageCreateError.UnAuthorized };
+                }
+
+                if (string.IsNullOrEmpty(messageCreateDto.Content))
+                {
+                    return new MessageCreateResult { Error = MessageCreateError.MessageIsNullOrEmpty };
+                }
+
+                var message = new Message
+                {
+                    SenderId = senderId,
+                    SenderUser = await userRepository.GetUserByIdAsync(senderId),
+                    Content = messageCreateDto.Content,
+                    TimeStamp = DateTime.UtcNow,
+                    Group = group,
+                    GroupId = group.Id
+                };
+
+                if (await messageRepository.CreateMessageAsync(message))
+                {
+                    return new MessageCreateResult { Error = MessageCreateError.CreateMessageFailed };
+                }
+
+                return new MessageCreateResult { Error = MessageCreateError.None };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(CreateGroupMessage));
+                return new MessageCreateResult { Error = MessageCreateError.UnknownError };
             }
         }
     }

@@ -6,14 +6,15 @@ using System.Threading.Tasks;
 
 namespace CommuniMerge.Library.Enums
 {
-    public enum MessageCreateError
+    public enum CreateGroupError
     {
         None,
         UserNotFound,
-        CreateMessageFailed,
-        MessageIsNullOrEmpty,
-        UnknownError,
-        GroupNotFound,
-        UnAuthorized
+        Unknown,
+        InvalidGroupName,
+        FailedCreatingGroup,
+        FailedCreatingUserLink,
+        DuplicateUserAddition,
+        UsersNotFriends
     }
 }

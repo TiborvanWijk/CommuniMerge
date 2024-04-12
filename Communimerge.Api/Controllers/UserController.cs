@@ -9,9 +9,9 @@ using System.Security.Claims;
 
 namespace Communimerge.Api.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("/api/[controller]")]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IAccountService accountService;
@@ -23,7 +23,7 @@ namespace Communimerge.Api.Controllers
             this.messageService = messageService;
         }
 
-        [HttpPost("/sendFriendRequest/{receiverUsername}")]
+        [HttpPost("sendFriendRequest/{receiverUsername}")]
         public async Task<IActionResult> SendFriendRequest([FromRoute] string receiverUsername)
         {
             if (!ModelState.IsValid)
@@ -48,7 +48,7 @@ namespace Communimerge.Api.Controllers
             return Created();
         }
 
-        [HttpPost("/acceptFriendRequest/{username}")]
+        [HttpPost("acceptFriendRequest/{username}")]
         public async Task<IActionResult> AcceptFriendRequest([FromRoute] string username)
         {
             if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace Communimerge.Api.Controllers
         }
 
 
-        [HttpPost("/declineFriendRequest/{username}")]
+        [HttpPost("declineFriendRequest/{username}")]
         public async Task<IActionResult> DeclineFriendRequest([FromRoute] string username)
         {
             if (!ModelState.IsValid)

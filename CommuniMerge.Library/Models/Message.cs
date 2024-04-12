@@ -10,6 +10,6 @@
         public string? ReceiverId { get; set; }
         public User? Receiver { get; set; }
         public int? GroupId { get; set; }
-        public GroupMessageLink? Group { get; set; }
+        public Group? Group { get; set; }
     }
 }

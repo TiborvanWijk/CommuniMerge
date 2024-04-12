@@ -1,8 +1,8 @@
-﻿using Communimerge.Api.CustomAttribute;
-using CommuniMerge.Library.Data.Dtos;
+﻿using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.ResultObjects;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -11,10 +11,10 @@ using System.Security.Claims;
 
 namespace Communimerge.Api.Controllers
 {
-    [ApiController]
-    [Route("/api/messages")]
-    [Authorize]
     [EnableCors]
+    [ApiController]
+    [Route("/api/[controller]")]
+    [Authorize]
     public class MessageController : Controller
     {
         private readonly IMessageService messageService;
@@ -29,7 +29,7 @@ namespace Communimerge.Api.Controllers
         }
 
         
-        [HttpGet("/get/{username}")]
+        [HttpGet("get/{username}")]
         public async Task<IActionResult> GetPersonalMessages([FromRoute] string username) 
         {
             if (!ModelState.IsValid)
@@ -51,7 +51,7 @@ namespace Communimerge.Api.Controllers
             return Ok(messageDtos);
         }
 
-        [HttpGet("/getGroup{groupId:int}")]
+        [HttpGet("getGroup{groupId:int}")]
         public async Task<IActionResult> GetGroupMessages([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -64,7 +64,7 @@ namespace Communimerge.Api.Controllers
         }
 
 
-        [HttpPost("/createPersonalMessage")]
+        [HttpPost("createPersonalMessage")]
         public async Task<IActionResult> CreatePersonalMessage([FromBody] PersonalMessageCreateDto messageCreateDto)
         {
             if (!ModelState.IsValid)
@@ -85,13 +85,20 @@ namespace Communimerge.Api.Controllers
             return Created();
         }
 
-        [HttpPost("/CreateGroupMessage")]
+        [HttpPost("CreateGroupMessage")]
         public async Task<IActionResult> CreateGroupMessage([FromBody] GroupMessageCreateDto messageCreateDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
             var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            MessageCreateResult result = await messageService.CreateGroupMessage(loggedInUserId, messageCreateDto);
 
-
-
+            if (result.Error != MessageCreateError.None)
+            {
+                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
+            }
 
 
 

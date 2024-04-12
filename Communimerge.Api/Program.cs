@@ -10,6 +10,10 @@ using CommuniMerge.Library.Services.Interfaces;
 using CommuniMerge.Middleware;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using CommuniMerge.ApiServices.Interfaces;
+using CommuniMerge.ApiServices;
+using CommuniMerge.CookieRepositories.Interfaces;
+using CommuniMerge.CookieRepositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +30,7 @@ builder.Services.AddScoped<ICustomLogger, LogService>();
 builder.Services.AddCors();
 
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
+
 builder.Services.AddSingleton<TokenSettings>();
 builder.Services.AddSingleton<TokenService>();
 builder.Services.AddEndpointsApiExplorer();

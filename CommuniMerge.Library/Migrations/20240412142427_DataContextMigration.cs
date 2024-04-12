@@ -243,6 +243,11 @@ namespace CommuniMerge.Library.Migrations
                         column: x => x.SenderUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Messages_groups_GroupId",
+                        column: x => x.GroupId,
+                        principalTable: "groups",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -264,30 +269,6 @@ namespace CommuniMerge.Library.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_userGroupLinks_groups_GroupId",
-                        column: x => x.GroupId,
-                        principalTable: "groups",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "GroupMessageLinks",
-                columns: table => new
-                {
-                    GroupId = table.Column<int>(type: "int", nullable: false),
-                    MessageId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_GroupMessageLinks", x => new { x.GroupId, x.MessageId });
-                    table.ForeignKey(
-                        name: "FK_GroupMessageLinks_Messages_MessageId",
-                        column: x => x.MessageId,
-                        principalTable: "Messages",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_GroupMessageLinks_groups_GroupId",
                         column: x => x.GroupId,
                         principalTable: "groups",
                         principalColumn: "Id",
@@ -344,10 +325,9 @@ namespace CommuniMerge.Library.Migrations
                 column: "FriendId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GroupMessageLinks_MessageId",
-                table: "GroupMessageLinks",
-                column: "MessageId",
-                unique: true);
+                name: "IX_Messages_GroupId",
+                table: "Messages",
+                column: "GroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_ReceiverId",
@@ -390,7 +370,7 @@ namespace CommuniMerge.Library.Migrations
                 name: "FriendsLink");
 
             migrationBuilder.DropTable(
-                name: "GroupMessageLinks");
+                name: "Messages");
 
             migrationBuilder.DropTable(
                 name: "userGroupLinks");
@@ -399,13 +379,10 @@ namespace CommuniMerge.Library.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Messages");
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "groups");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
         }
     }
 }

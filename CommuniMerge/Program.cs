@@ -14,6 +14,7 @@ using CommuniMerge.ApiServices.Interfaces;
 using CommuniMerge.ApiServices;
 using CommuniMerge.Library.Loggers.Interfaces;
 using CommuniMerge.Library.Loggers;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IMessageApiService, MessageApiService>();
 builder.Services.AddScoped<IUserApiService, UserApiService>();
 builder.Services.AddScoped<IAccountApiService, AccountApiService>();
 builder.Services.AddScoped<ICustomLogger, LogService>();
+builder.Services.AddScoped<IApiService, ApiService>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -35,7 +37,6 @@ builder.Services.AddSignalR();
 
 
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
-
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

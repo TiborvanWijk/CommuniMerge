@@ -14,5 +14,9 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> UpdateGroupOwnerAsync(int groupId, string newOwnerId);
         Task<bool> DeleteGroupAsync(int groupId);
         Task<bool> SaveAsync();
+        Task<bool> CreateUserGroupLink(UserGroupLink link);
+        Task<ICollection<Group>> GetAllGroupsByUserIdAsync(string userId);
+        Task<Group> getGroupById(int groupId);
+        Task<bool> IsInGroup(string senderId, int groupId);
     }
 }

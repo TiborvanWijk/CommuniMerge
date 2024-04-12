@@ -1,5 +1,6 @@
 ﻿using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Services;
 using CommuniMerge.Library.Services.Interfaces;
@@ -21,7 +22,7 @@ namespace Communimerge.Api.Controllers
         }
 
 
-        [HttpPost("/login")]
+        [HttpPost("login")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
@@ -47,7 +48,7 @@ namespace Communimerge.Api.Controllers
             return Ok(loginResponseDto);
         }
 
-        [HttpPost("/register")]
+        [HttpPost("register")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         [ProducesResponseType(500)]

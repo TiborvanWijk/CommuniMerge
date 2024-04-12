@@ -11,7 +11,6 @@ namespace CommuniMerge.Library.Data
 
         }
         public DbSet<Group> groups { get; set; }
-        public DbSet<GroupMessageLink> GroupMessageLinks { get; set; }
         public DbSet<Message> Messages { get; set; }
         public DbSet<UserGroupLink> userGroupLinks { get; set; }
         public DbSet<UserFriend> FriendsLink { get; set; }
@@ -21,14 +20,6 @@ namespace CommuniMerge.Library.Data
         {
             base.OnModelCreating(builder);
 
-
-
-            builder.Entity<GroupMessageLink>()
-                            .HasKey(x => new { x.GroupId, x.MessageId });
-            builder.Entity<GroupMessageLink>()
-                .HasOne(pc => pc.Group)
-                .WithMany(u => u.GroupMessageLinks)
-                .HasForeignKey(b => b.GroupId);
 
             builder.Entity<UserGroupLink>()
                 .HasKey(x => new { x.UserId, x.GroupId });
