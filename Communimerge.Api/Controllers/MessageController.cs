@@ -51,7 +51,7 @@ namespace Communimerge.Api.Controllers
             return Ok(messageDtos);
         }
 
-        [HttpGet("getGroup{groupId:int}")]
+        [HttpGet("getGroup/{groupId:int}")]
         public async Task<IActionResult> GetGroupMessages([FromRoute] int groupId)
         {
             if (!ModelState.IsValid)
@@ -59,8 +59,30 @@ namespace Communimerge.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Group group = await groupService.GetGroupById(groupId);
 
-            return Ok();
+            if (group == null)
+            {
+                return NotFound();
+            }
+            bool isMember = await groupService.IsUserGroupMember(loggedInUserId, groupId);
+            if(!isMember)
+            {
+                return Forbid();
+            }
+
+
+            ICollection<Message>? messages = await messageService.GetGroupMessages(groupId);
+
+            if(messages == null)
+            {
+                return StatusCode(500, "Unexpected error.");
+            }
+
+            ICollection<MessageDisplayDto> messageDisplayDtos = messages.Select(Map.ToMessageDisplayDto).ToList();
+
+            return Ok(messageDisplayDtos);
         }
 
 

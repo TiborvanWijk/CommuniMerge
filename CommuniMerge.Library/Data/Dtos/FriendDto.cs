@@ -8,6 +8,7 @@ namespace CommuniMerge.Library.Data.Dtos
 {
     public class FriendDto
     {
+        public string Id { get; set; }
         public string Username { get; set; }
     }
 }

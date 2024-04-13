@@ -10,5 +10,6 @@ namespace CommuniMerge.Library.Data.Dtos
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public MessageDisplayDto LatestMessage { get; set; }
     }
 }

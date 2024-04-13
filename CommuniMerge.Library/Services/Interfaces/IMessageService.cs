@@ -16,5 +16,6 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<ICollection<Message>> getPrivateMessages(string userId, string otherUserId);
         Task<Message> GetLatestGroupMessage(int groupId);
         Task<MessageCreateResult> CreateGroupMessage(string? loggedInUserId, GroupMessageCreateDto messageCreateDto);
+        Task<ICollection<Message>>? GetGroupMessages(int groupId);
     }
 }

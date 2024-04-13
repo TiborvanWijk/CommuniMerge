@@ -25,9 +25,6 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ICookieRepository, CookieRepository>();
-builder.Services.AddScoped<IMessageApiService, MessageApiService>();
-builder.Services.AddScoped<IUserApiService, UserApiService>();
-builder.Services.AddScoped<IAccountApiService, AccountApiService>();
 builder.Services.AddScoped<ICustomLogger, LogService>();
 builder.Services.AddScoped<IApiService, ApiService>();
 

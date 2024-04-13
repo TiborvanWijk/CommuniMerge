@@ -7,12 +7,63 @@ chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message
 
     let newMessage = createMessageHtml(senderUsername, sentAt, message);
 
-    updateLatestMessageListing(receiverUsername, senderUsername, message);
+    updateLatestMessageListingPersonal(receiverUsername, senderUsername, message);
 
-    addMessageToChatIfActive(senderUsername, receiverUsername, newMessage);
+    addMessageToChatIfActivePersonal(senderUsername, receiverUsername, newMessage);
 
     playAudio();
 });
+function updateLatestMessageListingPersonal(receiverUsername, currentUsername, latestMessage) {
+
+    const chatIdentifier1 = `${currentUsername}/${receiverUsername}`;
+    const chatIdentifier2 = `${receiverUsername}/${currentUsername}`;
+    const list = document.querySelector("#user-list");
+    const listItem = list.querySelector(`li[data-chat="${chatIdentifier1}"], li[data-chat="${chatIdentifier2}"]`);
+    if (listItem) {
+        let messageContent = listItem.querySelector('.truncate');
+        if (messageContent) {
+            messageContent.textContent = latestMessage;
+        }
+        else {
+            let informationHolder = listItem.querySelector(".message-information");
+            messageContent = document.createElement("p");
+            messageContent.textContent = latestMessage;
+            messageContent.classList.add("truncate");
+            informationHolder.appendChild(messageContent);
+        }
+        list.prepend(listItem);
+    }
+}
+function updateLatestMessageListingGroup(groupId, latestMessage) {
+    const list = document.querySelector("#user-list");
+    const listItem = list.querySelector(`li[data-group-id="${groupId}"]`);
+    if (listItem) {
+        let messageContent = listItem.querySelector('.truncate');
+        if (messageContent) {
+            messageContent.textContent = latestMessage;
+        }
+        else {
+            let informationHolder = listItem.querySelector(".message-information");
+            messageContent = document.createElement("p");
+            messageContent.textContent = latestMessage;
+            messageContent.classList.add("truncate");
+            informationHolder.appendChild(messageContent);
+        }
+        list.prepend(listItem);
+    }
+}
+
+chathub.on("ReceiveGroupMessage", function (groupId, senderUsername, message, sentAt) {
+
+    let newMessage = createMessageHtml(senderUsername, sentAt, message);
+
+    updateLatestMessageListingGroup(groupId, message);
+
+    addMessageToChatIfActiveGroup(groupId, newMessage);
+
+    playAudio();
+});
+
 
 friendhub.on("FailSendingFriendRequest", function (feedbackMessage) {
 
@@ -55,7 +106,7 @@ function createFeedbackMessage(feedbackMessage, isSucces) {
     return message;
 }
 
-function addMessageToChatIfActive(senderUsername, receiverUsername, message) {
+function addMessageToChatIfActivePersonal(senderUsername, receiverUsername, message) {
     let messageHolder = document.querySelector("#messages");
     let messageSender = document.querySelector("#message-sender");
 
@@ -78,27 +129,7 @@ function addMessageToChatIfActive(senderUsername, receiverUsername, message) {
     }
 }
 
-function updateLatestMessageListing(receiverUsername, currentUsername, latestMessage) {
 
-    const chatIdentifier1 = `${currentUsername}/${receiverUsername}`;
-    const chatIdentifier2 = `${receiverUsername}/${currentUsername}`;
-    const list = document.querySelector("#user-list");
-    const listItem = list.querySelector(`li[data-chat="${chatIdentifier1}"], li[data-chat="${chatIdentifier2}"]`);
-    if (listItem) {
-        let messageContent = listItem.querySelector('.truncate');
-        if (messageContent) {
-            messageContent.textContent = latestMessage;
-        }
-        else {
-            let informationHolder = listItem.querySelector(".message-information");
-            messageContent = document.createElement("p");
-            messageContent.textContent = latestMessage;
-            messageContent.classList.add("truncate");
-            informationHolder.appendChild(messageContent);
-        }
-        list.prepend(listItem);
-    }
-}
 
 chathub.start().then(function () {
     console.log("Connected to the server succesfully");
@@ -150,7 +181,7 @@ function createFriendListItemHTML(currentUser, friend) {
     let li = document.createElement("li");
     li.classList.add("message-item");
     li.setAttribute("data-chat", `${friend}/${currentUser}`);
-    li.onclick = function () { openConversation(this, friend) };
+    li.onclick = function () { openPersonalConversation(this, friend) };
     li.innerHTML =    `
             <header class="message-profile-header">
                 <figure class="message-profile user1">
@@ -204,13 +235,22 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     }
     input.value = "";
 
-    let receiver = document.querySelector("#message-sender").dataset.receiver;
-    
+    let messageSender = document.querySelector("#message-sender");
+    let receiver = messageSender.dataset.receiver;
 
+    let isForGroup = messageSender.dataset.forGroup;
 
-    chathub.invoke("SendMessage", receiver, message).catch(function (err) {
-        return console.error(err.toString());
-    });
+    if (isForGroup === "true") {
+        chathub.invoke("SendGroupMessage", parseInt(receiver), message).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+    else if (isForGroup === "false") {
+        chathub.invoke("SendMessage", receiver, message).catch(function (err) {
+            return console.error(err.toString());
+        });
+    }
+
     event.preventDefault();
 });
 
@@ -237,19 +277,58 @@ function playAudio(){
     audio.play();
 }
 
-async function openConversation(event, username) {
+async function openGroupConversation(event, group) {
+    hideScreenBlocker();
+    selectTab(event);
+
+    updateInfoHeader(group.Name);
+
+    updateReceiver(group.Id, true);
+
+    clearMessageHolder();
+
+    let messages = await getGroupMessages(group.Id);
+    if (messages != null) {
+        addMessagesToMessageHolder(messages);
+    }
+}
+
+async function getGroupMessages(groupId) {
+    const url = `https://localhost:7129/api/Message/getGroup/${groupId}`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: "include"
+
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch messages. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error('Error fetching messages:', error.message);
+        return null;
+    }
+}
+
+
+async function openPersonalConversation(event, username) {
     hideScreenBlocker();
     selectTab(event);
 
     updateInfoHeader(username);
 
-    updateReceiver(username);
+    updateReceiver(username, false);
 
     clearMessageHolder();
 
-    let messages = await getMessages(username);
+    let messages = await getPersonalMessages(username);
     if (messages != null) {
-        addMessagesToMessageHolder(messages, username);
+        addMessagesToMessageHolder(messages);
     }
 }
 
@@ -264,20 +343,26 @@ function selectTab(event){
     event.style.backgroundColor = "var(--light-blue)";
 }
 
-function updateReceiver(username){
+function updateReceiver(receiverId, isForGroup){
     let sender = document.querySelector("#message-sender");
 
     if(!sender.hasAttribute("data-receiver")){
         sender.setAttribute("data-receiver", "default value");
     }
+    if (isForGroup) {
+        if (!sender.hasAttribute("data-forGroup")) {
+            sender.setAttribute("data-forGroup", "default value");
+        }
+    }
 
-    sender.dataset.receiver = username;
+    sender.dataset.forGroup = isForGroup;
+    sender.dataset.receiver = receiverId;
 }
 
-function updateInfoHeader(username) {
+function updateInfoHeader(name) {
     let infoHeader = document.querySelector("#info-header");
     let headerUsername = document.querySelector("#info-header-username");
-    headerUsername.textContent = username;
+    headerUsername.textContent = name;
 }
 
 function clearInfoHeader() {
@@ -309,7 +394,7 @@ function createMessageHtml(senderUsername, timeStamp, message){
     return newMessage;
 }
 
-function addMessagesToMessageHolder(messageObjects, username) {
+function addMessagesToMessageHolder(messageObjects) {
     let messageHolder = document.querySelector("#messages");
 
     for (let i = 0; i < messageObjects.length; ++i) {
@@ -327,9 +412,9 @@ function addMessagesToMessageHolder(messageObjects, username) {
         }
     }
 }
-async function getMessages(username) {
+async function getPersonalMessages(username) {
 
-    const url = `https://localhost:7129/get/${username}`;
+    const url = `https://localhost:7129/api/Message/get/${username}`;
     try {
         const response = await fetch(url, {
             method: 'GET',

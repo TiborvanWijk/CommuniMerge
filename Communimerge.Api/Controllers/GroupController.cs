@@ -82,7 +82,34 @@ namespace Communimerge.Api.Controllers
             }).ToList();
 
             return Ok(groupsWithMessageDto);
+        }
 
+        [HttpGet("getMembers/{groupId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetAllMembersOfGroup(int groupId)
+        {
+
+            var group = await groupService.GetGroupById(groupId);
+
+            if(group == null)
+            {
+                return NotFound();
+            }
+            var currentlyLoggedInUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var isMember = await groupService.IsUserGroupMember(currentlyLoggedInUser, groupId);
+
+            if (!isMember)
+            {
+                return Forbid();
+            }
+
+            ICollection<User> users = await groupService.GetAllUsersOfGroupById(groupId);
+
+            ICollection<FriendDto> friendDtos = users.Select(Map.ToFriendDto).ToList();
+            return Ok(friendDtos);
         }
     }
 }

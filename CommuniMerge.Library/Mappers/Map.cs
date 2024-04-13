@@ -14,6 +14,7 @@ namespace CommuniMerge.Library.Mappers
         {
             return new FriendDto
             {
+                Id = user.Id,
                 Username = user.UserName
             };
         }

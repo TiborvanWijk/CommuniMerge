@@ -16,11 +16,11 @@ namespace CommuniMerge.Controllers
 {
     public class AuthorizeController : Controller
     {
-        private readonly IAccountApiService accountApiService;
+        private readonly IApiService apiService;
 
-        public AuthorizeController(IAccountApiService accountApiService)
+        public AuthorizeController(IApiService apiService)
         {
-            this.accountApiService = accountApiService;
+            this.apiService = apiService;
         }
         public IActionResult Login()
         {
@@ -31,7 +31,7 @@ namespace CommuniMerge.Controllers
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
 
-            var response = await accountApiService.Login(HttpContext, loginModel);
+            var response = await apiService.SendHttpRequest<LoginModel>(HttpContext, "/api/Account/login", HttpMethod.Post, loginModel);
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 var FeedbackMessage = "Invalid combination!";
@@ -61,7 +61,7 @@ namespace CommuniMerge.Controllers
         public async Task<IActionResult> Register(RegisterModel registerModel)
         {
 
-            var registerResult = await accountApiService.Register(HttpContext, registerModel);
+            var registerResult = await apiService.SendHttpRequest<RegisterModel>(HttpContext, "/api/Account/register", HttpMethod.Post, registerModel);
 
             if (registerResult.StatusCode != HttpStatusCode.OK)
             {
@@ -70,7 +70,7 @@ namespace CommuniMerge.Controllers
             }
 
             var loginModel = Map.ToLoginModelFromRegisterModel(registerModel);
-            var loginResult = await accountApiService.Login(HttpContext, loginModel);
+            var loginResult = await apiService.SendHttpRequest<LoginModel>(HttpContext, "/api/Account/login", HttpMethod.Post, loginModel);
 
             var resultContent = JsonConvert.DeserializeObject<LoginResponseDto>(await loginResult.Content.ReadAsStringAsync());
 

@@ -1,4 +1,5 @@
 ﻿using CommuniMerge.Library.Data;
+using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -40,9 +41,14 @@ namespace CommuniMerge.Library.Repositories
             return await dataContext.groups.Include(x => x.UserGroupsLinks).Where(x => x.UserGroupsLinks.Any(x => x.UserId == userId)).ToListAsync();
         }
 
+        public async Task<ICollection<User>> GetAllUsersOfGroupById(int groupId)
+        {
+            return await dataContext.Users.Where(x => x.UserGroupsLinks.Any(x => x.GroupId == groupId)).ToListAsync();
+        }
+
         public async Task<Group> getGroupById(int groupId)
         {
-            return await dataContext.groups.FirstAsync(x => x.Id == groupId);
+            return await dataContext.groups.FirstOrDefaultAsync(x => x.Id == groupId);
         }
 
         public async Task<bool> IsInGroup(string userId, int groupId)

@@ -11,6 +11,7 @@ using CommuniMerge.Library.Services.Interfaces;
 using CommuniMerge.Library.Services;
 using System.Net;
 using CommuniMerge.ApiServices.Interfaces;
+using System.Collections.Generic;
 
 namespace CommuniMerge.Controllers
 {
@@ -18,26 +19,38 @@ namespace CommuniMerge.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IAccountService accountService;
-        private readonly IUserApiService userApiService;
+        private readonly IApiService apiService;
 
-        public HomeController(ILogger<HomeController> logger, IAccountService accountService, IUserApiService userApiService)
+        public HomeController(ILogger<HomeController> logger, IAccountService accountService, IApiService apiService)
         {
             _logger = logger;
             this.accountService = accountService;
-            this.userApiService = userApiService;
+            this.apiService = apiService;
         }
         [CustomAuthorize]
         public async Task<IActionResult> Index()
         {
 
-            var friendsResult = await userApiService.GetAllFriends(HttpContext, true);
-            var friendRequestsResult = await userApiService.GetAllFriendRequests(HttpContext);
+            var friendsResult = await apiService.SendHttpRequest<object>(HttpContext, "/api/User/friends?withLatestMessage=true", HttpMethod.Get, null);
+            var friendRequestsResult = await apiService.SendHttpRequest<object>(HttpContext, "/api/User/friendRequests", HttpMethod.Get, null);
+            var groupsResult = await apiService.SendHttpRequest<object>(HttpContext, "/api/Group/getGroups?withLatestMessage=true", HttpMethod.Get, null);
 
-            List<FriendRequestDto> friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
             List<FriendDisplayDto> friends = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await friendsResult.Content.ReadAsStringAsync());
+            List < FriendRequestDto > friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
+            List<GroupDto> groups = JsonConvert.DeserializeObject<List<GroupDto>>(await groupsResult.Content.ReadAsStringAsync());
+
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
             var currentUser = await accountService.GetUserByIdAsync(id);
-            return View(new IndexView() { Friends = friends, CurrentUserUsername = currentUser.UserName, FriendRequests = friendRequest });
+
+            var indexView = new IndexView()
+            {
+                Friends = friends,
+                CurrentUserUsername = currentUser.UserName,
+                FriendRequests = friendRequest,
+                Groups = groups
+            };
+
+            return View(indexView);
         }
 
         public IActionResult Privacy()

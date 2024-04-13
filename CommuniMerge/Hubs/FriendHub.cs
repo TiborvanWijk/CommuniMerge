@@ -12,20 +12,20 @@ namespace CommuniMerge.Hubs
     [CustomAuthorize]
     public class FriendHub : Hub<IFriendClient>
     {
-        private readonly IUserApiService userApiService;
         private readonly IAccountService accountService;
+        private readonly IApiService apiService;
 
-        public FriendHub(IUserApiService userApiService, IAccountService accountService)
+        public FriendHub(IAccountService accountService, IApiService apiService)
         {
-            this.userApiService = userApiService;
             this.accountService = accountService;
+            this.apiService = apiService;
         }
 
         public async Task SendFriendRequest(string receiverUsername)
         {
             var currentlyLoggedInUserId = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var result = await userApiService.SendFriendRequest(Context.GetHttpContext(), receiverUsername);
+            var result = await apiService.SendHttpRequest<object?>(Context.GetHttpContext(), $"/api/User/sendFriendRequest/{receiverUsername}", HttpMethod.Post, null);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -50,7 +50,7 @@ namespace CommuniMerge.Hubs
 
             var httpContext = Context.GetHttpContext();
 
-            var result = await userApiService.AcceptFriendRequest(httpContext, senderUsername);
+            var result = await apiService.SendHttpRequest<object?>(Context.GetHttpContext(), $"/api/User/acceptFriendRequest/{senderUsername}", HttpMethod.Post, null);
 
             var sender = await accountService.GetUserByUsernameAsync(senderUsername);
             var receiver = await accountService.GetUserByIdAsync(receiverId);
@@ -68,7 +68,7 @@ namespace CommuniMerge.Hubs
 
             var httpContext = Context.GetHttpContext();
 
-            var result = await userApiService.DeclineFriendRequest(httpContext, senderUsername);
+            var result = await apiService.SendHttpRequest<object?>(Context.GetHttpContext(), $"/api/User/declineFriendRequest/{senderUsername}", HttpMethod.Post, null);
 
             if (result.IsSuccessStatusCode)
             {

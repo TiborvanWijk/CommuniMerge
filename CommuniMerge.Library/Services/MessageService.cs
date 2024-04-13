@@ -151,5 +151,19 @@ namespace CommuniMerge.Library.Services
                 return new MessageCreateResult { Error = MessageCreateError.UnknownError };
             }
         }
+
+        public async Task<ICollection<Message>>? GetGroupMessages(int groupId)
+        {
+            try
+            {
+                ICollection<Message> messages = await messageRepository.GetAllMessagesOfGroupAsync(groupId);
+                return messages;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(CreateGroupMessage));
+                return null;
+            }
+        }
     }
 }

@@ -13,5 +13,8 @@ namespace CommuniMerge.Library.Services.Interfaces
     {
         Task<CreateGroupResult> CreateGroup(string currentlyLoggedInUserId, GroupCreateDto groupCreateDto);
         Task<ICollection<Group>> GetAllGroups(string userId);
+        Task<ICollection<User>?> GetAllUsersOfGroupById(int groupId);
+        Task<Group?> GetGroupById(int groupId);
+        Task<bool> IsUserGroupMember(string userId, int groupId);
     }
 }

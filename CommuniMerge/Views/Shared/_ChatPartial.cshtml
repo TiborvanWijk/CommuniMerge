@@ -1,4 +1,6 @@
 ﻿@using CommuniMerge.ViewModels;
+@using Newtonsoft.Json
+@using System.Text
 @model IndexView;
 
 <nav class="nav">
@@ -35,7 +37,7 @@
                     foreach (var friend in Model.Friends)
                     {
 
-                        <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openConversation(this, '@friend.Username')">
+                        <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openPersonalConversation(this, '@friend.Username')">
 
                             <header class="message-profile-header">
                                 <figure class="message-profile user1">
@@ -58,26 +60,29 @@
 
 
                     }
-                    // foreach(var group in Model.Groups)
-                    // {
-                    //     <li class="message-item" data-group-id="@group.Id">
+                    foreach(var group in Model.Groups)
+                    {
 
-                    //         <header class="message-profile-header">
-                    //             <figure class="message-profile">
-                    //                 <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
-                    //             </figure>
-                    //         </header>
-                    //         <div class="message-information">
-                    //             <h3>@group.Name</h3>
-                    //             @{
-                    //                 if (friend.LatestMessage != null)
-                    //                 {
-                    //                     <p class="truncate">@friend.LatestMessage.Content</p>
-                    //                 }
-                    //             }
-                    //         </div>
-                    //     </li>
-                    // }
+                        var groupJson = JsonConvert.SerializeObject(group);
+
+                        <li class="message-item" data-group-id="@group.Id" onclick="openGroupConversation(this, @groupJson)">
+
+                            <header class="group-profile-header">
+                                <figure class="group-profile">
+                                    <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                </figure>
+                            </header>
+                            <div class="message-information">
+                                <h3>@group.Name</h3>
+                                @{
+                                    if (group.LatestMessage != null)
+                                    {
+                                        <p class="truncate">@group.LatestMessage.Content</p>
+                                    }
+                                }
+                            </div>
+                        </li>
+                    }
                 }
 
             </ul>

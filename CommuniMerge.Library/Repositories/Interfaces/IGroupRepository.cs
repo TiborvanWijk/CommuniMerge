@@ -1,4 +1,5 @@
-﻿using CommuniMerge.Library.Models;
+﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,5 +19,6 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<ICollection<Group>> GetAllGroupsByUserIdAsync(string userId);
         Task<Group> getGroupById(int groupId);
         Task<bool> IsInGroup(string senderId, int groupId);
+        Task<ICollection<User>> GetAllUsersOfGroupById(int groupId);
     }
 }

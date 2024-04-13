@@ -110,5 +110,49 @@ namespace CommuniMerge.Library.Services
                 return null;
             }
         }
+
+        public async Task<ICollection<User>?> GetAllUsersOfGroupById(int groupId)
+        {
+            try
+            {
+                ICollection<User> users = await groupRepository.GetAllUsersOfGroupById(groupId);
+
+                return users;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(GetAllUsersOfGroupById));
+                return null;
+            }
+        }
+
+        public async Task<Group?> GetGroupById(int groupId)
+        {
+            try
+            {
+                var group = await groupRepository.getGroupById(groupId);
+
+                return group;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(GetGroupById));
+                return null;
+            }
+        }
+
+        public async Task<bool> IsUserGroupMember(string loggedInUserId, int groupId)
+        {
+            try
+            {
+                bool isMember = await groupRepository.IsInGroup(loggedInUserId, groupId);
+
+                return isMember;
+            }catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(IsUserGroupMember));
+                return false;
+            }
+        }
     }
 }
