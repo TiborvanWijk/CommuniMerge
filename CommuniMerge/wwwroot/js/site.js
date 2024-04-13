@@ -64,7 +64,48 @@ chathub.on("ReceiveGroupMessage", function (groupId, senderUsername, message, se
     playAudio();
 });
 
+function addMessageToChatIfActiveGroup(groupId, message) {
 
+    let messageHolder = document.querySelector("#messages");
+    let messageSender = document.querySelector("#message-sender");
+
+    let activeReceiver = messageSender.getAttribute("data-receiver");
+    if (activeReceiver != groupId) {
+        return;
+    }
+
+    let firstChild = messageHolder.firstChild;
+    if (firstChild != null) {
+        messageHolder.insertBefore(message, firstChild);
+    }
+    else {
+        messageHolder.appendChild(message);
+    }
+
+}
+
+function addMessageToChatIfActivePersonal(senderUsername, receiverUsername, message) {
+    let messageHolder = document.querySelector("#messages");
+    let messageSender = document.querySelector("#message-sender");
+
+    const chatIdentifier1 = `${senderUsername}/${receiverUsername}`;
+    const chatIdentifier2 = `${receiverUsername}/${senderUsername}`;
+
+    let activeReceiver = messageSender.getAttribute("data-receiver");
+    let activeSender = messageSender.getAttribute("data-sender");
+    let activeChatIdentifier = activeReceiver + "/" + activeSender;
+    if (activeChatIdentifier != chatIdentifier1 && activeChatIdentifier != chatIdentifier2) {
+        return;
+    }
+
+    let firstChild = messageHolder.firstChild;
+    if (firstChild != null) {
+        messageHolder.insertBefore(message, firstChild);
+    }
+    else {
+        messageHolder.appendChild(message);
+    }
+}
 friendhub.on("FailSendingFriendRequest", function (feedbackMessage) {
 
     let messageHTML = createFeedbackMessage(feedbackMessage, false);
@@ -106,28 +147,6 @@ function createFeedbackMessage(feedbackMessage, isSucces) {
     return message;
 }
 
-function addMessageToChatIfActivePersonal(senderUsername, receiverUsername, message) {
-    let messageHolder = document.querySelector("#messages");
-    let messageSender = document.querySelector("#message-sender");
-
-    const chatIdentifier1 = `${senderUsername}/${receiverUsername}`;
-    const chatIdentifier2 = `${receiverUsername}/${senderUsername}`;
-
-    let activeReceiver = messageSender.getAttribute("data-receiver");
-    let activeSender = messageSender.getAttribute("data-sender");
-    let activeChatIdentifier = activeReceiver + "/" + activeSender;
-    if (activeChatIdentifier != chatIdentifier1 && activeChatIdentifier != chatIdentifier2) {
-        return;
-    }
-
-    let firstChild = messageHolder.firstChild;
-    if (firstChild != null) {
-        messageHolder.insertBefore(message, firstChild);
-    }
-    else {
-        messageHolder.appendChild(message);
-    }
-}
 
 
 
