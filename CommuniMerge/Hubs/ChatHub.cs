@@ -47,7 +47,7 @@ namespace CommuniMerge.Hubs
 
             foreach (var member in members)
             {
-                Clients.User(member.Id).ReceiveGroupMessage(groupId, user.UserName, message, DateTime.Now.ToShortDateString());
+                Clients.User(member.Id).ReceiveGroupMessage(groupId, user.UserName, message, DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"));
             }
 
         }
@@ -69,8 +69,8 @@ namespace CommuniMerge.Hubs
             }
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
 
-            await Clients.User(receiver.Id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToShortDateString());
-            await Clients.User(id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToShortDateString());
+            await Clients.User(receiver.Id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"));
+            await Clients.User(id).ReceiveMessage(receiverUsername, user.UserName, message, DateTime.Now.ToString("MM/dd/yyyy hh:mm tt"));
         }
     }
 }

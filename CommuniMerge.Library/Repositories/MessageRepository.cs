@@ -43,9 +43,9 @@ namespace CommuniMerge.Library.Repositories
                 .OrderBy(x => x.TimeStamp).ToList();
         }
 
-        public async Task<ICollection<Message>> GetAllMessagesOfGroupAsync(int groupId)
+        public ICollection<Message> GetAllMessagesOfGroup(int groupId)
         {
-            return await dataContext.Messages.Include(x => x.SenderUser).Where(x => x.GroupId != null && x.GroupId == groupId).ToListAsync();
+            return dataContext.Messages.Include(x => x.SenderUser).Where(x => x.GroupId != null && x.GroupId == groupId).ToList();
         }
 
         public async Task<bool> SaveAsync()

@@ -48,7 +48,7 @@ namespace CommuniMerge.Library.Mappers
                 Content = message.Content,
                 Id = message.Id,
                 SenderUsername = message.SenderUser.UserName,
-                TimeStamp = message.TimeStamp.ToShortDateString(),
+                TimeStamp = message.TimeStamp,
             };
         }
     }

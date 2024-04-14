@@ -96,7 +96,7 @@ namespace CommuniMerge.Library.Services
             try
             {
 
-                var allMessages = await messageRepository.GetAllMessagesOfGroupAsync(groupId);
+                var allMessages = messageRepository.GetAllMessagesOfGroup(groupId);
                 var latestMessage = allMessages.OrderByDescending(x => x.TimeStamp).FirstOrDefault();
 
                 return latestMessage;
@@ -156,7 +156,7 @@ namespace CommuniMerge.Library.Services
         {
             try
             {
-                ICollection<Message> messages = await messageRepository.GetAllMessagesOfGroupAsync(groupId);
+                ICollection<Message> messages = messageRepository.GetAllMessagesOfGroup(groupId);
                 return messages;
             }
             catch (Exception ex)

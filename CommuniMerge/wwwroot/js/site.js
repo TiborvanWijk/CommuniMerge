@@ -327,6 +327,11 @@ async function getGroupMessages(groupId) {
 
         const data = await response.json();
 
+
+        data.forEach(d => {
+            d.timeStamp = d.timeStamp.substring(0, 16).toString().replace("T", " ");
+        });
+
         return data;
     } catch (error) {
         console.error('Error fetching messages:', error.message);
@@ -446,6 +451,10 @@ async function getPersonalMessages(username) {
         }
 
         const data = await response.json();
+
+        data.forEach(d => {
+            d.timeStamp = d.timeStamp.substring(0, 16).toString().replace("T", " ");
+        });
 
         return data;
     } catch (error) {

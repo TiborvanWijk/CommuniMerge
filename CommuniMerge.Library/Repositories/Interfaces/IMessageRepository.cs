@@ -14,7 +14,7 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> DeleteMessageByIdAsync(int id);
         Task<bool> UpdateMessageAsync(Message message);
         Task<ICollection<Message>> GetAllMessagesOfConversationAsync(string currentUser, string otherUser);
-        Task<ICollection<Message>> GetAllMessagesOfGroupAsync(int groupId);
+        ICollection<Message> GetAllMessagesOfGroup(int groupId);
         Task<bool> SaveAsync();
     }
 }

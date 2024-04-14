@@ -1,4 +1,5 @@
-﻿@using CommuniMerge.ViewModels;
+﻿@using CommuniMerge.Library.Data.Dtos
+@using CommuniMerge.ViewModels;
 @using Newtonsoft.Json
 @using System.Text
 @model IndexView;
@@ -34,54 +35,56 @@
         <div class="message-listingHolder">
             <ul class="message-list" id="user-list">
                 @{
-                    foreach (var friend in Model.Friends)
+
+                    var combinedList = Model.Friends.Select(friend => new { Item = (object)friend, Timestamp = friend.LatestMessage?.TimeStamp })
+                    .Concat(Model.Groups.Select(group => new { Item = (object)group, Timestamp = group.LatestMessage?.TimeStamp }));
+
+                    var sortedList = combinedList.OrderByDescending(item => item.Timestamp);
+
+                    foreach (var item in sortedList)
                     {
-
-                        <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openPersonalConversation(this, '@friend.Username')">
-
-                            <header class="message-profile-header">
-                                <figure class="message-profile user1">
-                                    <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
-                                </figure>
-                                <figure class="message-profile user2">
-                                    <img src="~/img/doggy.jpg" alt="" srcset="" draggable="false">
-                                </figure>
-                            </header>
-                            <div class="message-information">
-                                <h3>@Model.CurrentUserUsername & @friend.Username</h3>
-                                @{
-                                    if (friend.LatestMessage != null)
-                                    {
-                                        <p class="truncate">@friend.LatestMessage.Content</p>
+                        if (item.Item is FriendDisplayDto friend)
+                        {
+                            <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openPersonalConversation(this, '@friend.Username')">
+                                <header class="message-profile-header">
+                                    <figure class="message-profile user1">
+                                        <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                    </figure>
+                                    <figure class="message-profile user2">
+                                        <img src="~/img/doggy.jpg" alt="" srcset="" draggable="false">
+                                    </figure>
+                                </header>
+                                <div class="message-information">
+                                    <h3>@Model.CurrentUserUsername & @friend.Username</h3>
+                                    @{
+                                        if (friend.LatestMessage != null)
+                                        {
+                                            <p class="truncate">@friend.LatestMessage.Content</p>
+                                        }
                                     }
-                                }
-                            </div>
-                        </li>
-
-
-                    }
-                    foreach(var group in Model.Groups)
-                    {
-
-                        var groupJson = JsonConvert.SerializeObject(group);
-
-                        <li class="message-item" data-group-id="@group.Id" onclick="openGroupConversation(this, @groupJson)">
-
-                            <header class="group-profile-header">
-                                <figure class="group-profile">
-                                    <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
-                                </figure>
-                            </header>
-                            <div class="message-information">
-                                <h3>@group.Name</h3>
-                                @{
-                                    if (group.LatestMessage != null)
-                                    {
-                                        <p class="truncate">@group.LatestMessage.Content</p>
+                                </div>
+                            </li>
+                        }
+                        else if (item.Item is GroupDto group)
+                        {
+                            var groupJson = JsonConvert.SerializeObject(group);
+                            <li class="message-item" data-group-id="@group.Id" onclick="openGroupConversation(this, @groupJson)">
+                                <header class="group-profile-header">
+                                    <figure class="group-profile">
+                                        <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                    </figure>
+                                </header>
+                                <div class="message-information">
+                                    <h3>@group.Name</h3>
+                                    @{
+                                        if (group.LatestMessage != null)
+                                        {
+                                            <p class="truncate">@group.LatestMessage.Content</p>
+                                        }
                                     }
-                                }
-                            </div>
-                        </li>
+                                </div>
+                            </li>
+                        }
                     }
                 }
 
