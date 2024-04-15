@@ -486,24 +486,20 @@ function getCookie(cookieName) {
 
 
 
-document.querySelector("#open-friendAddMenu").addEventListener("click", () =>{
-    clearFriendsMenu();
-    openFriendAddMenu();
-});
-
 function openFriendAddMenu(){
+    clearMenu();
+    setMenuHeader("Add friends");
     let addFriendMenu = document.querySelector("#add-friend-menu");
     addFriendMenu.style.display = "flex";
-}
-function clearFriendsMenu(){
-    let friendsOverview = document.querySelector("#friendsOverView");
-    let addFriendMenu = document.querySelector("#add-friend-menu");
-    let friendRequestMenu = document.querySelector("#friendRequestOverView");
+};
 
-    friendRequestMenu.style.display = "none";
-    friendsOverview.style.display = "none";
-    addFriendMenu.style.display = "none";
 
+function clearMenu(){
+    let menus = document.querySelector("#menu-popup").querySelectorAll(".menu-body");
+
+    menus.forEach(menu =>{
+        menu.style.display = "none";
+    });
 }
 
 function openFriendsOverviewMenu(){
@@ -512,15 +508,28 @@ function openFriendsOverviewMenu(){
 }
 
 function openFriendsMenu(){
-    let menu = document.querySelector("#menu-background");
-    clearFriendsMenu();
+    clearMenu();
+    setMenuHeader("Friends");
     openFriendsOverviewMenu();
-    menu.style.display = "block";
+    showMenu();
 }
 
+function setMenuHeader(value){
+    document.querySelector("#menu-header-title").textContent = value;
+}
+function clearMenuHeader(){
+    document.querySelector("#menu-header-title").textContent = "";
+}
 
+function showMenu(){
+    let menu = document.querySelector("#menu-background");
+    menu.style.display = "block";
+
+}
 function hideMenu(){
     document.querySelector("#menu-background").style.display = "none";
+    clearMenu();
+    clearMenuHeader();
 }
 
 document.getElementById('menu-popup').addEventListener('click', function(event) {
@@ -529,8 +538,8 @@ document.getElementById('menu-popup').addEventListener('click', function(event) 
 
 
 function openFriendRequestMenu(){
-
-    clearFriendsMenu();
+    setMenuHeader("Friend requests");
+    clearMenu();
     let menu = document.querySelector("#friendRequestOverView");
 
     menu.style.display = "flex";
@@ -545,4 +554,30 @@ function apendChatLoadingScreen(){
         
         
     }
+}
+
+
+function openGroupCreationMenu(){
+    var groupMenu = document.querySelector("#groupCreate");
+    groupMenu.style.display = "flex";
+    setMenuHeader("Create group");
+
+    showMenu();
+}
+
+function openSettingsMenu(){
+    
+
+
+
+
+    showMenu();
+}
+
+function openProfileMenu(){
+
+
+
+
+    showMenu();
 }

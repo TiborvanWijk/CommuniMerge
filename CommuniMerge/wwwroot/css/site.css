@@ -135,10 +135,13 @@ body {
   flex-direction: column;
 }
 
-.nav-search {
+.searchbar-big-holder {
   position: relative;
   display: flex;
   align-items: center;
+}
+
+.nav-search-holder {
   padding: 0 1em 1em 1em;
   height: 4em;
 }
@@ -146,24 +149,26 @@ body {
 .search-btn {
   position: absolute;
   font-size: 1em;
-  left: 1.5em;
   cursor: pointer;
 }
 
-.nav-searchbar {
+.nav-search-btn {
+  left: 1.5em;
+}
+
+.searchbar-big {
   background: var(--white);
   width: 100%;
   border-radius: 10px;
-  height: 2.5em;
-  padding: 1em 1em 1em 2em;
   border: none;
   outline: none;
   font-size: 1em;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-.nav-searchbar:hover {
-  background: var(--light-blue);
+.nav-search {
+  height: 2.5em;
+  padding: 1em 1em 1em 2em;
 }
 
 .message-listingHolder {
@@ -329,7 +334,7 @@ body {
   color: var(--white);
 }
 
-.menu-body {
+.menu-body-add-friends {
   display: none;
   flex-direction: column;
   padding: 25% 1em 1em 1em;
@@ -376,9 +381,8 @@ body {
   align-items: center;
 }
 
-.add-btn, .friendRequest-btn {
+.cta-btn {
   padding: 1em 0.5em;
-  width: 45%;
   border-radius: 10px;
   cursor: pointer;
   outline: none;
@@ -386,10 +390,12 @@ body {
 }
 
 .add-btn {
+  width: 45%;
   background: var(--light-blue);
 }
 
 .friendRequest-btn {
+  width: 45%;
   background: var(--light-green);
 }
 
@@ -475,8 +481,76 @@ body {
   transition: 200ms;
 }
 
-.friend-option:hover {
+.friend-option:hover, .friend-option:focus {
   background: var(--light-gray);
+}
+
+.menu-body-groupCreate-menu {
+  display: none;
+  padding: 1em;
+  flex-direction: column;
+  align-items: center;
+  gap: 1em;
+  height: calc(100% - 8em);
+  width: 100%;
+}
+
+.create-group-search {
+  padding: 1em 1em 1em 2em;
+  height: 2.5em;
+}
+
+.create-group-search-btn {
+  left: 0.5em;
+}
+
+#create-group-searchbar-holder {
+  width: 80%;
+}
+
+.group-add-friends-list {
+  height: 70%;
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  gap: 1em;
+  overflow: auto;
+  padding: 0em 1em;
+}
+
+.group-add-list-item {
+  display: flex;
+  width: 100%;
+  background: var(--white);
+  padding: 0.5em;
+  border-radius: 10px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.check-group-add {
+  padding: 30px;
+  height: 30px;
+  width: 30px;
+}
+
+.check-group-add:checked {
+  background-color: var(--green);
+}
+
+.create-group-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.create-group-btn {
+  width: 80%;
+  background-color: var(--light-blue);
+  padding: 1.5em 2em;
 }
 
 .add-friend-input-holder {

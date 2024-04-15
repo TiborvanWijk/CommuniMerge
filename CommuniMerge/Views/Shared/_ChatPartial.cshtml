@@ -9,14 +9,14 @@
         <div></div>
         <ul class="options">
             <li class="option" onclick="openFriendsMenu()"><i class="fa-solid fa-user-group"></i></i></li>
-            <li class="option" onclick="openGroupCreationMenu('@Model.CurrentUserUsername')"><i class="fa-regular fa-message create"></i></li>
-            <li class="option"><i class="fa-solid fa-gears"></i></i></li>
+            <li class="option" onclick="openGroupCreationMenu()"><i class="fa-regular fa-message create"></i></li>
+            <li class="option" onclick="openSettingsMenu()"><i class="fa-solid fa-gears"></i></i></li>
         </ul>
 
 
         <div class="user-actions">
 
-            <figure class="profileIcon">
+            <figure class="profileIcon" onclick="openProfileMenu()">
                 <img src="~/img/profile.jpg" alt="" srcset="">
             </figure>
             <a href="Authorize/logout" class="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
@@ -27,9 +27,9 @@
         <div class="title">
             <h2>Chats</h2>
         </div>
-        <div class="nav-search">
-            <i class="fa-solid fa-magnifying-glass search-btn"></i>
-            <input class="nav-searchbar" type="text" name="chat-search" id="chat-search" placeholder="Zoeken">
+        <div class="searchbar-big-holder nav-search-holder">
+            <i class="fa-solid fa-magnifying-glass search-btn nav-search-btn"></i>
+            <input class="nav-search searchbar-big" type="text" name="chat-search" id="chat-search" placeholder="Zoeken" autocomplete="off">
         </div>
 
         <div class="message-listingHolder">
@@ -101,27 +101,27 @@
             <header class="menu-header">
                 <button class="close-btn" onclick="hideMenu()"><i class="fa-solid fa-xmark"></i></button>
                 
-                <h2 class="menu-header-title" id="menu-header-title">Friends</h2>
+                <h2 class="menu-header-title" id="menu-header-title"></h2>
             </header>
 
 
-            <div class="menu-body" id="add-friend-menu">
+            <div class="menu-body menu-body-add-friends" id="add-friend-menu">
                 
                 <button class="friends-back-btn" onclick="openFriendsMenu()"><i class="fa-solid fa-arrow-left"></i></button>
 
                 <h3 class="body-info-title">Add your friend by username</h3>
                 <div class="add-friend-input-holder" id="add-friend-input-holder">
-                    <input class="menu-form-field" type="text" placeholder="your friends username" id="friendRequestInput">
+                    <input class="menu-form-field" type="text" placeholder="your friends username" id="friendRequestInput" autocomplete="off">
                 </div>
 
                 <input type="submit" class="submit-btn menu-submit-btn" id="sendFriendRequestBtn" value="Send friend request">
             </div>
 
-            <div class="menu-body-friends-overview" id="friendsOverView">
+            <div class="menu-body menu-body-friends-overview" id="friendsOverView">
                 
                 <div class="friend-menu-buttons-holder" >
-                    <button class="friendRequest-btn" onclick="openFriendRequestMenu()">friend requests</button>
-                    <button class="add-btn" id="open-friendAddMenu">
+                    <button class="cta-btn friendRequest-btn" onclick="openFriendRequestMenu()">friend requests</button>
+                    <button class="cta-btn add-btn" id="open-friendAddMenu" onclick="openFriendAddMenu()">
                         Add friend
                     </button>
                 </div>
@@ -142,7 +142,7 @@
 
             </div>
 
-            <div class="menu-body-friendRequest-overview" id="friendRequestOverView">
+            <div class="menu-body menu-body-friendRequest-overview" id="friendRequestOverView">
 
                 <button class="friends-back-btn" onclick="openFriendsMenu()"><i class="fa-solid fa-arrow-left"></i></button>
 
@@ -163,6 +163,38 @@
                     }
                 </ul>
             </div>
+
+
+            <div class="menu-body menu-body-groupCreate-menu" id="groupCreate">
+                
+                <div class="searchbar-big-holder" id="create-group-searchbar-holder">
+                    <i class="fa-solid fa-magnifying-glass search-btn create-group-search-btn"></i>
+                    <input class="searchbar-big create-group-search" type="text" name="chat-search" id="group-create-friend-search" placeholder="Zoeken" autocomplete="off">
+                </div>
+
+                <ul class="group-add-friends-list">
+
+                    @{
+                        foreach (var friend in Model.Friends)
+                        {
+
+                            <li class="group-add-list-item">
+                                <p>@friend.Username</p>
+                                <input type="checkbox" class="check-group-add" value="@friend.Username"/>
+                            </li>
+                        }
+                    }
+
+                </ul>
+                
+
+                <footer class="create-group-footer">
+                    <button class="cta-btn create-group-btn">Create group</button>
+                </footer>
+            </div>
+
+
+
 
         </div>
 
