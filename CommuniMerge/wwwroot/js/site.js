@@ -4,8 +4,8 @@ let chathub = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 let friendhub = new signalR.HubConnectionBuilder().withUrl("/friendHub").build();
 
 chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message, sentAt) {
-
-    let newMessage = createMessageHtml(senderUsername, sentAt, message);
+    let sentShortTime = sentAt.substring(0, 15).toString().replace("T", " ");
+    let newMessage = createMessageHtml(senderUsername, sentShortTime, message);
 
     updateLatestMessageListingPersonal(receiverUsername, senderUsername, message);
 
@@ -55,7 +55,9 @@ function updateLatestMessageListingGroup(groupId, latestMessage) {
 
 chathub.on("ReceiveGroupMessage", function (groupId, senderUsername, message, sentAt) {
 
-    let newMessage = createMessageHtml(senderUsername, sentAt, message);
+    let sentShortTime = sentAt.substring(0, 16).toString().replace("T", " ");
+
+    let newMessage = createMessageHtml(senderUsername, sentShortTime, message);
 
     updateLatestMessageListingGroup(groupId, message);
 

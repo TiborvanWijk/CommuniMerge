@@ -53,7 +53,7 @@ namespace CommuniMerge.Library.Services
                     ReceiverId = receiver.Id,
                     Receiver = receiver,
                     Content = messageCreateDto.Content,
-                    TimeStamp = DateTime.UtcNow,
+                    TimeStamp = DateTime.Now,
                 };
 
                 if(await messageRepository.CreateMessageAsync(message))
@@ -133,7 +133,7 @@ namespace CommuniMerge.Library.Services
                     SenderId = senderId,
                     SenderUser = await userRepository.GetUserByIdAsync(senderId),
                     Content = messageCreateDto.Content,
-                    TimeStamp = DateTime.UtcNow,
+                    TimeStamp = DateTime.Now,
                     Group = group,
                     GroupId = group.Id
                 };
