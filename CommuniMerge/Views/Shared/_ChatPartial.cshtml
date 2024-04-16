@@ -167,33 +167,38 @@
 
             <div class="menu-body menu-body-groupCreate-menu" id="groupCreate">
                 
+
                 <div class="searchbar-big-holder" id="create-group-searchbar-holder">
                     <i class="fa-solid fa-magnifying-glass search-btn create-group-search-btn"></i>
                     <input class="searchbar-big create-group-search" type="text" name="chat-search" id="group-create-friend-search" placeholder="Zoeken" autocomplete="off">
                 </div>
 
-                <ul class="group-add-friends-list">
-
-                    @{
-                        foreach (var friend in Model.Friends)
-                        {
-
-                            <li class="group-add-list-item">
-                                <p>@friend.Username</p>
-                                <input type="checkbox" class="check-group-add" value="@friend.Username"/>
-                            </li>
-                        }
-                    }
+                <ul class="group-add-friends-list" id="group-add-friends-list">
 
                 </ul>
                 
 
                 <footer class="create-group-footer">
-                    <button class="cta-btn create-group-btn">Create group</button>
+                    <button class="cta-btn create-group-btn" onclick="openGroupSettingsMenu()">Group settings</button>
                 </footer>
             </div>
 
+            <div class="menu-body group-create-info-menu" id="groupInfoCreate">
+                <button class="friends-back-btn" onclick="showGroupCreationMenu()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
+                
+                <div class="profile-holder">
+                    <input type="file" id="group-image-input" accept="image/*,video/*" />
+                    <i class="fa-solid fa-users-viewfinder" id="open-file-group-create-btn"></i>
 
+                </div>
+
+                <input type="text" id="groupname" name="groupname" class="form-field form-field-dark" placeholder="Group name"/>
+
+
+                <footer class="create-group-footer">
+                    <button class="cta-btn create-group-btn">Create group</button>
+                </footer>
+            </div>
 
 
         </div>

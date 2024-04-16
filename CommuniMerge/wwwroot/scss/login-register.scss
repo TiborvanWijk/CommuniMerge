@@ -62,12 +62,15 @@
 }
 
 .form-field{
-    background-color: var(--light-dark);
     outline: none;
     border: none;
     border-radius: 10px;
     padding: 1em;
     width: 90%;
+}
+
+.form-field-light-dark{
+    background-color: var(--light-dark);
     color: white;
 }
 

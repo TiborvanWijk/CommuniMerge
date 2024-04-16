@@ -495,6 +495,7 @@ function openFriendAddMenu(){
 
 
 function clearMenu(){
+    setMenuHeader("");
     let menus = document.querySelector("#menu-popup").querySelectorAll(".menu-body");
 
     menus.forEach(menu =>{
@@ -557,26 +558,107 @@ function apendChatLoadingScreen(){
 }
 
 
-function openGroupCreationMenu(){
+async function openGroupCreationMenu(){
+    clearMenu();
     var groupMenu = document.querySelector("#groupCreate");
     groupMenu.style.display = "flex";
-    setMenuHeader("Create group");
 
+    clearFriendsForGroup();
+    let friends = await getFriends();
+
+    addFriendsToGroupCreateFriendList(friends);
+
+
+    setMenuHeader("Select friends for group");
     showMenu();
 }
 
-function openSettingsMenu(){
+async function getFriends(){
+    const url = `https://localhost:7129/api/User/friends`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: "include"
+
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch messages. Status: ${response.status}`);
+        }
+
+        const friends = await response.json();
+
+        return friends;
+    } catch (error) {
+        console.error('Error fetching messages:', error.message);
+        return null;
+    }
+}
+
+function addFriendsToGroupCreateFriendList(friends) {
+    let ul = document.querySelector("#group-add-friends-list");
+    friends.forEach(friend => {
+        let li = document.createElement("li");
+        li.classList.add("group-add-list-item");
+
+        li.innerHTML = `
+        <p>${friend.username}</p>
+        `
+        ul.prepend(li);
+    });
+
+}
+
+function clearFriendsForGroup() {
+    let list = document.querySelector("#group-add-friends-list");
+    list.innerHTML = "";
+}
+document.getElementById('open-file-group-create-btn').addEventListener('click', function() {
+    document.getElementById('group-image-input').click();
+  });
+function openGroupSettingsMenu(){
     
+    clearMenu();
+
+    let infoMenu = document.querySelector("#groupInfoCreate");
+    infoMenu.style.display = "flex";
 
 
 
-
+    setMenuHeader("Group settings");
     showMenu();
 }
 
 function openProfileMenu(){
 
 
+
+
+    showMenu();
+}
+
+function showGroupCreationMenu(){
+    clearMenu();
+    setMenuHeader("Select friends for group");
+    let groupCreate = document.querySelector("#groupCreate");
+    groupCreate.style.display = "flex";
+}
+
+function hideGroupCreationMenu(){
+    let groupCreate = document.querySelector("#groupCreate");
+    groupCreate.style.display = "none";
+}
+
+function openGroupCreateInfoForm(){
+    hideGroupCreationMenu();
+
+
+
+
+
+}
+function openSettingsMenu(){
+    clearMenu();
 
 
     showMenu();
