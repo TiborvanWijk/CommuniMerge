@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,5 +11,6 @@ namespace CommuniMerge.Library.Data.Dtos
     {
         public int GroupId { get; set; }
         public string Content { get; set; }
+        public IFormFile? File { get; set; }
     }
 }

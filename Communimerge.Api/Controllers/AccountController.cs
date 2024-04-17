@@ -2,6 +2,7 @@
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.ResultObjects;
 using CommuniMerge.Library.Services;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;

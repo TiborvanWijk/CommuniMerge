@@ -12,6 +12,7 @@ using CommuniMerge.Library.Services;
 using System.Net;
 using CommuniMerge.ApiServices.Interfaces;
 using System.Collections.Generic;
+using CommuniMerge.Library.Mappers;
 
 namespace CommuniMerge.Controllers
 {
@@ -36,7 +37,7 @@ namespace CommuniMerge.Controllers
             var groupsResult = await apiService.SendHttpRequest<object>(HttpContext, "/api/Group/getGroups?withLatestMessage=true", HttpMethod.Get, null);
 
             List<FriendDisplayDto> friends = JsonConvert.DeserializeObject<List<FriendDisplayDto>>(await friendsResult.Content.ReadAsStringAsync());
-            List < FriendRequestDto > friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
+            List<FriendRequestDto > friendRequest = JsonConvert.DeserializeObject<List<FriendRequestDto>>(await friendRequestsResult.Content.ReadAsStringAsync());
             List<GroupDto> groups = JsonConvert.DeserializeObject<List<GroupDto>>(await groupsResult.Content.ReadAsStringAsync());
 
             var id = User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -45,9 +46,9 @@ namespace CommuniMerge.Controllers
             var indexView = new IndexView()
             {
                 Friends = friends,
-                CurrentUserUsername = currentUser.UserName,
                 FriendRequests = friendRequest,
-                Groups = groups
+                Groups = groups,
+                CurrentUser = Map.ToUserDto(currentUser),
             };
 
             return View(indexView);

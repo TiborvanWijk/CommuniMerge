@@ -2,6 +2,7 @@
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Loggers.Interfaces;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.Repositories;
 using CommuniMerge.Library.Repositories.Interfaces;
 using CommuniMerge.Library.ResultObjects;
 using CommuniMerge.Library.Services.Interfaces;
@@ -13,12 +14,14 @@ namespace CommuniMerge.Library.Services
         private readonly IGroupRepository groupRepository;
         private readonly ICustomLogger logger;
         private readonly IUserRepository userRepository;
+        private readonly IFileUploadRepository fileUploadRepository;
 
-        public GroupService(IGroupRepository groupRepository, ICustomLogger logger, IUserRepository userRepository)
+        public GroupService(IGroupRepository groupRepository, ICustomLogger logger, IUserRepository userRepository, IFileUploadRepository fileUploadRepository)
         {
             this.groupRepository = groupRepository;
             this.logger = logger;
             this.userRepository = userRepository;
+            this.fileUploadRepository = fileUploadRepository;
         }
         public async Task<CreateGroupResult> CreateGroup(string currentlyLoggedInUserId, GroupCreateDto groupCreateDto)
         {
@@ -30,10 +33,9 @@ namespace CommuniMerge.Library.Services
                     return new CreateGroupResult { Error = CreateGroupError.InvalidGroupName };
                 }
 
-                ICollection<User> users = new List<User>()
-                {
-                    await userRepository.GetUserByIdAsync(currentlyLoggedInUserId)
-                };
+                ICollection<User> users = new List<User>();
+
+                users.Add(await userRepository.GetUserByIdAsync(currentlyLoggedInUserId));
 
                 foreach (var username in groupCreateDto.Usernames)
                 {
@@ -57,8 +59,36 @@ namespace CommuniMerge.Library.Services
                 var group = new Group
                 {
                     Name = groupCreateDto.GroupName,
-                    OwnerId = currentlyLoggedInUserId
+                    OwnerId = currentlyLoggedInUserId,
+                    Description = groupCreateDto.Description,
                 };
+
+
+                bool fileIsEmpty = groupCreateDto.Image == null || groupCreateDto.Image.Length == 0;
+                if (!fileIsEmpty)
+                {
+
+                    if (!await fileUploadRepository.IsValidFileType(groupCreateDto.Image))
+                    {
+                        return new CreateGroupResult { Error = CreateGroupError.InvalidFileType };
+                    }
+
+                    FileType fileType = await fileUploadRepository.GetFileType(groupCreateDto.Image);
+
+                    if(fileType != FileType.Image)
+                    {
+                        return new CreateGroupResult { Error = CreateGroupError.InvalidFileType };
+                    }
+
+
+                    var fileName = await fileUploadRepository.UploadFile(groupCreateDto.Image, fileType);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        return new CreateGroupResult { Error = CreateGroupError.FileUpLoadFailed };
+                    }
+                    group.ProfilePath = Path.Combine("/img/", fileName);
+                }
+
                 var groupIsCreated = await groupRepository.CreateGroupAsync(group);
 
                 if (!groupIsCreated)

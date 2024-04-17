@@ -15,6 +15,8 @@ namespace CommuniMerge.Library.Enums
         FailedCreatingGroup,
         FailedCreatingUserLink,
         DuplicateUserAddition,
-        UsersNotFriends
+        UsersNotFriends,
+        InvalidFileType,
+        FileUpLoadFailed
     }
 }

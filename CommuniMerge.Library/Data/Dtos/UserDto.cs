@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace CommuniMerge.Library.Data.Dtos
 {
-    public class FriendDto
+    public class UserDto
     {
         public string Id { get; set; }
         public string Username { get; set; }
+        public string ProfilePath { get; set; }
     }
 }

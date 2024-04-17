@@ -26,6 +26,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ICustomLogger, LogService>();
+builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
 
 builder.Services.AddCors();
 

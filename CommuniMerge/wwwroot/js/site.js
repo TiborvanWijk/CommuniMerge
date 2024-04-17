@@ -262,12 +262,23 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     let isForGroup = messageSender.dataset.forGroup;
 
     if (isForGroup === "true") {
-        chathub.invoke("SendGroupMessage", parseInt(receiver), message).catch(function (err) {
+        let groupMessageCreateDto = {
+            groupId: receiver,
+            content: message,
+            file: null
+        }
+
+        chathub.invoke("SendGroupMessage", groupMessageCreateDto).catch(function (err) {
             return console.error(err.toString());
         });
     }
     else if (isForGroup === "false") {
-        chathub.invoke("SendMessage", receiver, message).catch(function (err) {
+        let personalMessageCreateDto = {
+            receiverUsername: receiver,
+            content: message,
+            file: null
+        }
+        chathub.invoke("SendMessage", personalMessageCreateDto).catch(function (err) {
             return console.error(err.toString());
         });
     }
@@ -613,9 +624,17 @@ function clearFriendsForGroup() {
     let list = document.querySelector("#group-add-friends-list");
     list.innerHTML = "";
 }
-document.getElementById('open-file-group-create-btn').addEventListener('click', function() {
-    document.getElementById('group-image-input').click();
+document.querySelector("#open-file-group-create-btn").addEventListener("click", function() {
+    document.querySelector("#group-image-input").click();
   });
+document.querySelector("#add-file-btn").addEventListener("click", function(){
+    document.querySelector("#message-file-selector").click();
+});
+
+
+
+
+
 function openGroupSettingsMenu(){
     
     clearMenu();

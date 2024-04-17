@@ -110,7 +110,7 @@ namespace Communimerge.Api.Controllers
 
             if(!withLatestMessage)
             {
-                var friendsDto = friends.Select(Map.ToFriendDto);
+                var friendsDto = friends.Select(Map.ToUserDto);
                 return Ok(friendsDto);
             }
 

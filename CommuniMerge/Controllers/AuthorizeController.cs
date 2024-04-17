@@ -4,13 +4,13 @@ using System.Text.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.Text;
-using CommuniMerge.Library.Data.Dtos;
 using System.Net;
 using Azure;
 using CommuniMerge.Library.Mappers;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using CommuniMerge.ViewModels;
 using CommuniMerge.ApiServices.Interfaces;
+using CommuniMerge.Library.ResultObjects;
 
 namespace CommuniMerge.Controllers
 {

@@ -87,7 +87,7 @@ namespace Communimerge.Api.Controllers
 
 
         [HttpPost("createPersonalMessage")]
-        public async Task<IActionResult> CreatePersonalMessage([FromBody] PersonalMessageCreateDto messageCreateDto)
+        public async Task<IActionResult> CreatePersonalMessage([FromForm] PersonalMessageCreateDto messageCreateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -108,7 +108,7 @@ namespace Communimerge.Api.Controllers
         }
 
         [HttpPost("CreateGroupMessage")]
-        public async Task<IActionResult> CreateGroupMessage([FromBody] GroupMessageCreateDto messageCreateDto)
+        public async Task<IActionResult> CreateGroupMessage([FromForm] GroupMessageCreateDto messageCreateDto)
         {
             if (!ModelState.IsValid)
             {

@@ -1,4 +1,5 @@
-﻿using CommuniMerge.Library.Models;
+﻿using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ namespace CommuniMerge.Library.Data.Dtos
         public int Id { get; set; }
         public string Content { get; set; }
         public DateTime TimeStamp { get; set; }
+        public string? FilePath { get; set; }
+        public FileType? FileType { get; set; }
         public string SenderUsername { get; set; }
     }
 }

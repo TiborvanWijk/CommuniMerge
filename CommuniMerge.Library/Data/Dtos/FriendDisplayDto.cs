@@ -8,7 +8,9 @@ namespace CommuniMerge.Library.Data.Dtos
 {
     public class FriendDisplayDto
     {
+        public string Id { get; set; }
         public string Username { get; set; }
+        public string ProfilePath { get; set; }
         public MessageDisplayDto LatestMessage { get; set; }
     }
 }

@@ -10,12 +10,13 @@ namespace CommuniMerge.Library.Mappers
 {
     public abstract class Map
     {
-        public static FriendDto ToFriendDto(User user)
+        public static UserDto ToUserDto(User user)
         {
-            return new FriendDto
+            return new UserDto
             {
                 Id = user.Id,
-                Username = user.UserName
+                Username = user.UserName,
+                ProfilePath = user.ProfilePath,
             };
         }
 
@@ -33,6 +34,8 @@ namespace CommuniMerge.Library.Mappers
             {
                 Id = group.Id,
                 Name = group.Name,
+                Description = group.Description,
+                ProfilePath = group.ProfilePath
             };
         }
 
@@ -49,6 +52,8 @@ namespace CommuniMerge.Library.Mappers
                 Id = message.Id,
                 SenderUsername = message.SenderUser.UserName,
                 TimeStamp = message.TimeStamp,
+                FilePath = message.FilePath,
+                FileType = message.FileType,
             };
         }
     }

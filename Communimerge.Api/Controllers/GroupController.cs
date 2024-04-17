@@ -74,10 +74,12 @@ namespace Communimerge.Api.Controllers
                 .OrderByDescending(x => x.LatestGroupMessage?.TimeStamp ?? DateTime.MinValue)
                 .ToList();
 
-            List<GroupDisplayDto> groupsWithMessageDto = orderedGroups.Select(x => new GroupDisplayDto
+            List<GroupDto> groupsWithMessageDto = orderedGroups.Select(x => new GroupDto
             {
                 Id = x.Group.Id,
                 Name = x.Group.Name,
+                Description = x.Group.Description,
+                ProfilePath = x.Group.ProfilePath,
                 LatestMessage = x.LatestGroupMessage == null ? null : Map.ToMessageDisplayDto(x.LatestGroupMessage)
             }).ToList();
 
@@ -108,7 +110,7 @@ namespace Communimerge.Api.Controllers
 
             ICollection<User> users = await groupService.GetAllUsersOfGroupById(groupId);
 
-            ICollection<FriendDto> friendDtos = users.Select(Map.ToFriendDto).ToList();
+            ICollection<UserDto> friendDtos = users.Select(Map.ToUserDto).ToList();
             return Ok(friendDtos);
         }
     }

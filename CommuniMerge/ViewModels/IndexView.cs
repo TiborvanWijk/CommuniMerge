@@ -7,7 +7,7 @@ namespace CommuniMerge.ViewModels
     {
         public List<GroupDto> Groups { get; set; }
         public List<FriendDisplayDto> Friends { get; set; } = new List<FriendDisplayDto>();
-        public string CurrentUserUsername { get; set; }
+        public UserDto CurrentUser { get; set; }
         public ICollection<FriendRequestDto> FriendRequests { get; set; }
     }
 }

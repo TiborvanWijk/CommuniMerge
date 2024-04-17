@@ -43,9 +43,9 @@
     </section>
 
     <footer class="message-sender-wrapper">
-        <button class="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
-        <input data-sender="@Model.CurrentUserUsername" data-forGroup="" data-receiver="" id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
-        @* <input type="text" placeholder="Send message to @ViewData[""]"> *@
+        <input type="file" class="hidden" id="message-file-selector" accept="" />
+        <button class="add-file-btn" id="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
+        <input data-sender="@Model.CurrentUser.Username" data-forGroup="" data-receiver="" id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
     </footer>
 </main>
 <script src="~/js/signalr/dist/browser/signalr.js"></script>

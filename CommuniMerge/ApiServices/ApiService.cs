@@ -25,19 +25,25 @@ namespace CommuniMerge.ApiServices
             apiUrl = configuration["ApiSettings:url"];
         }
 
-        public async Task<HttpResponseMessage> SendHttpRequest<T>(HttpContext context, string endpoint, HttpMethod httpMethod, T? content)
+        public async Task<HttpResponseMessage> SendHttpRequest<T>(HttpContext context, string endpoint, HttpMethod httpMethod, T? content, bool sendAsFormData = false)
         {
             var cookie = await cookieRepository.GetCookieByNameAsync(context, "BearerToken");
-
             await cookieRepository.AddBearerTokenAsCookieToContainer(cookieContainer, cookie);
             string url = $"{apiUrl}{endpoint}";
 
-            StringContent jsonContent = null;
+            HttpContent httpContent = null;
             if (content != null)
             {
-                jsonContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+                if (sendAsFormData)
+                {
+                    var formData = new FormUrlEncodedContent(JsonConvert.DeserializeObject<Dictionary<string, string>>(JsonConvert.SerializeObject(content)));
+                    httpContent = formData;
+                }
+                else
+                {
+                    httpContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
+                }
             }
-
 
             HttpResponseMessage result = null;
             switch (httpMethod.Method)
@@ -46,13 +52,13 @@ namespace CommuniMerge.ApiServices
                     result = await client.GetAsync(url);
                     break;
                 case "POST":
-                    result = await client.PostAsync(url, jsonContent);
+                    result = await client.PostAsync(url, httpContent);
                     break;
                 case "PUT":
-                    result = await client.PutAsync(url, jsonContent);
+                    result = await client.PutAsync(url, httpContent);
                     break;
                 case "PATCH":
-                    result = await client.PatchAsync(url, jsonContent);
+                    result = await client.PatchAsync(url, httpContent);
                     break;
                 case "DELETE":
                     result = await client.DeleteAsync(url);

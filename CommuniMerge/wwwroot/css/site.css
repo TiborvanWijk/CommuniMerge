@@ -19,6 +19,10 @@ body {
   border-radius: 3px;
 }
 
+.hidden {
+  display: none;
+}
+
 :root {
   --dark: #222831;
   --light-dark: #31363F;

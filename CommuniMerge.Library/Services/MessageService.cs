@@ -5,6 +5,7 @@ using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
 using CommuniMerge.Library.ResultObjects;
 using CommuniMerge.Library.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,15 @@ namespace CommuniMerge.Library.Services
         private readonly ICustomLogger logger;
         private readonly IUserRepository userRepository;
         private readonly IGroupRepository groupRepository;
+        private readonly IFileUploadRepository fileUploadRepository;
 
-        public MessageService(IMessageRepository messageRepository, ICustomLogger logger, IUserRepository userRepository, IGroupRepository groupRepository)
+        public MessageService(IMessageRepository messageRepository, ICustomLogger logger, IUserRepository userRepository, IGroupRepository groupRepository, IFileUploadRepository fileUploadRepository)
         {
             this.messageRepository = messageRepository;
             this.logger = logger;
             this.userRepository = userRepository;
             this.groupRepository = groupRepository;
+            this.fileUploadRepository = fileUploadRepository;
         }
 
         public async Task<MessageCreateResult> CreatePersonalMessage(string senderId, PersonalMessageCreateDto messageCreateDto)
@@ -36,12 +39,12 @@ namespace CommuniMerge.Library.Services
             {
 
                 var receiver = await userRepository.GetUserByUsernameAsync(messageCreateDto.ReceiverUsername);
-                if(receiver == null)
+                if (receiver == null)
                 {
                     return new MessageCreateResult { Error = MessageCreateError.UserNotFound };
                 }
 
-                if(string.IsNullOrEmpty(messageCreateDto.Content))
+                if (string.IsNullOrEmpty(messageCreateDto.Content))
                 {
                     return new MessageCreateResult { Error = MessageCreateError.MessageIsNullOrEmpty };
                 }
@@ -56,7 +59,30 @@ namespace CommuniMerge.Library.Services
                     TimeStamp = DateTime.Now,
                 };
 
-                if(await messageRepository.CreateMessageAsync(message))
+                bool fileIsEmpty = messageCreateDto.File == null || messageCreateDto.File.Length == 0;
+
+                if (!fileIsEmpty)
+                {
+
+                    if (!await fileUploadRepository.IsValidFileType(messageCreateDto.File))
+                    {
+                        return new MessageCreateResult { Error = MessageCreateError.InvalidFileType };
+                    }
+
+                    FileType fileType = await fileUploadRepository.GetFileType(messageCreateDto.File);
+
+                    var fileName = await fileUploadRepository.UploadFile(messageCreateDto.File, fileType);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        return new MessageCreateResult { Error = MessageCreateError.FileUploadFailed };
+                    }
+                    message.FileType = fileType;
+                    message.FilePath = fileType == FileType.Image 
+                        ? Path.Combine("/img/", fileName)
+                        : Path.Combine("/vid/", fileName);
+                }
+
+                if (await messageRepository.CreateMessageAsync(message))
                 {
                     return new MessageCreateResult { Error = MessageCreateError.CreateMessageFailed };
                 }
@@ -118,7 +144,7 @@ namespace CommuniMerge.Library.Services
                 {
                     return new MessageCreateResult { Error = MessageCreateError.GroupNotFound };
                 }
-                if(!await groupRepository.IsInGroup(senderId, group.Id))
+                if (!await groupRepository.IsInGroup(senderId, group.Id))
                 {
                     return new MessageCreateResult { Error = MessageCreateError.UnAuthorized };
                 }
@@ -137,6 +163,31 @@ namespace CommuniMerge.Library.Services
                     Group = group,
                     GroupId = group.Id
                 };
+
+
+                bool fileIsEmpty = messageCreateDto.File == null || messageCreateDto.File.Length == 0;
+
+                if (!fileIsEmpty)
+                {
+
+                    if (!await fileUploadRepository.IsValidFileType(messageCreateDto.File))
+                    {
+                        return new MessageCreateResult { Error = MessageCreateError.InvalidFileType };
+                    }
+
+                    FileType fileType = await fileUploadRepository.GetFileType(messageCreateDto.File);
+
+                    var fileName = await fileUploadRepository.UploadFile(messageCreateDto.File, fileType);
+                    if (string.IsNullOrEmpty(fileName))
+                    {
+                        return new MessageCreateResult { Error = MessageCreateError.FileUploadFailed };
+                    }
+                    message.FileType = fileType;
+                    message.FilePath = fileType == FileType.Image
+                        ? Path.Combine("/img/", fileName)
+                        : Path.Combine("/vid/", fileName);
+                }
+
 
                 if (await messageRepository.CreateMessageAsync(message))
                 {

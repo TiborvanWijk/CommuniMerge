@@ -90,3 +90,4 @@ bin/
 *.dll.config
 # Object files (Intermediate build artifacts)
 obj/
+*.jpg

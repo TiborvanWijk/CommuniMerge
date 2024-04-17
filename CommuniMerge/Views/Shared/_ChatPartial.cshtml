@@ -45,17 +45,17 @@
                     {
                         if (item.Item is FriendDisplayDto friend)
                         {
-                            <li class="message-item" data-chat="@friend.Username/@Model.CurrentUserUsername" onclick="openPersonalConversation(this, '@friend.Username')">
+                            <li class="message-item" data-chat="@friend.Username/@Model.CurrentUser.Username" onclick="openPersonalConversation(this, '@friend.Username')">
                                 <header class="message-profile-header">
                                     <figure class="message-profile user1">
-                                        <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                        <img src="@Model.CurrentUser.ProfilePath" alt="" srcset="" draggable="false">
                                     </figure>
                                     <figure class="message-profile user2">
-                                        <img src="~/img/doggy.jpg" alt="" srcset="" draggable="false">
+                                        <img src="@Model.CurrentUser.ProfilePath" alt="" srcset="" draggable="false">
                                     </figure>
                                 </header>
                                 <div class="message-information">
-                                    <h3>@Model.CurrentUserUsername & @friend.Username</h3>
+                                    <h3>@Model.CurrentUser.Username & @friend.Username</h3>
                                     @{
                                         if (friend.LatestMessage != null)
                                         {
@@ -71,7 +71,7 @@
                             <li class="message-item" data-group-id="@group.Id" onclick="openGroupConversation(this, @groupJson)">
                                 <header class="group-profile-header">
                                     <figure class="group-profile">
-                                        <img src="~/img/profile.jpg" alt="" srcset="" draggable="false">
+                                        <img src="@group.ProfilePath" alt="" srcset="" draggable="false">
                                     </figure>
                                 </header>
                                 <div class="message-information">

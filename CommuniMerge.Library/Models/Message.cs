@@ -1,4 +1,6 @@
-﻿namespace CommuniMerge.Library.Models
+﻿using CommuniMerge.Library.Enums;
+
+namespace CommuniMerge.Library.Models
 {
     public class Message
     {
@@ -10,6 +12,8 @@
         public string? ReceiverId { get; set; }
         public User? Receiver { get; set; }
         public int? GroupId { get; set; }
+        public string? FilePath { get; set; }
+        public FileType? FileType { get; set; }
         public Group? Group { get; set; }
     }
 }

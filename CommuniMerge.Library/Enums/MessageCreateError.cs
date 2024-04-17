@@ -14,6 +14,8 @@ namespace CommuniMerge.Library.Enums
         MessageIsNullOrEmpty,
         UnknownError,
         GroupNotFound,
-        UnAuthorized
+        UnAuthorized,
+        InvalidFileType,
+        FileUploadFailed
     }
 }
