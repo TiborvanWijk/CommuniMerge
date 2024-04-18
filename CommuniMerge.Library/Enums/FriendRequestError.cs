@@ -12,6 +12,7 @@ namespace CommuniMerge.Library.Enums
         RequestExists,
         AlreadyFriends,
         CreateRequestFailed,
-        UnknownError
+        UnknownError,
+        ToSelf
     }
 }

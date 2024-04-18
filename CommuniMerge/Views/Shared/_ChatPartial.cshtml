@@ -152,11 +152,11 @@
                         foreach (var friendRequest in Model.FriendRequests)
                         {
 
-                            <li class="friendRequest-list-item" data-user="@friendRequest.SenderUsername">
-                                <p>@friendRequest.SenderUsername</p>
+                            <li class="friendRequest-list-item" data-user="@friendRequest.Sender.Username">
+                                <p>@friendRequest.Sender.Username</p>
                                 <div class="friend-request-option-holder">
-                                    <button class="friend-request-option accept" onclick="acceptFriendRequest('@friendRequest.SenderUsername')"><i class="fa-solid fa-check"></i></button>
-                                    <button class="friend-request-option decline" onclick="declineFriendRequest('@friendRequest.SenderUsername')"><i class="fa-solid fa-xmark"></i></button>
+                                    <button class="friend-request-option accept" onclick="acceptFriendRequest('@friendRequest.Sender.Username')"><i class="fa-solid fa-check"></i></button>
+                                    <button class="friend-request-option decline" onclick="declineFriendRequest('@friendRequest.Sender.Username')"><i class="fa-solid fa-xmark"></i></button>
                                 </div>
                             </li>
                         }

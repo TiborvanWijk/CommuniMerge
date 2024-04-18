@@ -1,10 +1,13 @@
-﻿using CommuniMerge.Library.Data.Dtos;
+﻿using Communimerge.Api.Hubs;
+using Communimerge.Api.Hubs.ClientInterfaces;
+using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Communimerge.Api.Controllers
@@ -16,11 +19,13 @@ namespace Communimerge.Api.Controllers
     {
         private readonly IAccountService accountService;
         private readonly IMessageService messageService;
+        private readonly IHubContext<FriendHub, IFriendClient> friendHub;
 
-        public UserController(IAccountService accountService, IMessageService messageService)
+        public UserController(IAccountService accountService, IMessageService messageService, IHubContext<FriendHub, IFriendClient> friendHub)
         {
             this.accountService = accountService;
             this.messageService = messageService;
+            this.friendHub = friendHub;
         }
 
         [HttpPost("sendFriendRequest/{receiverUsername}")]
@@ -31,19 +36,26 @@ namespace Communimerge.Api.Controllers
                 return BadRequest(ModelState);
             }
             var receiver = await accountService.GetUserByUsernameAsync(receiverUsername);
-            if(receiver == null)
+            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (receiver == null)
             {
+                await friendHub.Clients.User(loggedInUserId).FailSendingFriendRequest("User does not exist");
                 return NotFound();
             }
-            var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var result = await accountService.SendFriendRequest(loggedInUserId, receiver.Id);
 
             if(result.Error != FriendRequestError.None)
             {
+                await friendHub.Clients.User(loggedInUserId).FailSendingFriendRequest("Something went wrong");
                 return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
             }
 
+            FriendRequestDto friendRequestDto = Map.ToFriendRequestDto(result.FriendRequest);
+
+            await friendHub.Clients.User(receiver.Id).ReceiveFriendRequest(friendRequestDto);
+            await friendHub.Clients.User(loggedInUserId).SuccesSendingFriendRequest("Succesfully sent friendrequest");
 
             return Created();
         }
@@ -70,6 +82,13 @@ namespace Communimerge.Api.Controllers
                 return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
             }
 
+            var currentUserDto = Map.ToUserDto(await accountService.GetUserByIdAsync(currentUserId));
+            var requestingUserDto = Map.ToUserDto(requestingUser);
+
+            await friendHub.Clients.User(currentUserId).UpdateFriendListing(currentUserDto, requestingUserDto);
+            await friendHub.Clients.User(requestingUser.Id).UpdateFriendListing(currentUserDto, requestingUserDto);
+
+
             return Created();
         }
 
@@ -95,6 +114,9 @@ namespace Communimerge.Api.Controllers
             {
                 return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
             }
+
+            await friendHub.Clients.User(currentUserId).DeleteFriendRequestListing(username);
+
 
             return Created();
         }

@@ -87,7 +87,7 @@ namespace CommuniMerge.Library.Services
                     return new MessageCreateResult { Error = MessageCreateError.CreateMessageFailed };
                 }
 
-                return new MessageCreateResult { Error = MessageCreateError.None };
+                return new MessageCreateResult { Message = message, Error = MessageCreateError.None };
             }
             catch (Exception ex)
             {
@@ -194,7 +194,7 @@ namespace CommuniMerge.Library.Services
                     return new MessageCreateResult { Error = MessageCreateError.CreateMessageFailed };
                 }
 
-                return new MessageCreateResult { Error = MessageCreateError.None };
+                return new MessageCreateResult { Message = message, Error = MessageCreateError.None };
             }
             catch (Exception ex)
             {

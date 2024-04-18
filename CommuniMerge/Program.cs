@@ -1,4 +1,3 @@
-using CommuniMerge.Hubs;
 using CommuniMerge.Library.Data;
 using CommuniMerge.Library.Middleware;
 using CommuniMerge.Library.Models;
@@ -31,7 +30,9 @@ builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(e => {
+    e.MaximumReceiveMessageSize = 102400000;
+});
 
 
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
@@ -73,8 +74,6 @@ using(var scope = app.Services.CreateScope())
 
 }
 
-app.MapHub<FriendHub>("/friendHub");
-app.MapHub<ChatHub>("/chatHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

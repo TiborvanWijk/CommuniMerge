@@ -14,6 +14,8 @@ using CommuniMerge.ApiServices.Interfaces;
 using CommuniMerge.ApiServices;
 using CommuniMerge.CookieRepositories.Interfaces;
 using CommuniMerge.CookieRepositories;
+using Microsoft.AspNetCore.SignalR;
+using Communimerge.Api.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,14 @@ builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<ICustomLogger, LogService>();
 builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
+
+
+
+builder.Services.AddSignalR(e => {
+    e.MaximumReceiveMessageSize = 102400000;
+});
+
+
 
 builder.Services.AddCors();
 
@@ -65,6 +75,8 @@ app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowCredential
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
+app.MapHub<FriendHub>("/friendHub");
+app.MapHub<ChatHub>("/chatHub");
 
 app.MapControllers();
 

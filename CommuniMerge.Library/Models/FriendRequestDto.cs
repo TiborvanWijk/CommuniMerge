@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommuniMerge.Library.Data.Dtos;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace CommuniMerge.Library.Models
 {
     public class FriendRequestDto
     {
-        public string SenderUsername { get; set; }
+        public UserDto Sender { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CommuniMerge.Library.Enums;
+using CommuniMerge.Library.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace CommuniMerge.Library.ResultObjects
 {
     public class MessageCreateResult
     {
+        public Message? Message { get; set; }
         public MessageCreateError Error { get; set; }
     }
 }

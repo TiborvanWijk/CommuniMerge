@@ -1,4 +1,6 @@
-﻿using CommuniMerge.Library.Data.Dtos;
+﻿using Communimerge.Api.Hubs;
+using Communimerge.Api.Hubs.ClientInterfaces;
+using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
@@ -7,6 +9,7 @@ using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Communimerge.Api.Controllers
@@ -20,15 +23,17 @@ namespace Communimerge.Api.Controllers
         private readonly IMessageService messageService;
         private readonly IAccountService accountService;
         private readonly IGroupService groupService;
+        private readonly IHubContext<ChatHub, IChatClient> chatHub;
 
-        public MessageController(IMessageService messageService, IAccountService accountService, IGroupService groupService)
+        public MessageController(IMessageService messageService, IAccountService accountService, IGroupService groupService, IHubContext<ChatHub, IChatClient> chatHub)
         {
             this.messageService = messageService;
             this.accountService = accountService;
             this.groupService = groupService;
+            this.chatHub = chatHub;
         }
 
-        
+
         [HttpGet("get/{username}")]
         public async Task<IActionResult> GetPersonalMessages([FromRoute] string username) 
         {
@@ -103,6 +108,12 @@ namespace Communimerge.Api.Controllers
                 return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
             }
 
+            var receiver = await accountService.GetUserByUsernameAsync(messageCreateDto.ReceiverUsername);
+
+            MessageDisplayDto messageDisplayDto = Map.ToMessageDisplayDto(result.Message);
+
+            await chatHub.Clients.User(loggedInUserId).ReceiveMessage(receiver.UserName, messageDisplayDto);
+            await chatHub.Clients.User(receiver.Id).ReceiveMessage(receiver.UserName, messageDisplayDto);
 
             return Created();
         }
@@ -122,6 +133,14 @@ namespace Communimerge.Api.Controllers
                 return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
             }
 
+            var receivers = await groupService.GetAllUsersOfGroupById(messageCreateDto.GroupId);
+
+
+            MessageDisplayDto messageDisplayDto = Map.ToMessageDisplayDto(result.Message);
+            foreach (var user in receivers)
+            {
+                await chatHub.Clients.User(user.Id).ReceiveGroupMessage(messageCreateDto.GroupId, messageDisplayDto);
+            }
 
 
             return Created();

@@ -24,7 +24,7 @@ namespace CommuniMerge.Library.Mappers
         {
             return new FriendRequestDto
             {
-                SenderUsername = friendRequest.Sender.UserName
+                Sender = ToUserDto(friendRequest.Sender)
             };
         }
 

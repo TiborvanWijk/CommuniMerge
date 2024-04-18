@@ -1,15 +1,15 @@
 ﻿"use strict";
 
-let chathub = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-let friendhub = new signalR.HubConnectionBuilder().withUrl("/friendHub").build();
+let chathub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/chatHub").build();
+let friendhub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/friendHub").build();
 
-chathub.on("ReceiveMessage", function (receiverUsername, senderUsername, message, sentAt) {
-    let sentShortTime = sentAt.substring(0, 15).toString().replace("T", " ");
-    let newMessage = createMessageHtml(senderUsername, sentShortTime, message);
+chathub.on("ReceiveMessage", function (receiverUsername, messageDto) {
+    let sentShortTime = messageDto.timeStamp.substring(0, 15).toString().replace("T", " ");
+    let newMessage = createMessageHtml(messageDto.senderUsername, sentShortTime, messageDto.content);
 
-    updateLatestMessageListingPersonal(receiverUsername, senderUsername, message);
+    updateLatestMessageListingPersonal(receiverUsername, messageDto.senderUsername, messageDto.content);
 
-    addMessageToChatIfActivePersonal(senderUsername, receiverUsername, newMessage);
+    addMessageToChatIfActivePersonal(messageDto.senderUsername, receiverUsername, newMessage);
 
     playAudio();
 });
@@ -53,13 +53,13 @@ function updateLatestMessageListingGroup(groupId, latestMessage) {
     }
 }
 
-chathub.on("ReceiveGroupMessage", function (groupId, senderUsername, message, sentAt) {
+chathub.on("ReceiveGroupMessage", function (groupId, messageDto) {
 
-    let sentShortTime = sentAt.substring(0, 16).toString().replace("T", " ");
+    let sentShortTime = messageDto.timeStamp.substring(0, 16).toString().replace("T", " ");
 
-    let newMessage = createMessageHtml(senderUsername, sentShortTime, message);
+    let newMessage = createMessageHtml(messageDto.senderUsername, sentShortTime, messageDto.content);
 
-    updateLatestMessageListingGroup(groupId, message);
+    updateLatestMessageListingGroup(groupId, messageDto.content);
 
     addMessageToChatIfActiveGroup(groupId, newMessage);
 
@@ -178,11 +178,13 @@ function deleteFriendRequestOfListing(username) {
     }
 }
 
-friendhub.on("ReceiveFriendRequest", function(sender){
+friendhub.on("ReceiveFriendRequest", function (friendRequestDto) {
+
+    let sender = friendRequestDto.sender;
 
     let friendRequestList = document.querySelector("#friendRequest-list");
 
-    let friendRequestListItem = createLiFriendRequestHTML(sender);
+    let friendRequestListItem = createLiFriendRequestHTML(sender.username);
 
     friendRequestList.appendChild(friendRequestListItem);
 });
@@ -190,7 +192,7 @@ function createLiFriendRequestHTML(sender) {
     let friendRequestListItem = document.createElement("li");
     friendRequestListItem.classList.add("friendRequest-list-item");
     friendRequestListItem.setAttribute("data-user", sender);
-    friendRequestListItem.innerHTML= `               
+    friendRequestListItem.innerHTML = `               
         <p>${sender}</p>
         <div class="friend-request-option-holder">
             <button class="friend-request-option accept" onclick="acceptFriendRequest('${sender}')"><i class="fa-solid fa-check"></i></button>
@@ -203,7 +205,7 @@ function createFriendListItemHTML(currentUser, friend) {
     li.classList.add("message-item");
     li.setAttribute("data-chat", `${friend}/${currentUser}`);
     li.onclick = function () { openPersonalConversation(this, friend) };
-    li.innerHTML =    `
+    li.innerHTML = `
             <header class="message-profile-header">
                 <figure class="message-profile user1">
                     <img src="/img/profile.jpg" alt="" srcset="" draggable="false">
@@ -219,8 +221,8 @@ function createFriendListItemHTML(currentUser, friend) {
     return li;
 }
 
-friendhub.on("UpdateFriendListing", function (currentUsersname, friendUsername) {
-    let friendListItem = createFriendListItemHTML(currentUsersname, friendUsername);
+friendhub.on("UpdateFriendListing", function (currentUser, friend) {
+    let friendListItem = createFriendListItemHTML(currentUser.username, friend.username);
     addListItemToFriendListing(friendListItem);
 });
 function addListItemToFriendListing(listItem) {
@@ -228,12 +230,40 @@ function addListItemToFriendListing(listItem) {
     friendListing.prepend(listItem);
 }
 
-function acceptFriendRequest(username){
-    friendhub.invoke("AcceptFriendRequest", username);
+function acceptFriendRequest(username) {
+    const url = `https://localhost:7129/api/User/acceptFriendRequest/${username}`;
+    fetch(url, {
+        method: 'POST',
+        credentials: "include",
+        body: null
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            console.error('There was a problem with the request:', error);
+        });
 }
 
-function declineFriendRequest(username){ 
-    friendhub.invoke("DeclineFriendRequest", username);
+function declineFriendRequest(username) {
+    const url = `https://localhost:7129/api/User/declineFriendRequest/${username}`;
+    fetch(url, {
+        method: 'POST',
+        credentials: "include",
+        body: null
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            console.error('There was a problem with the request:', error);
+        });
 }
 
 
@@ -259,18 +289,43 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
     let messageSender = document.querySelector("#message-sender");
     let receiver = messageSender.dataset.receiver;
 
+    let fileInput = document.querySelector("#message-file-selector");
+
     let isForGroup = messageSender.dataset.forGroup;
 
     if (isForGroup === "true") {
         let groupMessageCreateDto = {
             groupId: receiver,
             content: message,
-            file: null
+            file: null,
         }
 
-        chathub.invoke("SendGroupMessage", groupMessageCreateDto).catch(function (err) {
-            return console.error(err.toString());
-        });
+        if (fileInput.files.length > 0) {
+            groupMessageCreateDto.file = fileInput.files[0];
+        }
+
+        let formData = new FormData();
+        formData.append('groupId', groupMessageCreateDto.groupId);
+        formData.append('content', groupMessageCreateDto.content);
+        if (groupMessageCreateDto.file) {
+            formData.append('file', groupMessageCreateDto.file);
+        }
+
+        fetch('https://localhost:7129/api/Message/CreateGroupMessage', {
+            method: 'POST',
+            credentials: "include",
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log('Message sent successfully');
+            })
+            .catch(error => {
+                console.error('There was a problem with the request:', error);
+            });
+
     }
     else if (isForGroup === "false") {
         let personalMessageCreateDto = {
@@ -278,32 +333,68 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
             content: message,
             file: null
         }
-        chathub.invoke("SendMessage", personalMessageCreateDto).catch(function (err) {
-            return console.error(err.toString());
-        });
+        if (fileInput.files.length > 0) {
+            personalMessageCreateDto.file = fileInput.files[0];
+        }
+
+        let formData = new FormData();
+        formData.append('ReceiverUsername', personalMessageCreateDto.receiverUsername);
+        formData.append('content', personalMessageCreateDto.content);
+        if (personalMessageCreateDto.file) {
+            formData.append('file', personalMessageCreateDto.file);
+        }
+
+        fetch('https://localhost:7129/api/Message/createPersonalMessage', {
+            method: 'POST',
+            credentials: "include",
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log('Message sent successfully');
+            })
+            .catch(error => {
+                console.error('There was a problem with the request:', error);
+            });
+
     }
 
     event.preventDefault();
 });
 
 let sendFriendRequestBtn = document.querySelector("#sendFriendRequestBtn");
-sendFriendRequestBtn.addEventListener("click", () =>{
+sendFriendRequestBtn.addEventListener("click", () => {
     let friendRequestInput = document.querySelector("#friendRequestInput")
     let receiverUsername = friendRequestInput.value;
 
-    friendhub.invoke("SendFriendRequest", receiverUsername).catch(function (err){
-        return console.error(err.toString());
+
+    const url = `https://localhost:7129/api/User/sendFriendRequest/${receiverUsername}`;
+    fetch(url, {
+        method: 'POST',
+        credentials: "include",
+        body: null
     })
-    
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            console.error('There was a problem with the request:', error);
+        });
+
 });
 
 
-function hideScreenBlocker(){
+function hideScreenBlocker() {
     let screenBlocker = document.querySelector("#screenBlocker");
     screenBlocker.style.display = "none";
 }
 
-function playAudio(){
+function playAudio() {
     let audio = new Audio();
     audio.src = "./Audio/mixkit-long-pop-2358.wav";
     audio.play();
@@ -369,21 +460,21 @@ async function openPersonalConversation(event, username) {
     }
 }
 
-function selectTab(event){
-    
+function selectTab(event) {
+
     var messageItems = document.querySelectorAll(".message-item");
 
-    for(let i = 0; i < messageItems.length; ++i){
+    for (let i = 0; i < messageItems.length; ++i) {
         let messageItem = messageItems[i];
         messageItem.style.backgroundColor = "var(--white)";
     }
     event.style.backgroundColor = "var(--light-blue)";
 }
 
-function updateReceiver(receiverId, isForGroup){
+function updateReceiver(receiverId, isForGroup) {
     let sender = document.querySelector("#message-sender");
 
-    if(!sender.hasAttribute("data-receiver")){
+    if (!sender.hasAttribute("data-receiver")) {
         sender.setAttribute("data-receiver", "default value");
     }
     if (isForGroup) {
@@ -408,15 +499,15 @@ function clearInfoHeader() {
 }
 
 
-function createMessageHtml(senderUsername, timeStamp, message){
+function createMessageHtml(senderUsername, timeStamp, message) {
     let newMessage = document.createElement("li");
-        newMessage.classList.add("message-wrapper");
+    newMessage.classList.add("message-wrapper");
 
-        let urlRegex = /(https?:\/\/[^\s]+)/g;
-        let messageWithLinks = message.replace(urlRegex, (url) => {
-            return '<a href="' + url + '" target="_blank">' + url + '</a>';
-        });
-        newMessage.innerHTML = `                    
+    let urlRegex = /(https?:\/\/[^\s]+)/g;
+    let messageWithLinks = message.replace(urlRegex, (url) => {
+        return '<a href="' + url + '" target="_blank">' + url + '</a>';
+    });
+    newMessage.innerHTML = `                    
         <figure class="message-profile-picture">
         <img src="/img/profile.jpg">
         </figure>
@@ -497,7 +588,7 @@ function getCookie(cookieName) {
 
 
 
-function openFriendAddMenu(){
+function openFriendAddMenu() {
     clearMenu();
     setMenuHeader("Add friends");
     let addFriendMenu = document.querySelector("#add-friend-menu");
@@ -505,71 +596,71 @@ function openFriendAddMenu(){
 };
 
 
-function clearMenu(){
+function clearMenu() {
     setMenuHeader("");
     let menus = document.querySelector("#menu-popup").querySelectorAll(".menu-body");
 
-    menus.forEach(menu =>{
+    menus.forEach(menu => {
         menu.style.display = "none";
     });
 }
 
-function openFriendsOverviewMenu(){
+function openFriendsOverviewMenu() {
     let friendsOverview = document.querySelector("#friendsOverView");
     friendsOverview.style.display = "flex";
 }
 
-function openFriendsMenu(){
+function openFriendsMenu() {
     clearMenu();
     setMenuHeader("Friends");
     openFriendsOverviewMenu();
     showMenu();
 }
 
-function setMenuHeader(value){
+function setMenuHeader(value) {
     document.querySelector("#menu-header-title").textContent = value;
 }
-function clearMenuHeader(){
+function clearMenuHeader() {
     document.querySelector("#menu-header-title").textContent = "";
 }
 
-function showMenu(){
+function showMenu() {
     let menu = document.querySelector("#menu-background");
     menu.style.display = "block";
 
 }
-function hideMenu(){
+function hideMenu() {
     document.querySelector("#menu-background").style.display = "none";
     clearMenu();
     clearMenuHeader();
 }
 
-document.getElementById('menu-popup').addEventListener('click', function(event) {
+document.getElementById('menu-popup').addEventListener('click', function (event) {
     event.stopPropagation();
 });
 
 
-function openFriendRequestMenu(){
+function openFriendRequestMenu() {
     setMenuHeader("Friend requests");
     clearMenu();
     let menu = document.querySelector("#friendRequestOverView");
 
     menu.style.display = "flex";
-    
+
 }
 
-function apendChatLoadingScreen(){
+function apendChatLoadingScreen() {
     let messageList = document.querySelector("#messages");
 
-    for(let i = 0; i < 20; ++i){
+    for (let i = 0; i < 20; ++i) {
         let li = document.createElement("li");
-        
-        
+
+
     }
 }
 
 
-async function openGroupCreationMenu(){
+async function openGroupCreationMenu() {
     clearMenu();
     var groupMenu = document.querySelector("#groupCreate");
     groupMenu.style.display = "flex";
@@ -584,7 +675,7 @@ async function openGroupCreationMenu(){
     showMenu();
 }
 
-async function getFriends(){
+async function getFriends() {
     const url = `https://localhost:7129/api/User/friends`;
     try {
         const response = await fetch(url, {
@@ -624,10 +715,10 @@ function clearFriendsForGroup() {
     let list = document.querySelector("#group-add-friends-list");
     list.innerHTML = "";
 }
-document.querySelector("#open-file-group-create-btn").addEventListener("click", function() {
+document.querySelector("#open-file-group-create-btn").addEventListener("click", function () {
     document.querySelector("#group-image-input").click();
-  });
-document.querySelector("#add-file-btn").addEventListener("click", function(){
+});
+document.querySelector("#add-file-btn").addEventListener("click", function () {
     document.querySelector("#message-file-selector").click();
 });
 
@@ -635,8 +726,8 @@ document.querySelector("#add-file-btn").addEventListener("click", function(){
 
 
 
-function openGroupSettingsMenu(){
-    
+function openGroupSettingsMenu() {
+
     clearMenu();
 
     let infoMenu = document.querySelector("#groupInfoCreate");
@@ -648,7 +739,7 @@ function openGroupSettingsMenu(){
     showMenu();
 }
 
-function openProfileMenu(){
+function openProfileMenu() {
 
 
 
@@ -656,19 +747,19 @@ function openProfileMenu(){
     showMenu();
 }
 
-function showGroupCreationMenu(){
+function showGroupCreationMenu() {
     clearMenu();
     setMenuHeader("Select friends for group");
     let groupCreate = document.querySelector("#groupCreate");
     groupCreate.style.display = "flex";
 }
 
-function hideGroupCreationMenu(){
+function hideGroupCreationMenu() {
     let groupCreate = document.querySelector("#groupCreate");
     groupCreate.style.display = "none";
 }
 
-function openGroupCreateInfoForm(){
+function openGroupCreateInfoForm() {
     hideGroupCreationMenu();
 
 
@@ -676,7 +767,7 @@ function openGroupCreateInfoForm(){
 
 
 }
-function openSettingsMenu(){
+function openSettingsMenu() {
     clearMenu();
 
 

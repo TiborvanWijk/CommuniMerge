@@ -142,6 +142,10 @@ namespace CommuniMerge.Library.Services
             try
             {
 
+                if(senderId.Equals(receiverId))
+                {
+                    return new FriendRequestResult { Error = FriendRequestError.ToSelf };
+                }
                 if (await userRepository.FriendRequestExists(senderId, receiverId))
                 {
                     return new FriendRequestResult { Error = FriendRequestError.RequestExists };
@@ -150,6 +154,7 @@ namespace CommuniMerge.Library.Services
                 {
                     return new FriendRequestResult { Error = FriendRequestError.AlreadyFriends };
                 }
+
 
                 var friendRequest = new FriendRequest
                 {
@@ -164,7 +169,7 @@ namespace CommuniMerge.Library.Services
                     return new FriendRequestResult { Error = FriendRequestError.CreateRequestFailed };
                 }
 
-                return new FriendRequestResult { Error = FriendRequestError.None };
+                return new FriendRequestResult { FriendRequest = friendRequest, Error = FriendRequestError.None };
 
             }
             catch (Exception ex)
