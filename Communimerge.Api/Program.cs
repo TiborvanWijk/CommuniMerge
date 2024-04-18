@@ -16,6 +16,7 @@ using CommuniMerge.CookieRepositories.Interfaces;
 using CommuniMerge.CookieRepositories;
 using Microsoft.AspNetCore.SignalR;
 using Communimerge.Api.Hubs;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,7 +37,10 @@ builder.Services.AddSignalR(e => {
     e.MaximumReceiveMessageSize = 102400000;
 });
 
-
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 5242880000;
+});
 
 builder.Services.AddCors();
 

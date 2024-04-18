@@ -17,7 +17,7 @@
         <div class="user-actions">
 
             <figure class="profileIcon" onclick="openProfileMenu()">
-                <img src="~/img/profile.jpg" alt="" srcset="">
+                <img src="@Model.CurrentUser.ProfilePath" alt="" srcset="">
             </figure>
             <a href="Authorize/logout" class="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
         </div>
@@ -45,13 +45,14 @@
                     {
                         if (item.Item is FriendDisplayDto friend)
                         {
-                            <li class="message-item" data-chat="@friend.Username/@Model.CurrentUser.Username" onclick="openPersonalConversation(this, '@friend.Username')">
+                            var friendJson = JsonConvert.SerializeObject(friend);
+                            <li class="message-item" data-chat="@friend.Username/@Model.CurrentUser.Username" onclick="openPersonalConversation(this, @friendJson)">
                                 <header class="message-profile-header">
                                     <figure class="message-profile user1">
                                         <img src="@Model.CurrentUser.ProfilePath" alt="" srcset="" draggable="false">
                                     </figure>
                                     <figure class="message-profile user2">
-                                        <img src="@Model.CurrentUser.ProfilePath" alt="" srcset="" draggable="false">
+                                        <img src="@friend.ProfilePath" alt="" srcset="" draggable="false">
                                     </figure>
                                 </header>
                                 <div class="message-information">

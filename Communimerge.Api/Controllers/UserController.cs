@@ -87,7 +87,7 @@ namespace Communimerge.Api.Controllers
 
             await friendHub.Clients.User(currentUserId).UpdateFriendListing(currentUserDto, requestingUserDto);
             await friendHub.Clients.User(requestingUser.Id).UpdateFriendListing(currentUserDto, requestingUserDto);
-
+            await friendHub.Clients.User(currentUserId).DeleteFriendRequestListing(username);
 
             return Created();
         }
@@ -155,6 +155,8 @@ namespace Communimerge.Api.Controllers
             List<FriendDisplayDto> friendsWithMessageDto = orderedFriends.Select(x => new FriendDisplayDto
             {
                 Username = x.User.UserName,
+                ProfilePath = x.User.ProfilePath,
+                Id = x.User.Id,
                 LatestMessage = x.LatestMessage == null ? null : Map.ToMessageDisplayDto(x.LatestMessage)
             }).ToList();
 

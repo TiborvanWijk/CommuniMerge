@@ -15,6 +15,6 @@ namespace CommuniMerge.Library.Data.Dtos
         public DateTime TimeStamp { get; set; }
         public string? FilePath { get; set; }
         public FileType? FileType { get; set; }
-        public string SenderUsername { get; set; }
+        public UserDto sender { get; set; }
     }
 }

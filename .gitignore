@@ -91,3 +91,5 @@ bin/
 # Object files (Intermediate build artifacts)
 obj/
 *.jpg
+*.PNG
+*.mp4

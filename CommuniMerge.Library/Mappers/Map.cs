@@ -50,7 +50,7 @@ namespace CommuniMerge.Library.Mappers
             {
                 Content = message.Content,
                 Id = message.Id,
-                SenderUsername = message.SenderUser.UserName,
+                sender = Map.ToUserDto(message.SenderUser),
                 TimeStamp = message.TimeStamp,
                 FilePath = message.FilePath,
                 FileType = message.FileType,

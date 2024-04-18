@@ -111,7 +111,7 @@ namespace Communimerge.Api.Controllers
             var receiver = await accountService.GetUserByUsernameAsync(messageCreateDto.ReceiverUsername);
 
             MessageDisplayDto messageDisplayDto = Map.ToMessageDisplayDto(result.Message);
-
+            UserDto sender = Map.ToUserDto(await accountService.GetUserByIdAsync(loggedInUserId));
             await chatHub.Clients.User(loggedInUserId).ReceiveMessage(receiver.UserName, messageDisplayDto);
             await chatHub.Clients.User(receiver.Id).ReceiveMessage(receiver.UserName, messageDisplayDto);
 
@@ -135,7 +135,7 @@ namespace Communimerge.Api.Controllers
 
             var receivers = await groupService.GetAllUsersOfGroupById(messageCreateDto.GroupId);
 
-
+            UserDto sender = Map.ToUserDto(await accountService.GetUserByIdAsync(loggedInUserId));
             MessageDisplayDto messageDisplayDto = Map.ToMessageDisplayDto(result.Message);
             foreach (var user in receivers)
             {

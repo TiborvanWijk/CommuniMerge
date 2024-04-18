@@ -41,7 +41,7 @@ namespace CommuniMerge.Library.Repositories
             var allowedContentTypes = new[]
             {
                 "image/jpeg", "image/png", "image/jpg",
-                "video/mp4", "video/webm", "video/ogg"
+                "video/mp4", "video/webm", "video/ogg", "video/mkv", "video/x-matroska"
             };
 
             return allowedContentTypes.Contains(formFile.ContentType);

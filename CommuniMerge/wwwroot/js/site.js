@@ -4,12 +4,13 @@ let chathub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129
 let friendhub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/friendHub").build();
 
 chathub.on("ReceiveMessage", function (receiverUsername, messageDto) {
-    let sentShortTime = messageDto.timeStamp.substring(0, 15).toString().replace("T", " ");
-    let newMessage = createMessageHtml(messageDto.senderUsername, sentShortTime, messageDto.content);
+    let senderDto = messageDto.sender;
+    messageDto.timeStamp = messageDto.timeStamp.substring(0, 16).toString().replace("T", " ");
 
-    updateLatestMessageListingPersonal(receiverUsername, messageDto.senderUsername, messageDto.content);
+    let newMessage = createMessageHtml(messageDto);
+    updateLatestMessageListingPersonal(receiverUsername, messageDto.sender.username, messageDto.content);
 
-    addMessageToChatIfActivePersonal(messageDto.senderUsername, receiverUsername, newMessage);
+    addMessageToChatIfActivePersonal(senderDto.username, receiverUsername, newMessage);
 
     playAudio();
 });
@@ -55,9 +56,9 @@ function updateLatestMessageListingGroup(groupId, latestMessage) {
 
 chathub.on("ReceiveGroupMessage", function (groupId, messageDto) {
 
-    let sentShortTime = messageDto.timeStamp.substring(0, 16).toString().replace("T", " ");
+    messageDto.timeStamp = messageDto.timeStamp.substring(0, 16).toString().replace("T", " ");
 
-    let newMessage = createMessageHtml(messageDto.senderUsername, sentShortTime, messageDto.content);
+    let newMessage = createMessageHtml(messageDto);
 
     updateLatestMessageListingGroup(groupId, messageDto.content);
 
@@ -404,7 +405,7 @@ async function openGroupConversation(event, group) {
     hideScreenBlocker();
     selectTab(event);
 
-    updateInfoHeader(group.Name);
+    updateInfoHeader(group.Name, group.ProfilePath);
 
     updateReceiver(group.Id, true);
 
@@ -444,17 +445,17 @@ async function getGroupMessages(groupId) {
 }
 
 
-async function openPersonalConversation(event, username) {
+async function openPersonalConversation(event, userDto) {
     hideScreenBlocker();
     selectTab(event);
 
-    updateInfoHeader(username);
+    updateInfoHeader(userDto.Username, userDto.ProfilePath);
 
-    updateReceiver(username, false);
+    updateReceiver(userDto.Username, false);
 
     clearMessageHolder();
 
-    let messages = await getPersonalMessages(username);
+    let messages = await getPersonalMessages(userDto.Username);
     if (messages != null) {
         addMessagesToMessageHolder(messages);
     }
@@ -487,9 +488,11 @@ function updateReceiver(receiverId, isForGroup) {
     sender.dataset.receiver = receiverId;
 }
 
-function updateInfoHeader(name) {
+function updateInfoHeader(name, profilePath) {
     let infoHeader = document.querySelector("#info-header");
     let headerUsername = document.querySelector("#info-header-username");
+    let img = document.querySelector("#pfp-img");
+    img.src = profilePath;
     headerUsername.textContent = name;
 }
 
@@ -499,26 +502,64 @@ function clearInfoHeader() {
 }
 
 
-function createMessageHtml(senderUsername, timeStamp, message) {
+function createMessageHtml(messageObject) {
     let newMessage = document.createElement("li");
     newMessage.classList.add("message-wrapper");
 
     let urlRegex = /(https?:\/\/[^\s]+)/g;
-    let messageWithLinks = message.replace(urlRegex, (url) => {
+    let messageWithLinks = messageObject.content.replace(urlRegex, (url) => {
         return '<a href="' + url + '" target="_blank">' + url + '</a>';
     });
-    newMessage.innerHTML = `                    
-        <figure class="message-profile-picture">
-        <img src="/img/profile.jpg">
-        </figure>
-        <div class="content-wrapper">
-        <div class="identifier-wrapper">
-        <h3>${senderUsername}</h3>
-        <p>${timeStamp}</p>
-        </div>
-        <div class="message-text">${messageWithLinks}</div>
-        </div>
-        `;
+
+    if (messageObject.fileType == null) {
+
+        newMessage.innerHTML = `                    
+            <figure class="message-profile-picture">
+                <img src="${messageObject.sender.profilePath}">
+            </figure>
+            <div class="content-wrapper">
+                <div class="identifier-wrapper">
+                    <h3>${messageObject.sender.username}</h3>
+                    <p>${messageObject.timeStamp}</p>
+                </div>
+                <div class="message-text">${messageWithLinks}</div>
+            </div>
+            `;
+    }
+    else if (messageObject.fileType == 0) {
+        newMessage.innerHTML = `                    
+            <figure class="message-profile-picture">
+                <img src="${messageObject.sender.profilePath}">
+            </figure>
+            <div class="content-wrapper">
+                <div class="identifier-wrapper">
+                    <h3>${messageObject.sender.username}</h3>
+                    <p>${messageObject.timeStamp}</p>
+                </div>
+                <figure class="message-image-holder" >
+                    <img src="${messageObject.filePath}" />
+                </figure>
+                <div class="message-text">${messageWithLinks}</div>
+            </div>
+            `;
+    }
+    else if (messageObject.fileType == 1) {
+        newMessage.innerHTML = `                    
+            <figure class="message-profile-picture">
+                <img src="${messageObject.sender.profilePath}">
+            </figure>
+            <div class="content-wrapper">
+                <div class="identifier-wrapper">
+                    <h3>${messageObject.sender.username}</h3>
+                    <p>${messageObject.timeStamp}</p>
+                </div>
+                <video class="message-video-holder" type="video/mp4" controls>
+                    <source src="${messageObject.filePath}" />
+                </video>
+                <div class="message-text">${messageWithLinks}</div>
+            </div>
+            `;
+    }
     return newMessage;
 }
 
@@ -529,7 +570,7 @@ function addMessagesToMessageHolder(messageObjects) {
 
         let messageObject = messageObjects[i];
 
-        let newMessage = createMessageHtml(messageObject.senderUsername, messageObject.timeStamp, messageObject.content);
+        let newMessage = createMessageHtml(messageObject);
 
         let firstChild = messageHolder.firstChild;
         if (firstChild != null) {
