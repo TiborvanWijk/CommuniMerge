@@ -729,6 +729,9 @@ body {
   gap: 1em;
 }
 
+.message-image-holder {
+  cursor: pointer;
+}
 .message-image-holder img {
   object-fit: cover;
   height: 100%;
@@ -742,6 +745,8 @@ body {
   max-height: 22em;
   max-width: 30em;
   margin: 0.5em 0em;
+  overflow: hidden;
+  border-radius: 5px;
 }
 
 .message-sender-wrapper {
@@ -824,6 +829,53 @@ body {
   color: var(--light-blue);
 }
 
+#image-popup {
+  left: 0;
+  top: 0;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--darkSeeThrough);
+  z-index: var(--layer9);
+}
+
+#closeImagePopup {
+  position: absolute;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 3em;
+  cursor: pointer;
+  top: 1em;
+  right: 2em;
+}
+
+.image-of-popup {
+  position: relative;
+  width: min(100ch, 100vw);
+  max-height: min(70ch, 100vw);
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  animation: popup 600ms ease-out;
+}
+.image-of-popup img {
+  max-height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
 .main-form {
   height: 100%;
   width: 100%;

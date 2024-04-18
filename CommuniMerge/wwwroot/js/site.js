@@ -537,11 +537,12 @@ function createMessageHtml(messageObject) {
                     <p>${messageObject.timeStamp}</p>
                 </div>
                 <figure class="message-image-holder" >
-                    <img src="${messageObject.filePath}" />
+                    <img src="${messageObject.filePath}" onclick="popUpImage(this)" />
                 </figure>
                 <div class="message-text">${messageWithLinks}</div>
             </div>
             `;
+
     }
     else if (messageObject.fileType == 1) {
         newMessage.innerHTML = `                    
@@ -561,6 +562,46 @@ function createMessageHtml(messageObject) {
             `;
     }
     return newMessage;
+}
+
+function popUpImage(imageTag){
+    let imagePath = imageTag.src;
+    let div = document.createElement("div");
+
+    let img = document.createElement("img");
+    img.src = imagePath;
+    div.id = "image-popup";
+
+    div.innerHTML = `
+        <button id="closeImagePopup" onclick="deletePopupImage()"><i class="fa-solid fa-xmark"></i></button>
+
+        <figure class="image-of-popup">
+
+        </figure>
+
+    `;
+
+    let figure = div.querySelector(".image-of-popup");
+
+    img.addEventListener("load", function(){
+        figure.appendChild(img);
+        let body = document.body;
+        body.addEventListener("keyup", escapeDelete);
+        body.appendChild(div);
+    });
+
+}
+
+function escapeDelete(event) {
+    if(event.key === "Escape") {
+        deletePopupImage();
+        document.body.removeEventListener("keyup", escapeDelete);
+    }
+}
+
+function deletePopupImage(){
+
+    document.querySelector("#image-popup").remove();
 }
 
 function addMessagesToMessageHolder(messageObjects) {
