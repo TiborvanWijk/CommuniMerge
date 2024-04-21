@@ -40,9 +40,31 @@ namespace Communimerge.Api.Controllers
             var currentlyLoggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var result = await groupService.CreateGroup(currentlyLoggedInUserId, groupCreateDto);
 
-            if(result.Error != CreateGroupError.None)
+
+            switch (result.Error)
             {
-                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
+                case CreateGroupError.None:
+                    break;
+                case CreateGroupError.UserNotFound:
+                    return NotFound("User(s) not found");
+                case CreateGroupError.InvalidGroupName:
+                    return BadRequest("Group name must be atleast 1 character long and shorter than 40.");
+                case CreateGroupError.DuplicateUserAddition:
+                    return BadRequest("Cannot add user twice.");
+                case CreateGroupError.UsersNotFriends:
+                    return BadRequest("User is not a friend.");
+                case CreateGroupError.FailedCreatingGroup:
+                    return StatusCode(500, "Something went wrong while creating group.");
+                case CreateGroupError.FailedCreatingUserLink:
+                    return StatusCode(500, "Something went wrong while adding user(s) to group.");
+                case CreateGroupError.FileUpLoadFailed:
+                    return StatusCode(500, "Something went wrong while adding group photo.");
+                case CreateGroupError.InvalidFileType:
+                    return BadRequest("Unsupported file type.");
+                case CreateGroupError.Unknown:
+                    return StatusCode(500, "Unexpected server error.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
             }
 
 

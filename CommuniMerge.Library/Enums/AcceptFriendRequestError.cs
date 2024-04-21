@@ -11,8 +11,8 @@ namespace CommuniMerge.Library.Enums
         None,
         RequestNotFound,
         AcceptRequestFailed,
-        DeleteRequestFailed,
         AlreadyFriends,
-        UnknownError
+        UnknownError,
+        DeleteRequestFailed
     }
 }

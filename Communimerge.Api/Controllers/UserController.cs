@@ -29,6 +29,10 @@ namespace Communimerge.Api.Controllers
         }
 
         [HttpPost("sendFriendRequest/{receiverUsername}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> SendFriendRequest([FromRoute] string receiverUsername)
         {
             if (!ModelState.IsValid)
@@ -46,10 +50,21 @@ namespace Communimerge.Api.Controllers
 
             var result = await accountService.SendFriendRequest(loggedInUserId, receiver.Id);
 
-            if(result.Error != FriendRequestError.None)
+
+            switch (result.Error)
             {
-                await friendHub.Clients.User(loggedInUserId).FailSendingFriendRequest("Something went wrong");
-                return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
+                case FriendRequestError.None:
+                    break;
+                case FriendRequestError.RequestExists:
+                    return BadRequest("Request already exists.");
+                case FriendRequestError.ToSelf:
+                    return BadRequest("Cannot sent friend request to self.");
+                case FriendRequestError.AlreadyFriends:
+                    return BadRequest("User is already your friend.");
+                case FriendRequestError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
             }
 
             FriendRequestDto friendRequestDto = Map.ToFriendRequestDto(result.FriendRequest);
@@ -61,6 +76,10 @@ namespace Communimerge.Api.Controllers
         }
 
         [HttpPost("acceptFriendRequest/{username}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> AcceptFriendRequest([FromRoute] string username)
         {
             if (!ModelState.IsValid)
@@ -76,6 +95,25 @@ namespace Communimerge.Api.Controllers
             var currentUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             var result = await accountService.AcceptFriendRequest(currentUserId, requestingUser.Id);
+
+
+            switch (result.Error)
+            {
+                case AcceptFriendRequestError.None:
+                    break;
+                case AcceptFriendRequestError.AlreadyFriends:
+                    return BadRequest("User is already your friend.");
+                case AcceptFriendRequestError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                case AcceptFriendRequestError.RequestNotFound:
+                    return NotFound("Request not found");
+                case AcceptFriendRequestError.AcceptRequestFailed:
+                    return StatusCode(500, "Something went wrong while accepting request.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
+            }
+
+
 
             if (result.Error != AcceptFriendRequestError.None)
             {
@@ -94,6 +132,10 @@ namespace Communimerge.Api.Controllers
 
 
         [HttpPost("declineFriendRequest/{username}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> DeclineFriendRequest([FromRoute] string username)
         {
             if (!ModelState.IsValid)
@@ -110,9 +152,18 @@ namespace Communimerge.Api.Controllers
 
             var result = await accountService.DeclineFriendRequest(currentUserId, requestingUser.Id);
 
-            if (result.Error != DeclineFriendRequestError.None )
+            switch (result.Error)
             {
-                return StatusCode(501, "ERROR HANDELING IS NOT IMPLEMENTED");
+                case DeclineFriendRequestError.None:
+                    break;
+                case DeclineFriendRequestError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                case DeclineFriendRequestError.RequestNotFound:
+                    return NotFound("Request not found");
+                case DeclineFriendRequestError.DeleteRequestFailed:
+                    return StatusCode(500, "Something went wrong while deleting request.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
             }
 
             await friendHub.Clients.User(currentUserId).DeleteFriendRequestListing(username);
@@ -122,6 +173,8 @@ namespace Communimerge.Api.Controllers
         }
 
         [HttpGet("friends")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllFriends([FromQuery] bool withLatestMessage)
         {
 
@@ -164,6 +217,8 @@ namespace Communimerge.Api.Controllers
         }
 
         [HttpGet("friendRequests")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetAllFriendRequests()
         {
             if (!ModelState.IsValid)

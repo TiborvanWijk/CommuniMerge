@@ -37,9 +37,16 @@ namespace Communimerge.Api.Controllers
 
             var loginResult = await accountService.LoginAsync(loginModel);
 
-            if (loginResult.Error == LoginError.InvalidCombination)
+            switch (loginResult.Error)
             {
-                return BadRequest("Invalid combination");
+                case LoginError.None:
+                    break;
+                case LoginError.InvalidCombination:
+                    return BadRequest("Invalid combination");
+                case LoginError.UnExpected:
+                    return StatusCode(500, "Unexpected server error.");
+                default:
+                    return StatusCode(500, "Unknown server error.");
             }
             var user = await accountService.GetUserByUsernameAsync(loginModel.Username);
             string bearerToken = tokenService.GenerateBearerToken(user.Id, user.UserName);
@@ -62,13 +69,26 @@ namespace Communimerge.Api.Controllers
 
             var registrationResult = await accountService.RegisterAsync(registerModel);
 
-            if (registrationResult.Error != RegistrationError.None)
+
+            switch (registrationResult.Error)
             {
-                //TEMP NEEDS UPDATING
-                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
+                case RegistrationError.None:
+                    break;
+                case RegistrationError.EmailExists:
+                    return BadRequest("Email alreay in use.");
+                case RegistrationError.InvalidEmailFormat:
+                    return BadRequest("Invalid email format.");
+                case RegistrationError.WeakPassword:
+                    return BadRequest("Password must be at least 8 characters long and contain at least one special character");
+                case RegistrationError.CreateUserFailed:
+                    return StatusCode(500, "Something went wrong while registering");
+                case RegistrationError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                default:
+                    return StatusCode(500, "Unknown server error.");
             }
 
-            return Ok();
+            return Created();
         }
     }
 }

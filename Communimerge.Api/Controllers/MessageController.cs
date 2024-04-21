@@ -103,9 +103,25 @@ namespace Communimerge.Api.Controllers
 
             var result = await messageService.CreatePersonalMessage(loggedInUserId, messageCreateDto);
 
-            if(result.Error != MessageCreateError.None)
+
+            switch (result.Error)
             {
-                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
+                case MessageCreateError.None:
+                    break;
+                case MessageCreateError.UserNotFound:
+                    return NotFound("User not found.");
+                case MessageCreateError.MessageIsNullOrEmpty:
+                    return BadRequest("Message may not be empty.");
+                case MessageCreateError.UnAuthorized:
+                    return Unauthorized();
+                case MessageCreateError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                case MessageCreateError.InvalidFileType:
+                    return BadRequest("Unsupported file type.");
+                case MessageCreateError.FileUploadFailed:
+                    return StatusCode(500, "Something went wrong while adding file.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
             }
 
             var receiver = await accountService.GetUserByUsernameAsync(messageCreateDto.ReceiverUsername);
@@ -128,9 +144,24 @@ namespace Communimerge.Api.Controllers
             var loggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             MessageCreateResult result = await messageService.CreateGroupMessage(loggedInUserId, messageCreateDto);
 
-            if (result.Error != MessageCreateError.None)
+            switch (result.Error)
             {
-                return StatusCode(501, "THIS IS TEMPORARLY NOT IMPLEMENTED");
+                case MessageCreateError.None:
+                    break;
+                case MessageCreateError.GroupNotFound:
+                    return NotFound("Group not found.");
+                case MessageCreateError.MessageIsNullOrEmpty:
+                    return BadRequest("Message may not be empty.");
+                case MessageCreateError.UnAuthorized:
+                    return Unauthorized();
+                case MessageCreateError.UnknownError:
+                    return StatusCode(500, "Unexpected server error.");
+                case MessageCreateError.InvalidFileType:
+                    return BadRequest("Unsupported file type.");
+                case MessageCreateError.FileUploadFailed:
+                    return StatusCode(500, "Something went wrong while adding file.");
+                default:
+                    return StatusCode(500, "Unexpected server error.");
             }
 
             var receivers = await groupService.GetAllUsersOfGroupById(messageCreateDto.GroupId);

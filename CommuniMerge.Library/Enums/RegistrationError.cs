@@ -13,6 +13,7 @@ namespace CommuniMerge.Library.Enums
         InvalidEmailFormat,
         WeakPassword,
         CreateUserFailed,
-        UnknownError
+        UnknownError,
+        InvalidUsername
     }
 }

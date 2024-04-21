@@ -34,7 +34,7 @@ namespace CommuniMerge.Controllers
             var response = await apiService.SendHttpRequest<LoginModel>(HttpContext, "/api/Account/login", HttpMethod.Post, loginModel);
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                var FeedbackMessage = "Invalid combination!";
+                var FeedbackMessage = await response.Content.ReadAsStringAsync();
                 return View(new LoginView { LoginModel = loginModel, FeedbackMessage = FeedbackMessage });
             }
 
@@ -63,9 +63,9 @@ namespace CommuniMerge.Controllers
 
             var registerResult = await apiService.SendHttpRequest<RegisterModel>(HttpContext, "/api/Account/register", HttpMethod.Post, registerModel);
 
-            if (registerResult.StatusCode != HttpStatusCode.OK)
+            if (registerResult.StatusCode != HttpStatusCode.Created)
             {
-                var feedbackMessage = "Invalid Temp";
+                var feedbackMessage = await registerResult.Content.ReadAsStringAsync();
                 return View(new RegisterView { RegisterModel = registerModel, FeedbackMessage = feedbackMessage});
             }
 

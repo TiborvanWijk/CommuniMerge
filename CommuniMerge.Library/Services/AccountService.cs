@@ -68,6 +68,10 @@ namespace CommuniMerge.Library.Services
 
         private async Task<RegistrationError> ValidateRegistrationAndGetError(RegisterModel registerModel)
         {
+            if(!await isValidUsername(registerModel.Username))
+            {
+                return RegistrationError.InvalidUsername;
+            }
 
             if (await userRepository.ExistsByEmailAsync(registerModel.Email))
             {
@@ -83,6 +87,22 @@ namespace CommuniMerge.Library.Services
             }
             return RegistrationError.None;
         }
+
+        private async Task<bool> isValidUsername(string username)
+        {
+            if(await userRepository.GetUserByUsernameAsync(username) != null)
+            {
+                return false;
+            }
+
+            if(username == null || username.Length >= 20)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private async Task<bool> IsValidPassword(string password)
         {
             string pattern = @"^(?=.*[!@#$%^&*()-_+=])[A-Za-z0-9!@#$%^&*()-_+=]{8,}$";
@@ -92,6 +112,10 @@ namespace CommuniMerge.Library.Services
         }
         private async Task<bool> IsValidEmail(string email)
         {
+            if(email == null)
+            {
+                return false;
+            }
             return true;
         }
 
