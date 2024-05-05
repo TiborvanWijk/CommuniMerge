@@ -23,5 +23,6 @@ namespace CommuniMerge.Library.Repositories.Interfaces
         Task<bool> DeleteRequest(string currentUserId, string requestingUserId);
         Task<ICollection<User>> getAllFriendsById(string userId);
         Task<ICollection<FriendRequest>> GetAllFriendRequestsById(string userId);
+        Task<bool> UpdateUserAsync(User user);
     }
 }

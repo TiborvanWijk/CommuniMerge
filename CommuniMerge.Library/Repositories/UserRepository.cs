@@ -105,5 +105,11 @@ namespace CommuniMerge.Library.Repositories
             var saved = dataContext.SaveChangesAsync();
             return await saved > 0;
         }
+
+        public async Task<bool> UpdateUserAsync(User user)
+        {
+            dataContext.Users.Update(user);
+            return await SaveAsync();
+        }
     }
 }

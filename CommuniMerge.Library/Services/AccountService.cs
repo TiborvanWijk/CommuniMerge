@@ -1,4 +1,5 @@
-﻿using CommuniMerge.Library.Enums;
+﻿using CommuniMerge.Library.Data.Dtos;
+using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Loggers.Interfaces;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Repositories.Interfaces;
@@ -20,12 +21,14 @@ namespace CommuniMerge.Library.Services
     {
         private readonly IUserRepository userRepository;
         private readonly ICustomLogger logger;
+        private readonly IFileUploadRepository fileUploadRepository;
         private readonly PasswordHasher<User> passwordHasher;
 
-        public AccountService(IUserRepository userRepository, ICustomLogger logger)
+        public AccountService(IUserRepository userRepository, ICustomLogger logger, IFileUploadRepository fileUploadRepository)
         {
             this.userRepository = userRepository;
             this.logger = logger;
+            this.fileUploadRepository = fileUploadRepository;
             this.passwordHasher = new PasswordHasher<User>();
         }
 
@@ -95,7 +98,7 @@ namespace CommuniMerge.Library.Services
                 return false;
             }
 
-            if(username == null || username.Length >= 20)
+            if(string.IsNullOrEmpty(username) || username.Length >= 20)
             {
                 return false;
             }
@@ -291,6 +294,81 @@ namespace CommuniMerge.Library.Services
             {
                 logger.LogError(ex.Message, GetType().Name, nameof(DeclineFriendRequest));
                 return new DeclineFriendRequestResult { Error = DeclineFriendRequestError.UnknownError };
+            }
+        }
+
+        public async Task<UpdateUserProfileResult> UpdateUserProfile(string userId, UserUpdateDto userUpdateDto)
+        {
+            try
+            {
+                bool allPropertiesAreNull = userUpdateDto.GetType().GetProperties().All(prop =>
+                {
+                    var value = prop.GetValue(userUpdateDto);
+                    return value == null;
+                });
+
+                if (allPropertiesAreNull)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.AllPropertiesAreNull };
+                }
+
+                bool usernameIsValid = !string.IsNullOrEmpty(userUpdateDto.Username) && userUpdateDto.Username.Length <= 20;
+
+                if(!usernameIsValid)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.InvalidUsername };
+                }
+
+                bool aboutIsToLong = userUpdateDto.About?.Length >= 100;
+
+                if(aboutIsToLong)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.AboutIsToLong };
+                }
+
+                var userWithInputUsername = await userRepository.GetUserByUsernameAsync(userUpdateDto.Username);
+
+                bool usernameInUse = userWithInputUsername != null && !userWithInputUsername.Id.Equals(userId);
+                usernameInUse = usernameInUse ? userWithInputUsername != null : usernameInUse;
+
+                if(usernameInUse)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.InvalidUsername };
+                }
+
+                bool fileIsNotAImage = await fileUploadRepository.GetFileType(userUpdateDto.ProfileImage) != FileType.Image;
+
+                if (fileIsNotAImage)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.InValidFileType };
+                }
+
+                string? imagePath = await fileUploadRepository.UploadFile(userUpdateDto.ProfileImage, FileType.Image);
+                bool fileIsUploaded = imagePath != null;
+
+                if (!fileIsUploaded)
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.FailedUploadingImage };
+                }
+
+                var currentUser = await userRepository.GetUserByIdAsync(userId);
+
+                currentUser.ProfilePath = "/img/" + imagePath;
+                currentUser.UserName = userUpdateDto.Username;
+                currentUser.NormalizedUserName = userUpdateDto.Username.Trim().ToUpper();
+                currentUser.About = userUpdateDto.About;
+
+                if(!await userRepository.UpdateUserAsync(currentUser))
+                {
+                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.FailedUpdatingUserInfo };
+                }
+
+                return new UpdateUserProfileResult { Error = UpdateUserProfileError.None };
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(DeclineFriendRequest));
+                return new UpdateUserProfileResult { Error = UpdateUserProfileError.UnknownError };
             }
         }
     }

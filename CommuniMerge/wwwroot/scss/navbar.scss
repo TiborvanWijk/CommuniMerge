@@ -150,9 +150,13 @@
     border-radius: 10px;
     user-select: none;
     cursor: pointer;
+    transition: 200ms;
 }
 .message-item:hover{
     background-color: var(--light-blue) !important;
+}
+.message-item:hover .user2{
+    outline: 2px solid var(--light-blue);
 }
 
 .user1{
@@ -163,6 +167,8 @@
 .user2{
     left: 30px;
     top: 30px;
+    outline: 2px solid var(--white);
+    transition: 200ms;
 }
 .message-profile-header{
     width: 30%;

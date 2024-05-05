@@ -21,5 +21,6 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<ICollection<User>> GetAllFriends(string userId);
         Task<ICollection<FriendRequest>> GetAllFriendRequests(string loggedInUserId);
         Task<DeclineFriendRequestResult> DeclineFriendRequest(string receiverId, string senderId);
+        Task<UpdateUserProfileResult> UpdateUserProfile(string userId, UserUpdateDto userUpdateDto);
     }
 }

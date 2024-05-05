@@ -4,6 +4,7 @@ using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
+using CommuniMerge.Library.ResultObjects;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -234,6 +235,44 @@ namespace Communimerge.Api.Controllers
 
             return Ok(friendRequestDtos);
         }
+
+
+
+        [HttpPut("put")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> UpdateProfile([FromForm] UserUpdateDto userUpdateDto)
+        {
+
+            var currentlyLoggedInUser = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            UpdateUserProfileResult result = await accountService.UpdateUserProfile(currentlyLoggedInUser, userUpdateDto);
+
+            switch (result.Error)
+            {
+                case UpdateUserProfileError.None:
+                    break;
+                case UpdateUserProfileError.AllPropertiesAreNull:
+                    return BadRequest("Must enter a value.");
+                case UpdateUserProfileError.InValidFileType:
+                    return BadRequest("Invalid file type.");
+                case UpdateUserProfileError.InvalidUsername:
+                    return BadRequest("Invalid username.");
+                case UpdateUserProfileError.FailedUploadingImage:
+                    return StatusCode(500, "Failed uploading image.");
+                case UpdateUserProfileError.AboutIsToLong: 
+                    return BadRequest("About text must be within 100 characters.");
+                case UpdateUserProfileError.FailedUpdatingUserInfo:
+                    return StatusCode(500, "Failed updating user info.");
+                case UpdateUserProfileError.UnknownError:
+                    return StatusCode(500, "Something unexpected happend.");
+            }
+
+
+            return NoContent();
+        }
+
 
     }
 }
