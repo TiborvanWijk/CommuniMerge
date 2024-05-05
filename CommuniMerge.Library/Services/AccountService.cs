@@ -71,7 +71,7 @@ namespace CommuniMerge.Library.Services
 
         private async Task<RegistrationError> ValidateRegistrationAndGetError(RegisterModel registerModel)
         {
-            if(!await isValidUsername(registerModel.Username))
+            if (!await isValidUsername(registerModel.Username))
             {
                 return RegistrationError.InvalidUsername;
             }
@@ -93,12 +93,12 @@ namespace CommuniMerge.Library.Services
 
         private async Task<bool> isValidUsername(string username)
         {
-            if(await userRepository.GetUserByUsernameAsync(username) != null)
+            if (await userRepository.GetUserByUsernameAsync(username) != null)
             {
                 return false;
             }
 
-            if(string.IsNullOrEmpty(username) || username.Length >= 20)
+            if (string.IsNullOrEmpty(username) || username.Length >= 20)
             {
                 return false;
             }
@@ -115,7 +115,7 @@ namespace CommuniMerge.Library.Services
         }
         private async Task<bool> IsValidEmail(string email)
         {
-            if(email == null)
+            if (email == null)
             {
                 return false;
             }
@@ -169,7 +169,7 @@ namespace CommuniMerge.Library.Services
             try
             {
 
-                if(senderId.Equals(receiverId))
+                if (senderId.Equals(receiverId))
                 {
                     return new FriendRequestResult { Error = FriendRequestError.ToSelf };
                 }
@@ -314,14 +314,14 @@ namespace CommuniMerge.Library.Services
 
                 bool usernameIsValid = !string.IsNullOrEmpty(userUpdateDto.Username) && userUpdateDto.Username.Length <= 20;
 
-                if(!usernameIsValid)
+                if (!usernameIsValid)
                 {
                     return new UpdateUserProfileResult { Error = UpdateUserProfileError.InvalidUsername };
                 }
 
                 bool aboutIsToLong = userUpdateDto.About?.Length >= 100;
 
-                if(aboutIsToLong)
+                if (aboutIsToLong)
                 {
                     return new UpdateUserProfileResult { Error = UpdateUserProfileError.AboutIsToLong };
                 }
@@ -331,34 +331,38 @@ namespace CommuniMerge.Library.Services
                 bool usernameInUse = userWithInputUsername != null && !userWithInputUsername.Id.Equals(userId);
                 usernameInUse = usernameInUse ? userWithInputUsername != null : usernameInUse;
 
-                if(usernameInUse)
+                if (usernameInUse)
                 {
                     return new UpdateUserProfileResult { Error = UpdateUserProfileError.InvalidUsername };
                 }
 
-                bool fileIsNotAImage = await fileUploadRepository.GetFileType(userUpdateDto.ProfileImage) != FileType.Image;
-
-                if (fileIsNotAImage)
-                {
-                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.InValidFileType };
-                }
-
-                string? imagePath = await fileUploadRepository.UploadFile(userUpdateDto.ProfileImage, FileType.Image);
-                bool fileIsUploaded = imagePath != null;
-
-                if (!fileIsUploaded)
-                {
-                    return new UpdateUserProfileResult { Error = UpdateUserProfileError.FailedUploadingImage };
-                }
-
                 var currentUser = await userRepository.GetUserByIdAsync(userId);
 
-                currentUser.ProfilePath = "/img/" + imagePath;
-                currentUser.UserName = userUpdateDto.Username;
-                currentUser.NormalizedUserName = userUpdateDto.Username.Trim().ToUpper();
-                currentUser.About = userUpdateDto.About;
+                if (userUpdateDto.ProfileImage != null)
+                {
 
-                if(!await userRepository.UpdateUserAsync(currentUser))
+                    bool fileIsNotAImage = await fileUploadRepository.GetFileType(userUpdateDto.ProfileImage) != FileType.Image;
+
+                    if (fileIsNotAImage)
+                    {
+                        return new UpdateUserProfileResult { Error = UpdateUserProfileError.InValidFileType };
+                    }
+
+                    string? imagePath = await fileUploadRepository.UploadFile(userUpdateDto.ProfileImage, FileType.Image);
+                    bool fileIsUploaded = imagePath != null;
+
+                    if (!fileIsUploaded)
+                    {
+                        return new UpdateUserProfileResult { Error = UpdateUserProfileError.FailedUploadingImage };
+                    }
+                    currentUser.ProfilePath = "/img/" + imagePath;
+                }
+
+                currentUser.UserName = userUpdateDto.Username == null ? currentUser.UserName : userUpdateDto.Username;
+                currentUser.NormalizedUserName = userUpdateDto.Username == null ? currentUser.UserName : userUpdateDto.Username.Trim().ToUpper();
+                currentUser.About = userUpdateDto.About == null ? currentUser.About : userUpdateDto.About;
+
+                if (!await userRepository.UpdateUserAsync(currentUser))
                 {
                     return new UpdateUserProfileResult { Error = UpdateUserProfileError.FailedUpdatingUserInfo };
                 }
