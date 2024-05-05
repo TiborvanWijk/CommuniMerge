@@ -207,7 +207,7 @@ body {
 }
 
 .message-item:hover .user2 {
-  outline: 2px solid var(--light-blue);
+  outline: 2px solid var(--light-blue) !important;
 }
 
 .user1 {

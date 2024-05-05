@@ -464,12 +464,21 @@ async function openPersonalConversation(event, userDto) {
 function selectTab(event) {
 
     var messageItems = document.querySelectorAll(".message-item");
+    var user2s = document.querySelectorAll(".user2");
+
+    user2s.forEach(user =>{
+        user.style.outline = "2px solid var(--white)";
+    });
 
     for (let i = 0; i < messageItems.length; ++i) {
         let messageItem = messageItems[i];
         messageItem.style.backgroundColor = "var(--white)";
     }
     event.style.backgroundColor = "var(--light-blue)";
+    let user = event.querySelector(".user2");
+    if(user != null){
+        user.style.outline = "2px solid var(--light-blue)";
+    }
 }
 
 function updateReceiver(receiverId, isForGroup) {
