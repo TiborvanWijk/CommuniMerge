@@ -345,8 +345,11 @@ body {
   color: var(--white);
 }
 
-.menu-body-add-friends {
+.menu-body {
   display: none;
+}
+
+.menu-body-add-friends {
   flex-direction: column;
   padding: 25% 1em 1em 1em;
   align-items: center;
@@ -411,7 +414,6 @@ body {
 }
 
 .menu-body-friends-overview, .menu-body-friendRequest-overview {
-  display: none;
   flex-direction: column;
   align-items: center;
   gap: 1em;
@@ -497,7 +499,6 @@ body {
 }
 
 .menu-body-groupCreate-menu {
-  display: none;
   padding: 1em;
   flex-direction: column;
   align-items: center;
@@ -570,11 +571,9 @@ body {
 }
 
 .group-create-info-menu {
-  display: none;
   position: relative;
   height: calc(100% - 8em);
   width: 100%;
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -636,8 +635,10 @@ body {
 }
 .index-main {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: calc(100vw - min(400px, 100vw));
-  height: 100%;
+  height: 100vh;
   background: radial-gradient(farthest-side at -33.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 0 36px, radial-gradient(farthest-side at 50% 133.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%) 36px 0, radial-gradient(farthest-side at 133.33% 50%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), radial-gradient(farthest-side at 50% -33.33%, rgba(0, 0, 0, 0) 52%, #31363f 54% 57%, rgba(0, 0, 0, 0) 59%), #222831;
   background-size: 15.4274694665px 72px, 72px 15.4274694665px;
 }
@@ -657,7 +658,7 @@ body {
   background: var(--light-dark);
   height: 4em;
   width: 100%;
-  padding: 0 1em;
+  padding: 1em;
 }
 
 .message-menu {
@@ -723,11 +724,12 @@ body {
 }
 
 .messages-holder {
+  position: relative;
   display: flex;
   flex-direction: column-reverse;
-  height: calc(100% - 8em);
+  flex-grow: 1;
   padding: 3em;
-  overflow: auto;
+  overflow-y: auto;
 }
 
 .messages {
@@ -745,7 +747,8 @@ body {
   width: 100%;
 }
 
-.message-video-holder, .message-image-holder {
+.message-video-holder,
+.message-image-holder {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -759,14 +762,13 @@ body {
 .message-sender-wrapper {
   position: relative;
   padding: 0.5em 1em;
-  height: 4em;
   background: var(--dark);
 }
 
 .add-file-btn {
   position: absolute;
   left: 1em;
-  top: 0.5em;
+  bottom: 0.5em;
   background: none;
   border: none;
   font-size: 1.8em;
@@ -781,6 +783,64 @@ body {
   padding: 1em 1em 1em 4em;
   width: 100%;
   color: var(--white);
+}
+
+.file-preview-holder {
+  display: flex;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  width: 100%;
+  background: var(--light-dark);
+  z-index: var(--layer2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0em 0em 1em 0em;
+}
+
+.file-list {
+  display: grid;
+  grid-template-columns: repeat(5, calc(20% - 1em));
+  justify-content: space-between;
+  padding: 1em 1em 0em 1em;
+  gap: 1em;
+  max-height: 15em;
+  width: 100%;
+  overflow: auto;
+  list-style: none;
+}
+
+.file-list-item {
+  padding: 0.5em;
+  background: var(--dark);
+  height: 12em;
+  position: relative;
+}
+.file-list-item figure {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.file-list-item figure img {
+  max-height: 100%;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.remove-uploadedFile {
+  background: var(--dark);
+  position: absolute;
+  border-radius: 50%;
+  border: none;
+  padding: 0.5em;
+  border: 2px solid var(--dark);
+  top: -1em;
+  right: -1em;
+  cursor: pointer;
+}
+.remove-uploadedFile i {
+  font-size: 1.2em;
+  color: var(--red);
 }
 
 .message-wrapper {
