@@ -466,7 +466,7 @@ function selectTab(event) {
     var messageItems = document.querySelectorAll(".message-item");
     var user2s = document.querySelectorAll(".user2");
 
-    user2s.forEach(user =>{
+    user2s.forEach(user => {
         user.style.outline = "2px solid var(--white)";
     });
 
@@ -476,7 +476,7 @@ function selectTab(event) {
     }
     event.style.backgroundColor = "var(--light-blue)";
     let user = event.querySelector(".user2");
-    if(user != null){
+    if (user != null) {
         user.style.outline = "2px solid var(--light-blue)";
     }
 }
@@ -573,7 +573,7 @@ function createMessageHtml(messageObject) {
     return newMessage;
 }
 
-function popUpImage(imageTag){
+function popUpImage(imageTag) {
     let imagePath = imageTag.src;
     let div = document.createElement("div");
 
@@ -592,7 +592,7 @@ function popUpImage(imageTag){
 
     let figure = div.querySelector(".image-of-popup");
 
-    img.addEventListener("load", function(){
+    img.addEventListener("load", function () {
         figure.appendChild(img);
         let body = document.body;
         body.addEventListener("keyup", escapeDelete);
@@ -602,13 +602,13 @@ function popUpImage(imageTag){
 }
 
 function escapeDelete(event) {
-    if(event.key === "Escape") {
+    if (event.key === "Escape") {
         deletePopupImage();
         document.body.removeEventListener("keyup", escapeDelete);
     }
 }
 
-function deletePopupImage(){
+function deletePopupImage() {
 
     document.querySelector("#image-popup").remove();
 }
@@ -732,8 +732,8 @@ document.getElementById('menu-popup').addEventListener('click', function (event)
 
 
 function openFriendRequestMenu() {
-    setMenuHeader("Friend requests");
     clearMenu();
+    setMenuHeader("Friend requests");
     let menu = document.querySelector("#friendRequestOverView");
 
     menu.style.display = "flex";
@@ -813,7 +813,60 @@ document.querySelector("#add-file-btn").addEventListener("click", function () {
     document.querySelector("#message-file-selector").click();
 });
 
+let selectedFiles = [];
 
+function handleFiles(fileList) {
+    for (let i = 0; i < fileList.length; i++) {
+        selectedFiles.push(fileList[i]);
+    }
+
+    updateFileList();
+}
+
+function updateFileList() {
+    let fileListHolder = document.querySelector("#file-preview-holder");
+
+    let fileList = fileListHolder.querySelector(".file-list");
+    fileList.innerHTML = "";
+    for (let i = 0; i < selectedFiles.length; ++i) {
+
+        let src = URL.createObjectURL(selectedFiles[i]);
+
+        let newFileDisplay = createUploadedFileDisplayHTML(src);
+        newFileDisplay.querySelector("button").addEventListener("click", function () {
+            removeFile(i);
+        })
+        fileList.appendChild(newFileDisplay)
+    }
+
+    fileListHolder.style.display = "flex";
+}
+
+function removeFile(index) {
+    selectedFiles.splice(index, 1);
+    let fileListHolder = document.querySelector("#file-preview-holder");
+    let fileList = fileListHolder.querySelector(".file-list");
+    let listItems = fileList.children;
+
+    listItems[index].remove();
+
+    if (selectedFiles.length == 0) {
+        fileListHolder.style.display = "none";
+    }
+}
+
+function createUploadedFileDisplayHTML(source) {
+    let li = document.createElement("li");
+    li.classList.add("file-list-item");
+
+    li.innerHTML = `
+                <button class="remove-uploadedFile"><i class="fa-solid fa-trash-can"></i></button>
+                <figure>
+                    <img onclick="popUpImage(this)" src="${source}" />
+                </figure>
+                `;
+    return li;
+}
 
 
 
