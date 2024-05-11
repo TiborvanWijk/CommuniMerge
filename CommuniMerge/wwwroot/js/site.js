@@ -834,23 +834,27 @@ function updateFileList() {
 
         let newFileDisplay = createUploadedFileDisplayHTML(src);
         newFileDisplay.querySelector("button").addEventListener("click", function () {
-            removeFile(i);
+            removeFile(this);
         })
         fileList.appendChild(newFileDisplay)
     }
-
+    document.querySelector("#message-sender").style.borderRadius = "0px 0px 10px 10px";
     fileListHolder.style.display = "flex";
 }
 
-function removeFile(index) {
-    selectedFiles.splice(index, 1);
+function removeFile(removeBtn) {
     let fileListHolder = document.querySelector("#file-preview-holder");
     let fileList = fileListHolder.querySelector(".file-list");
-    let listItems = fileList.children;
 
-    listItems[index].remove();
+    let displayedFile = removeBtn.parentElement;
+
+    let index = Array.from(fileList.children).indexOf(displayedFile);
+    selectedFiles.splice(index, 1);
+    
+    displayedFile.remove();
 
     if (selectedFiles.length == 0) {
+        document.querySelector("#message-sender").style.borderRadius = "10px";
         fileListHolder.style.display = "none";
     }
 }
