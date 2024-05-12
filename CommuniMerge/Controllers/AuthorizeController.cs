@@ -63,7 +63,7 @@ namespace CommuniMerge.Controllers
 
             var registerResult = await apiService.SendHttpRequest<RegisterModel>(HttpContext, "/api/Account/register", HttpMethod.Post, registerModel);
 
-            if (registerResult.StatusCode != HttpStatusCode.Created)
+            if (registerResult.StatusCode != HttpStatusCode.NoContent)
             {
                 var feedbackMessage = await registerResult.Content.ReadAsStringAsync();
                 return View(new RegisterView { RegisterModel = registerModel, FeedbackMessage = feedbackMessage});

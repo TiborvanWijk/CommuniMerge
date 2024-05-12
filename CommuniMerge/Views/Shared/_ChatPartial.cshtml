@@ -60,7 +60,16 @@
                                     @{
                                         if (friend.LatestMessage != null)
                                         {
-                                            <p class="truncate">@friend.LatestMessage.Content</p>
+                                            if (friend.LatestMessage.FilePath != null)
+                                            {
+                                                <p class="truncate"><i class="fa-solid fa-image"></i> @friend.LatestMessage.Content</p>
+
+                                            }
+                                            else
+                                            {
+                                                <p class="truncate">@friend.LatestMessage.Content</p>
+                                                
+                                            }
                                         }
                                     }
                                 </div>
@@ -78,9 +87,15 @@
                                 <div class="message-information">
                                     <h3>@group.Name</h3>
                                     @{
-                                        if (group.LatestMessage != null)
+                                        if (group.LatestMessage.FilePath != null)
+                                        {
+                                            <p class="truncate"><i class="fa-solid fa-image"></i> @group.LatestMessage.Content</p>
+
+                                        }
+                                        else
                                         {
                                             <p class="truncate">@group.LatestMessage.Content</p>
+
                                         }
                                     }
                                 </div>

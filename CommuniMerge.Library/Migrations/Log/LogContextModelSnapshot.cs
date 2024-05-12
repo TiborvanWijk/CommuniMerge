@@ -34,9 +34,8 @@ namespace CommuniMerge.Library.Migrations.Log
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LogLevel")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -46,8 +45,8 @@ namespace CommuniMerge.Library.Migrations.Log
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("TimeStamp")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

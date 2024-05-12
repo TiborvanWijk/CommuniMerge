@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CommuniMerge.Library.Migrations.Log
 {
     [DbContext(typeof(LogContext))]
-    [Migration("20240330210431_LogContextMigration")]
+    [Migration("20240512105029_LogContextMigration")]
     partial class LogContextMigration
     {
         /// <inheritdoc />
@@ -37,9 +37,8 @@ namespace CommuniMerge.Library.Migrations.Log
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("LogLevel")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LogLevel")
+                        .HasColumnType("int");
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -49,8 +48,8 @@ namespace CommuniMerge.Library.Migrations.Log
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("TimeStamp")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
