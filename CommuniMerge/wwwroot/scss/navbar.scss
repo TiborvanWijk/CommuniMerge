@@ -290,8 +290,12 @@
     color: var(--white);
 }
 
-.menu-body-add-friends{
+
+.menu-body{
     display: none;
+}
+
+.menu-body-add-friends{
     flex-direction: column;
     padding: 25% 1em 1em 1em;
     align-items: center;
@@ -360,7 +364,6 @@
 }
 
 .menu-body-friends-overview, .menu-body-friendRequest-overview{
-    display: none;
     flex-direction: column;
     align-items: center;
     gap: 1em;
@@ -454,7 +457,6 @@
 
 
 .menu-body-groupCreate-menu{
-    display: none;
     padding: 1em;
     flex-direction: column;
     align-items: center;
@@ -525,11 +527,9 @@
 
 .group-create-info-menu{
 
-    display: none;
     position: relative;
     height: calc(100% - 8em);
     width: 100%;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;

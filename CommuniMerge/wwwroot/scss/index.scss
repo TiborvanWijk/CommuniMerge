@@ -1,44 +1,46 @@
 @use "./variables.scss";
 
-.index-main{
+.index-main {
     position: relative;
+    display: flex;
+    flex-direction: column;
     width: calc(100vw - min(400px, 100vw));
-    height: 100%;
-    background: 
-    radial-gradient(farthest-side at -33.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%) 0 calc(72px/2),
-    radial-gradient(farthest-side at 50% 133.33%,#0000 52%,#31363f 54% 57%,#0000 59%) calc(72px/2) 0,
-    radial-gradient(farthest-side at 133.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%),
-    radial-gradient(farthest-side at 50% -33.33%,#0000 52%,#31363f 54% 57%,#0000 59%),
-    #222831;
-    background-size: calc(72px/4.667) 72px,72px calc(72px/4.667);
+    height: 100vh;
+    background:
+        radial-gradient(farthest-side at -33.33% 50%, #0000 52%, #31363f 54% 57%, #0000 59%) 0 calc(72px/2),
+        radial-gradient(farthest-side at 50% 133.33%, #0000 52%, #31363f 54% 57%, #0000 59%) calc(72px/2) 0,
+        radial-gradient(farthest-side at 133.33% 50%, #0000 52%, #31363f 54% 57%, #0000 59%),
+        radial-gradient(farthest-side at 50% -33.33%, #0000 52%, #31363f 54% 57%, #0000 59%),
+        #222831;
+    background-size: calc(72px/4.667) 72px, 72px calc(72px/4.667);
 }
-    
-    
-#screenBlocker{
+
+
+#screenBlocker {
     position: absolute;
     height: 100%;
     width: 100%;
-    background: 
-    radial-gradient(farthest-side at -33.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%) 0 calc(72px/2),
-    radial-gradient(farthest-side at 50% 133.33%,#0000 52%,#31363f 54% 57%,#0000 59%) calc(72px/2) 0,
-    radial-gradient(farthest-side at 133.33% 50%,#0000 52%,#31363f 54% 57%,#0000 59%),
-    radial-gradient(farthest-side at 50% -33.33%,#0000 52%,#31363f 54% 57%,#0000 59%),
-    #222831;
-    background-size: calc(72px/4.667) 72px,72px calc(72px/4.667);
+    background:
+        radial-gradient(farthest-side at -33.33% 50%, #0000 52%, #31363f 54% 57%, #0000 59%) 0 calc(72px/2),
+        radial-gradient(farthest-side at 50% 133.33%, #0000 52%, #31363f 54% 57%, #0000 59%) calc(72px/2) 0,
+        radial-gradient(farthest-side at 133.33% 50%, #0000 52%, #31363f 54% 57%, #0000 59%),
+        radial-gradient(farthest-side at 50% -33.33%, #0000 52%, #31363f 54% 57%, #0000 59%),
+        #222831;
+    background-size: calc(72px/4.667) 72px, 72px calc(72px/4.667);
     z-index: var(--layer1);
 }
 
-.info-header{
+.info-header {
     display: flex;
 
     justify-content: space-between;
     background: var(--light-dark);
     height: 4em;
     width: 100%;
-    padding: 0 1em;
+    padding: 1em;
 }
 
-.message-menu{
+.message-menu {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -49,16 +51,17 @@
     color: var(--white);
     font-size: 1.4em;
     padding: 0 1em;
-    li{
+
+    li {
         position: relative;
     }
 }
 
-.message-option{
+.message-option {
     cursor: pointer;
 }
 
-.search-chat-input{
+.search-chat-input {
     background: var(--dark);
     border: none;
     color: white;
@@ -67,7 +70,7 @@
     // height: 30px;
 }
 
-.chat-search{
+.chat-search {
     position: absolute;
     right: 10px;
     bottom: 6px;
@@ -75,19 +78,20 @@
     cursor: pointer;
 }
 
-.userinfo-wrapper{
+.userinfo-wrapper {
     display: flex;
     align-items: center;
     color: white;
     gap: 1em;
 
-    p{
+    p {
         color: rgba(255, 255, 255, 0.6);
     }
+
     cursor: pointer;
 }
 
-.user-pfp{
+.user-pfp {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -95,21 +99,26 @@
     width: 50px;
     border-radius: 50%;
     overflow: hidden;
-    img{
+
+    img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 }
-.messages-holder{
+
+.messages-holder {
+    position: relative;
     display: flex;
     flex-direction: column-reverse;
-    height: calc(100% - 8em);
+    // height: calc(100% - 8em);
+    flex-grow: 1;
+    flex-shrink: 1;
     padding: 3em;
-    overflow: auto;
-} 
+    overflow-y: auto;
+}
 
-.messages{
+.messages {
     display: flex;
     flex-direction: column-reverse;
 
@@ -117,16 +126,18 @@
 
 }
 
-.message-image-holder{
+.message-image-holder {
     cursor: pointer;
-    img{
+
+    img {
         object-fit: cover;
         height: 100%;
         width: 100%;
     }
 }
 
-.message-video-holder, .message-image-holder{
+.message-video-holder,
+.message-image-holder {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -138,27 +149,26 @@
 }
 
 
-.userinfo{
+.userinfo {}
 
-}
-
-.message-sender-wrapper{
+.message-sender-wrapper {
     position: relative;
     padding: 0.5em 1em;
-    height: 4em;
     background: var(--dark);
 }
-.add-file-btn{
+
+.add-file-btn {
     position: absolute;
     left: 1em;
-    top: 0.5em;
+    bottom: 0.4em;
     background: none;
     border: none;
     font-size: 1.8em;
     color: var(--white);
     cursor: pointer;
 }
-.message-sender{
+
+.message-sender {
     background: var(--light-dark);
     border: none;
     border-radius: 10px;
@@ -167,12 +177,114 @@
     color: var(--white);
 }
 
-.message-wrapper{
+
+
+
+
+.file-preview-holder{
+    display: none;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    width: 100%;
+    max-height: 15em;
+
+    background: var(--light-dark);
+    z-index: var(--layer2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0em 0em 1em 0em;
+}
+
+.file-list{
+    display: grid;
+    grid-template-columns: repeat(5, calc(20% - 1em));
+    justify-content: space-between;
+    padding: 1em 1em 0em 1em;
+
+    gap: 1em;
+    width: 100%;
+    overflow: auto;
+    list-style: none;
+}
+
+@media (max-width: 1500px){
+    .file-list{
+    grid-template-columns: repeat(4, calc(25% - 1em));
+    }
+}
+@media (max-width: 1300px){
+    .file-list{
+    grid-template-columns: repeat(3, calc(calc(100%/3) - 1em));
+    }
+}
+@media (max-width: 1150px){
+    .file-list{
+    grid-template-columns: repeat(2, calc(50% - 1em));
+    }
+}
+
+@media (max-width: 900px){
+    .file-list{
+    grid-template-columns:  calc(100% - 1em);
+    }
+}
+.file-list-item{
+    padding: 0.5em;
+    background: var(--dark);
+    height: 12em;
+    position: relative;
+    figure{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        img{
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+    }
+}
+
+.remove-uploadedFile{
+    background: var(--dark);
+    position: absolute;
+    border-radius: 50%;
+    border: none;
+    padding: 0.5em;
+    border: 2px solid var(--dark);
+    top: -1em;
+    right: -1em;
+    cursor: pointer;
+    i{
+        font-size: 1.2em;
+        color: var(--red);
+    }
+}
+
+.file-preview-options{
+    position: absolute;
+    display: flex;
+    right: 2em;
+    top: 1em;
+}
+
+
+
+
+
+
+
+
+
+
+
+.message-wrapper {
     display: flex;
     gap: 1em;
 }
 
-.message-profile-picture{
+.message-profile-picture {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -181,50 +293,52 @@
     width: 40px;
     overflow: hidden;
     border-radius: 50%;
-    img{
+
+    img {
         object-fit: cover;
         height: 100%;
         width: 100%;
     }
 }
 
-.identifier-wrapper{
+.identifier-wrapper {
     display: flex;
     gap: 0.5em;
     align-items: center;
 
-    h3{
+    h3 {
         color: var(--white);
     }
-    p{
+
+    p {
         color: rgba(255, 255, 255, 0.6);
         font-size: 75%;
     }
 }
 
-.content-wrapper{
+.content-wrapper {
     display: flex;
     flex-direction: column;
     background: var(--light-dark);
     border-radius: 10px;
     padding: 0.5em;
     max-width: 75%;
-    overflow-wrap: break-word; 
-    word-wrap: break-word; 
-    word-break: break-word; 
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
-.message-text{
+.message-text {
     color: var(--white);
 
-    a{
+    a {
         color: var(--light-blue);
     }
 
 }
 
 
-#image-popup{
+#image-popup {
     left: 0;
     top: 0;
     position: absolute;
@@ -237,7 +351,7 @@
     z-index: var(--layer9);
 }
 
-#closeImagePopup{
+#closeImagePopup {
     position: absolute;
     background: none;
     border: none;
@@ -247,7 +361,8 @@
     top: 1em;
     right: 2em;
 }
-.image-of-popup{
+
+.image-of-popup {
     position: relative;
     width: min(100ch, 100vw);
     max-height: min(70ch, 100vw);
@@ -255,19 +370,20 @@
     justify-content: center;
     overflow: hidden;
     animation: popup 600ms ease-out;
-    
-    img{
+
+    img {
         max-height: 100%;
         width: 100%;
         object-fit: contain;
     }
 }
 
-@keyframes popup{
-    from{
+@keyframes popup {
+    from {
         transform: scale(0);
     }
-    to{
+
+    to {
         transform: scale(1);
     }
 }

@@ -38,22 +38,25 @@
         
         </ul>
 
-
-
     </section>
 
     <footer class="message-sender-wrapper">
-        <input type="file" class="hidden" id="message-file-selector" accept="" />
+
+
+        <div class="file-preview-holder" id="file-preview-holder">
+            <ul class="file-list">
+
+
+            </ul>
+        </div>
+
+        <div>
+
+            <input type="file" class="hidden" id="message-file-selector" multiple accept="" onchange="handleFiles(this.files)" />
         <button class="add-file-btn" id="add-file-btn"><i class="fa-solid fa-circle-plus"></i></button>
         <input data-sender="@Model.CurrentUser.Username" data-forGroup="" data-receiver="" id="message-sender" autocomplete="off" class="message-sender" type="text" placeholder="Send message to User">
+        </div>
     </footer>
 </main>
 
-@* <div id="image-popup">
-    <button id="closeImagePopup"><i class="fa-solid fa-xmark"></i></button>
-
-    <figure class="image-of-popup">
-        <img src="/img/doggy.jpg" />
-    </figure>
-</div> *@
 <script src="~/js/signalr/dist/browser/signalr.js"></script>

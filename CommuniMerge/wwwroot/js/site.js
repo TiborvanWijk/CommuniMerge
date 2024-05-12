@@ -8,45 +8,56 @@ chathub.on("ReceiveMessage", function (receiverUsername, messageDto) {
     messageDto.timeStamp = messageDto.timeStamp.substring(0, 16).toString().replace("T", " ");
 
     let newMessage = createMessageHtml(messageDto);
-    updateLatestMessageListingPersonal(receiverUsername, messageDto.sender.username, messageDto.content);
+    updateLatestMessageListingPersonal(receiverUsername, messageDto.sender.username, messageDto);
 
     addMessageToChatIfActivePersonal(senderDto.username, receiverUsername, newMessage);
 
     playAudio();
 });
-function updateLatestMessageListingPersonal(receiverUsername, currentUsername, latestMessage) {
+function updateLatestMessageListingPersonal(receiverUsername, currentUsername, messageObject) {
 
     const chatIdentifier1 = `${currentUsername}/${receiverUsername}`;
     const chatIdentifier2 = `${receiverUsername}/${currentUsername}`;
     const list = document.querySelector("#user-list");
     const listItem = list.querySelector(`li[data-chat="${chatIdentifier1}"], li[data-chat="${chatIdentifier2}"]`);
+
+    let latestMessage = messageObject.content;
+    if (messageObject.fileType != null) {
+        latestMessage = `<i class="fa-solid fa-image"></i> ` + (latestMessage != null ? latestMessage : "");
+    }
     if (listItem) {
         let messageContent = listItem.querySelector('.truncate');
         if (messageContent) {
-            messageContent.textContent = latestMessage;
+            messageContent.innerHTML = latestMessage;
         }
         else {
             let informationHolder = listItem.querySelector(".message-information");
             messageContent = document.createElement("p");
-            messageContent.textContent = latestMessage;
+            messageContent.innerHTML = latestMessage;
             messageContent.classList.add("truncate");
             informationHolder.appendChild(messageContent);
         }
         list.prepend(listItem);
     }
 }
-function updateLatestMessageListingGroup(groupId, latestMessage) {
+function updateLatestMessageListingGroup(groupId, messageObject) {
     const list = document.querySelector("#user-list");
     const listItem = list.querySelector(`li[data-group-id="${groupId}"]`);
+
+    let latestMessage = messageObject.content;
+    if (messageObject.fileType != null) {
+        latestMessage = `<i class="fa-solid fa-image"></i> ` + (latestMessage != null ? latestMessage : "");
+    }
+
     if (listItem) {
         let messageContent = listItem.querySelector('.truncate');
         if (messageContent) {
-            messageContent.textContent = latestMessage;
+            messageContent.innerHTML = latestMessage;
         }
         else {
             let informationHolder = listItem.querySelector(".message-information");
             messageContent = document.createElement("p");
-            messageContent.textContent = latestMessage;
+            messageContent.innerHTML = latestMessage;
             messageContent.classList.add("truncate");
             informationHolder.appendChild(messageContent);
         }
@@ -60,7 +71,7 @@ chathub.on("ReceiveGroupMessage", function (groupId, messageDto) {
 
     let newMessage = createMessageHtml(messageDto);
 
-    updateLatestMessageListingGroup(groupId, messageDto.content);
+    updateLatestMessageListingGroup(groupId, messageDto);
 
     addMessageToChatIfActiveGroup(groupId, newMessage);
 
@@ -279,10 +290,36 @@ function resetFriendRequestHolder() {
     let input = holder.querySelector("#friendRequestInput");
     input.style.border = "none";
 }
-document.getElementById("message-sender").addEventListener("keyup", function (event) {
+
+
+async function sendGroupMessage(groupMessageCreateDto) {
+    let formData = new FormData();
+    formData.append('groupId', groupMessageCreateDto.groupId);
+    formData.append('content', groupMessageCreateDto.content);
+    if (groupMessageCreateDto.file) {
+        formData.append('file', groupMessageCreateDto.file);
+    }
+
+    await fetch('https://localhost:7129/api/Message/CreateGroupMessage', {
+        method: 'POST',
+        credentials: "include",
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            console.error('There was a problem with the request:', error);
+        });
+}
+
+document.getElementById("message-sender").addEventListener("keyup", async function (event) {
     let input = document.getElementById("message-sender");
     let message = input.value;
-    if (event.key != "Enter" || message.length == 0) {
+    if (event.key != "Enter" || message.length == 0 && selectedFiles.length == 0) {
         return;
     }
     input.value = "";
@@ -301,31 +338,19 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
             file: null,
         }
 
-        if (fileInput.files.length > 0) {
-            groupMessageCreateDto.file = fileInput.files[0];
+        if (selectedFiles.length != 0) {
+            for (let i = 0; i < selectedFiles.length; ++i) {
+                groupMessageCreateDto.file = selectedFiles[i];
+                await sendGroupMessage(groupMessageCreateDto);
+                groupMessageCreateDto.content = "";
+            }
+            selectedFiles = [];
+            document.querySelector("#file-preview-holder").style.display = "none";
+            document.querySelector("#message-sender").style.borderRadius = "10px";
         }
-
-        let formData = new FormData();
-        formData.append('groupId', groupMessageCreateDto.groupId);
-        formData.append('content', groupMessageCreateDto.content);
-        if (groupMessageCreateDto.file) {
-            formData.append('file', groupMessageCreateDto.file);
+        else {
+            await sendGroupMessage(groupMessageCreateDto);
         }
-
-        fetch('https://localhost:7129/api/Message/CreateGroupMessage', {
-            method: 'POST',
-            credentials: "include",
-            body: formData
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                console.log('Message sent successfully');
-            })
-            .catch(error => {
-                console.error('There was a problem with the request:', error);
-            });
 
     }
     else if (isForGroup === "false") {
@@ -334,36 +359,49 @@ document.getElementById("message-sender").addEventListener("keyup", function (ev
             content: message,
             file: null
         }
-        if (fileInput.files.length > 0) {
-            personalMessageCreateDto.file = fileInput.files[0];
-        }
 
-        let formData = new FormData();
-        formData.append('ReceiverUsername', personalMessageCreateDto.receiverUsername);
-        formData.append('content', personalMessageCreateDto.content);
-        if (personalMessageCreateDto.file) {
-            formData.append('file', personalMessageCreateDto.file);
+        if (selectedFiles.length != 0) {
+            for (let i = 0; i < selectedFiles.length; ++i) {
+                personalMessageCreateDto.file = selectedFiles[i];
+                await sendPersonalMessage(personalMessageCreateDto);
+                personalMessageCreateDto.content = "";
+            }
+            selectedFiles = [];
+            document.querySelector("#file-preview-holder").style.display = "none";
+            document.querySelector("#message-sender").style.borderRadius = "10px";
         }
-
-        fetch('https://localhost:7129/api/Message/createPersonalMessage', {
-            method: 'POST',
-            credentials: "include",
-            body: formData
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                console.log('Message sent successfully');
-            })
-            .catch(error => {
-                console.error('There was a problem with the request:', error);
-            });
+        else {
+            await sendPersonalMessage(personalMessageCreateDto);
+        }
 
     }
 
     event.preventDefault();
 });
+
+async function sendPersonalMessage(personalMessageCreateDto) {
+    let formData = new FormData();
+    formData.append('ReceiverUsername', personalMessageCreateDto.receiverUsername);
+    formData.append('content', personalMessageCreateDto.content);
+    if (personalMessageCreateDto.file) {
+        formData.append('file', personalMessageCreateDto.file);
+    }
+
+    await fetch('https://localhost:7129/api/Message/createPersonalMessage', {
+        method: 'POST',
+        credentials: "include",
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            console.log('Message sent successfully');
+        })
+        .catch(error => {
+            console.error('There was a problem with the request:', error);
+        });
+}
 
 let sendFriendRequestBtn = document.querySelector("#sendFriendRequestBtn");
 sendFriendRequestBtn.addEventListener("click", () => {
@@ -466,7 +504,7 @@ function selectTab(event) {
     var messageItems = document.querySelectorAll(".message-item");
     var user2s = document.querySelectorAll(".user2");
 
-    user2s.forEach(user =>{
+    user2s.forEach(user => {
         user.style.outline = "2px solid var(--white)";
     });
 
@@ -476,7 +514,7 @@ function selectTab(event) {
     }
     event.style.backgroundColor = "var(--light-blue)";
     let user = event.querySelector(".user2");
-    if(user != null){
+    if (user != null) {
         user.style.outline = "2px solid var(--light-blue)";
     }
 }
@@ -516,9 +554,9 @@ function createMessageHtml(messageObject) {
     newMessage.classList.add("message-wrapper");
 
     let urlRegex = /(https?:\/\/[^\s]+)/g;
-    let messageWithLinks = messageObject.content.replace(urlRegex, (url) => {
+    let messageWithLinks = messageObject.content != null ? messageObject.content.replace(urlRegex, (url) => {
         return '<a href="' + url + '" target="_blank">' + url + '</a>';
-    });
+    }) : null;
 
     if (messageObject.fileType == null) {
 
@@ -547,8 +585,11 @@ function createMessageHtml(messageObject) {
                 </div>
                 <figure class="message-image-holder" >
                     <img src="${messageObject.filePath}" onclick="popUpImage(this)" />
-                </figure>
-                <div class="message-text">${messageWithLinks}</div>
+                </figure>`
+            +
+            (messageWithLinks != null ? `\n<div class="message-text" > ${messageWithLinks}</div>\n` : "")
+            +
+            `
             </div>
             `;
 
@@ -565,15 +606,18 @@ function createMessageHtml(messageObject) {
                 </div>
                 <video class="message-video-holder" type="video/mp4" controls>
                     <source src="${messageObject.filePath}" />
-                </video>
-                <div class="message-text">${messageWithLinks}</div>
+                </video>`
+            +
+            (messageWithLinks != null ? `\n<div class="message-text" > ${messageWithLinks}</div>\n` : "")
+            +
+            `
             </div>
             `;
     }
     return newMessage;
 }
 
-function popUpImage(imageTag){
+function popUpImage(imageTag) {
     let imagePath = imageTag.src;
     let div = document.createElement("div");
 
@@ -592,7 +636,7 @@ function popUpImage(imageTag){
 
     let figure = div.querySelector(".image-of-popup");
 
-    img.addEventListener("load", function(){
+    img.addEventListener("load", function () {
         figure.appendChild(img);
         let body = document.body;
         body.addEventListener("keyup", escapeDelete);
@@ -602,13 +646,13 @@ function popUpImage(imageTag){
 }
 
 function escapeDelete(event) {
-    if(event.key === "Escape") {
+    if (event.key === "Escape") {
         deletePopupImage();
         document.body.removeEventListener("keyup", escapeDelete);
     }
 }
 
-function deletePopupImage(){
+function deletePopupImage() {
 
     document.querySelector("#image-popup").remove();
 }
@@ -732,8 +776,8 @@ document.getElementById('menu-popup').addEventListener('click', function (event)
 
 
 function openFriendRequestMenu() {
-    setMenuHeader("Friend requests");
     clearMenu();
+    setMenuHeader("Friend requests");
     let menu = document.querySelector("#friendRequestOverView");
 
     menu.style.display = "flex";
@@ -813,7 +857,67 @@ document.querySelector("#add-file-btn").addEventListener("click", function () {
     document.querySelector("#message-file-selector").click();
 });
 
+let selectedFiles = [];
 
+function handleFiles(fileList) {
+    for (let i = 0; i < fileList.length; i++) {
+        selectedFiles.push(fileList[i]);
+    }
+
+    let input = document.querySelector("#message-file-selector");
+    input.value = null;
+
+    updateFileList();
+}
+
+function updateFileList() {
+    let fileListHolder = document.querySelector("#file-preview-holder");
+
+    let fileList = fileListHolder.querySelector(".file-list");
+    fileList.innerHTML = "";
+    for (let i = 0; i < selectedFiles.length; ++i) {
+
+        let src = URL.createObjectURL(selectedFiles[i]);
+
+        let newFileDisplay = createUploadedFileDisplayHTML(src);
+        newFileDisplay.querySelector("button").addEventListener("click", function () {
+            removeFile(this);
+        })
+        fileList.appendChild(newFileDisplay)
+    }
+    document.querySelector("#message-sender").style.borderRadius = "0px 0px 10px 10px";
+    fileListHolder.style.display = "flex";
+}
+
+function removeFile(removeBtn) {
+    let fileListHolder = document.querySelector("#file-preview-holder");
+    let fileList = fileListHolder.querySelector(".file-list");
+
+    let displayedFile = removeBtn.parentElement;
+
+    let index = Array.from(fileList.children).indexOf(displayedFile);
+    selectedFiles.splice(index, 1);
+
+    displayedFile.remove();
+
+    if (selectedFiles.length == 0) {
+        document.querySelector("#message-sender").style.borderRadius = "10px";
+        fileListHolder.style.display = "none";
+    }
+}
+
+function createUploadedFileDisplayHTML(source) {
+    let li = document.createElement("li");
+    li.classList.add("file-list-item");
+
+    li.innerHTML = `
+                <button class="remove-uploadedFile"><i class="fa-solid fa-trash-can"></i></button>
+                <figure>
+                    <img onclick="popUpImage(this)" src="${source}" />
+                </figure>
+                `;
+    return li;
+}
 
 
 

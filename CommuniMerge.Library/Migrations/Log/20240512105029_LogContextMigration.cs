@@ -17,8 +17,8 @@ namespace CommuniMerge.Library.Migrations.Log
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TimeStamp = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    LogLevel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LogLevel = table.Column<int>(type: "int", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ClassName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     MethodName = table.Column<string>(type: "nvarchar(max)", nullable: false)

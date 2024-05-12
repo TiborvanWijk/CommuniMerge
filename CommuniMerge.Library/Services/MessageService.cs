@@ -44,7 +44,7 @@ namespace CommuniMerge.Library.Services
                     return new MessageCreateResult { Error = MessageCreateError.UserNotFound };
                 }
 
-                if (string.IsNullOrEmpty(messageCreateDto.Content))
+                if (string.IsNullOrEmpty(messageCreateDto.Content) && messageCreateDto.File == null)
                 {
                     return new MessageCreateResult { Error = MessageCreateError.MessageIsNullOrEmpty };
                 }
@@ -149,7 +149,7 @@ namespace CommuniMerge.Library.Services
                     return new MessageCreateResult { Error = MessageCreateError.UnAuthorized };
                 }
 
-                if (string.IsNullOrEmpty(messageCreateDto.Content))
+                if (string.IsNullOrEmpty(messageCreateDto.Content) && messageCreateDto.File == null)
                 {
                     return new MessageCreateResult { Error = MessageCreateError.MessageIsNullOrEmpty };
                 }
