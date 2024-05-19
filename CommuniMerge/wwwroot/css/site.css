@@ -544,7 +544,7 @@ body {
 }
 
 .group-add-list-item:hover {
-  background: var(--green) !important;
+  background: var(--light-gray);
 }
 
 .check-group-add {
@@ -591,19 +591,40 @@ body {
   display: flex;
   align-items: center;
   flex-direction: column;
-}
-.profile-holder i {
-  font-size: 7em;
+  height: 14em;
+  width: 14em;
+  border-radius: 50%;
+  overflow: hidden;
   cursor: pointer;
-  color: var(--white);
+}
+
+.group-select-holder {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.group-select-holder img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
 #group-image-input {
   display: none;
 }
 
-#groupname {
+.group-input {
   width: 75% !important;
+}
+
+.group-input-holder {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
 .add-friend-input-holder {

@@ -119,7 +119,7 @@ namespace CommuniMerge.Library.Services
                         return new CreateGroupResult { GroupId = group.Id, Error = CreateGroupError.FailedCreatingUserLink };
                     }
                 }
-                return new CreateGroupResult { Error = CreateGroupError.None };
+                return new CreateGroupResult { Group = group, Error = CreateGroupError.None };
             }
             catch (Exception ex)
             {

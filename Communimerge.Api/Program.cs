@@ -81,6 +81,7 @@ app.UseAuthorization();
 
 app.MapHub<FriendHub>("/friendHub");
 app.MapHub<ChatHub>("/chatHub");
+app.MapHub<GroupHub>("/groupHub");
 
 app.MapControllers();
 

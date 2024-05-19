@@ -33,7 +33,7 @@ namespace CommuniMerge.Library.Mappers
             return new GroupDto
             {
                 Id = group.Id,
-                Name = group.Name,
+                GroupName = group.Name,
                 Description = group.Description,
                 ProfilePath = group.ProfilePath
             };

@@ -1,10 +1,13 @@
-﻿using CommuniMerge.Library.Data.Dtos;
+﻿using Communimerge.Api.Hubs;
+using Communimerge.Api.Hubs.ClientInterfaces;
+using CommuniMerge.Library.Data.Dtos;
 using CommuniMerge.Library.Enums;
 using CommuniMerge.Library.Mappers;
 using CommuniMerge.Library.Models;
 using CommuniMerge.Library.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace Communimerge.Api.Controllers
@@ -17,12 +20,14 @@ namespace Communimerge.Api.Controllers
         private readonly IGroupService groupService;
         private readonly IAccountService accountService;
         private readonly IMessageService messageService;
+        private readonly IHubContext<GroupHub, IGroupClient> grouphub;
 
-        public GroupController(IGroupService groupService, IAccountService accountService, IMessageService messageService)
+        public GroupController(IGroupService groupService, IAccountService accountService, IMessageService messageService, IHubContext<GroupHub, IGroupClient> grouphub)
         {
             this.groupService = groupService;
             this.accountService = accountService;
             this.messageService = messageService;
+            this.grouphub = grouphub;
         }
 
         [HttpPost("createGroup")]
@@ -30,7 +35,7 @@ namespace Communimerge.Api.Controllers
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> CreateGroup(GroupCreateDto groupCreateDto)
+        public async Task<IActionResult> CreateGroup([FromForm] GroupCreateDto groupCreateDto)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +71,14 @@ namespace Communimerge.Api.Controllers
                 default:
                     return StatusCode(500, "Unexpected server error.");
             }
+            var groupDto = Map.ToGroupDto(result.Group);
+            grouphub.Clients.User(currentlyLoggedInUserId).SuccesCreatingGroup(groupDto);
+            foreach (var username in groupCreateDto.Usernames)
+            {
+                var user = await accountService.GetUserByUsernameAsync(username);
 
+                grouphub.Clients.User(user.Id).SuccesCreatingGroup(groupDto);
+            }
 
             return Ok(result.GroupId);
         }
@@ -99,7 +111,7 @@ namespace Communimerge.Api.Controllers
             List<GroupDto> groupsWithMessageDto = orderedGroups.Select(x => new GroupDto
             {
                 Id = x.Group.Id,
-                Name = x.Group.Name,
+                GroupName = x.Group.Name,
                 Description = x.Group.Description,
                 ProfilePath = x.Group.ProfilePath,
                 LatestMessage = x.LatestGroupMessage == null ? null : Map.ToMessageDisplayDto(x.LatestGroupMessage)

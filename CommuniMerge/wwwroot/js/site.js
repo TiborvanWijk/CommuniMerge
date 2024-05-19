@@ -2,6 +2,7 @@
 
 let chathub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/chatHub").build();
 let friendhub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/friendHub").build();
+let grouphub = new signalR.HubConnectionBuilder().withUrl("https://localhost:7129/groupHub").build();
 
 chathub.on("ReceiveMessage", function (receiverUsername, messageDto) {
     let senderDto = messageDto.sender;
@@ -174,7 +175,14 @@ friendhub.start().then(function () {
     console.log("Connected to the server succesfully");
 }).catch(function (err) {
     return console.error(err.toString());
-})
+});
+
+grouphub.start().then(function () {
+    console.log("Connected to the server succesfully");
+}).catch(function (err) {
+    return console.error(err.toString());
+});
+
 
 friendhub.on("DeleteFriendRequestListing", function (username) {
     deleteFriendRequestOfListing(username);
@@ -725,14 +733,14 @@ function getCookie(cookieName) {
 
 function openFriendAddMenu() {
     clearMenu();
-    setMenuHeader("Add friends");
+    setMenuHeaderValue("Add friends");
     let addFriendMenu = document.querySelector("#add-friend-menu");
     addFriendMenu.style.display = "flex";
 };
 
 
 function clearMenu() {
-    setMenuHeader("");
+    setMenuHeaderValue("");
     let menus = document.querySelector("#menu-popup").querySelectorAll(".menu-body");
 
     menus.forEach(menu => {
@@ -747,14 +755,18 @@ function openFriendsOverviewMenu() {
 
 function openFriendsMenu() {
     clearMenu();
-    setMenuHeader("Friends");
+    setMenuHeaderValue("Friends");
     openFriendsOverviewMenu();
     showMenu();
 }
 
-function setMenuHeader(value) {
+function setMenuHeaderValue(value) {
     document.querySelector("#menu-header-title").textContent = value;
 }
+function setMenuHeaderColor(color) {
+    document.querySelector("#menu-header-title").style.backgroundColor = `${color}`;
+}
+
 function clearMenuHeader() {
     document.querySelector("#menu-header-title").textContent = "";
 }
@@ -777,7 +789,7 @@ document.getElementById('menu-popup').addEventListener('click', function (event)
 
 function openFriendRequestMenu() {
     clearMenu();
-    setMenuHeader("Friend requests");
+    setMenuHeaderValue("Friend requests");
     let menu = document.querySelector("#friendRequestOverView");
 
     menu.style.display = "flex";
@@ -806,7 +818,7 @@ async function openGroupCreationMenu() {
     addFriendsToGroupCreateFriendList(friends);
 
 
-    setMenuHeader("Select friends for group");
+    setMenuHeaderValue("Select friends for group");
     showMenu();
 }
 
@@ -840,11 +852,86 @@ function addFriendsToGroupCreateFriendList(friends) {
 
         li.innerHTML = `
         <p>${friend.username}</p>
-        `
+        <input type="checkbox" class="hidden">
+        `;
         ul.prepend(li);
     });
+    let children = ul.children;
+    for (let i = 0; i < children.length; ++i) {
+        let child = children[i];
+
+        child.addEventListener("click", function () {
+
+
+
+            child.style.backgroundColor = child.style.backgroundColor === "var(--light-green)" ? "" : "var(--light-green)";
+            child.querySelector("input").checked = !child.querySelector("input").checked;
+        });
+    }
+}
+async function createGroup() {
+    let ul = document.querySelector("#group-add-friends-list");
+    let children = ul.children;
+    let title = document.querySelector("#groupname").value;
+    let description = document.querySelector("#groupDescription").value;
+    let image = document.querySelector("#group-image-input").files[0];
+
+    const addedUsers = [];
+
+    for (let i = 0; i < children.length; ++i) {
+        let child = children[i];
+
+        if (child.querySelector("input").checked) {
+            let friend = child.querySelector("p").textContent;
+            addedUsers.push(friend);
+        }
+
+    }
+    let groupCreateDto = {
+        groupName: title,
+        description: description,
+        usernames: addedUsers,
+        image: image
+    }
+    createGroupApiCall(groupCreateDto)
 
 }
+async function createGroupApiCall(groupCreateDto) {
+
+    let form = new FormData();
+    form.append("GroupName", groupCreateDto.groupName);
+    form.append("Description", groupCreateDto.description);
+    form.append("Usernames", groupCreateDto.usernames);
+
+    if (groupCreateDto.image != null) {
+        form.append("Image", groupCreateDto.image);
+    }
+
+
+
+
+
+    const url = `https://localhost:7129/api/Group/createGroup`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: "include",
+            body: form
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch messages. Status: ${response.status}`);
+        }
+
+    } catch (error) {
+        console.error('Error fetching messages:', error.message);
+    }
+}
+
+function groupCreateErrorDisplay() {
+
+}
+
 
 function clearFriendsForGroup() {
     let list = document.querySelector("#group-add-friends-list");
@@ -853,6 +940,19 @@ function clearFriendsForGroup() {
 document.querySelector("#open-file-group-create-btn").addEventListener("click", function () {
     document.querySelector("#group-image-input").click();
 });
+
+function uploadFileAndDisplay(inputId, imageId) {
+
+    let input = document.querySelector(`#${inputId}`);
+    let image = document.querySelector(`#${imageId}`);
+
+
+    let url = URL.createObjectURL(input.files[0])
+    image.src = url;
+
+}
+
+
 document.querySelector("#add-file-btn").addEventListener("click", function () {
     document.querySelector("#message-file-selector").click();
 });
@@ -930,7 +1030,7 @@ function openGroupSettingsMenu() {
 
 
 
-    setMenuHeader("Group settings");
+    setMenuHeaderValue("Group settings");
     showMenu();
 }
 
@@ -944,7 +1044,7 @@ function openProfileMenu() {
 
 function showGroupCreationMenu() {
     clearMenu();
-    setMenuHeader("Select friends for group");
+    setMenuHeaderValue("Select friends for group");
     let groupCreate = document.querySelector("#groupCreate");
     groupCreate.style.display = "flex";
 }
@@ -967,4 +1067,36 @@ function openSettingsMenu() {
 
 
     showMenu();
+}
+
+
+grouphub.on("SuccesCreatingGroup", function (groupDto) {
+    let item = createGroupListingItem(groupDto);
+    document.querySelector("#user-list").prepend(item);
+});
+
+
+
+function createGroupListingItem(groupDto) {
+
+        let li = document.createElement("li");
+        li.classList.add("message-item");
+        li.dataGroupId = groupDto.id;
+
+        li.innerHTML =
+            `
+        <header class="group-profile-header">
+            <figure class="group-profile">
+                <img src="${groupDto.profilePath}" alt="" srcset="" draggable="false">
+            </figure>
+        </header>
+        <div class="message-information">
+            <h3>${groupDto.groupName}</h3>
+            </div>
+            `;
+
+    li.addEventListener("click", () => {
+        openGroupConversation(li, groupDto)
+    });
+    return li;
 }

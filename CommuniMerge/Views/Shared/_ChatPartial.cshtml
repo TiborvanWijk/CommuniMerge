@@ -68,7 +68,7 @@
                                             else
                                             {
                                                 <p class="truncate">@friend.LatestMessage.Content</p>
-                                                
+
                                             }
                                         }
                                     }
@@ -85,17 +85,21 @@
                                     </figure>
                                 </header>
                                 <div class="message-information">
-                                    <h3>@group.Name</h3>
+                                    <h3>@group.GroupName</h3>
                                     @{
-                                        if (group.LatestMessage.FilePath != null)
+                                        if (group.LatestMessage != null)
                                         {
-                                            <p class="truncate"><i class="fa-solid fa-image"></i> @group.LatestMessage.Content</p>
 
-                                        }
-                                        else
-                                        {
-                                            <p class="truncate">@group.LatestMessage.Content</p>
+                                            if (group.LatestMessage.FilePath != null)
+                                            {
+                                                <p class="truncate"><i class="fa-solid fa-image"></i> @group.LatestMessage.Content</p>
 
+                                            }
+                                            else
+                                            {
+                                                <p class="truncate">@group.LatestMessage.Content</p>
+
+                                            }
                                         }
                                     }
                                 </div>
@@ -111,18 +115,18 @@
 
 
     </section>
-    
+
     <section class="menu-background" id="menu-background" onclick="hideMenu()">
         <div class="menu-popup" id="menu-popup">
             <header class="menu-header">
                 <button class="close-btn" onclick="hideMenu()"><i class="fa-solid fa-xmark"></i></button>
-                
+
                 <h2 class="menu-header-title" id="menu-header-title"></h2>
             </header>
 
 
             <div class="menu-body menu-body-add-friends" id="add-friend-menu">
-                
+
                 <button class="friends-back-btn" onclick="openFriendsMenu()"><i class="fa-solid fa-arrow-left"></i></button>
 
                 <h3 class="body-info-title">Add your friend by username</h3>
@@ -134,8 +138,8 @@
             </div>
 
             <div class="menu-body menu-body-friends-overview" id="friendsOverView">
-                
-                <div class="friend-menu-buttons-holder" >
+
+                <div class="friend-menu-buttons-holder">
                     <button class="cta-btn friendRequest-btn" onclick="openFriendRequestMenu()">friend requests</button>
                     <button class="cta-btn add-btn" id="open-friendAddMenu" onclick="openFriendAddMenu()">
                         Add friend
@@ -145,13 +149,13 @@
                 <ul class="friends-list">
 
                     @{
-                        foreach(var friend in Model.Friends)
+                        foreach (var friend in Model.Friends)
                         {
-                            
-                        <li class="friend-list-item">
-                            <p>@friend.Username</p>
-                            <button class="friend-option"><i class="fa-solid fa-ellipsis-vertical"></i></button>
-                        </li>
+
+                            <li class="friend-list-item">
+                                <p>@friend.Username</p>
+                                <button class="friend-option"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                            </li>
                         }
                     }
                 </ul>
@@ -182,7 +186,7 @@
 
 
             <div class="menu-body menu-body-groupCreate-menu" id="groupCreate">
-                
+
 
                 <div class="searchbar-big-holder" id="create-group-searchbar-holder">
                     <i class="fa-solid fa-magnifying-glass search-btn create-group-search-btn"></i>
@@ -190,9 +194,8 @@
                 </div>
 
                 <ul class="group-add-friends-list" id="group-add-friends-list">
-
                 </ul>
-                
+
 
                 <footer class="create-group-footer">
                     <button class="cta-btn create-group-btn" onclick="openGroupSettingsMenu()">Group settings</button>
@@ -201,18 +204,25 @@
 
             <div class="menu-body group-create-info-menu" id="groupInfoCreate">
                 <button class="friends-back-btn" onclick="showGroupCreationMenu()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i></button>
-                
-                <div class="profile-holder">
-                    <input type="file" id="group-image-input" accept="image/*,video/*" />
-                    <i class="fa-solid fa-users-viewfinder" id="open-file-group-create-btn"></i>
 
+                <div class="profile-holder">
+                    <input type="file" id="group-image-input" accept="image/*,video/*" onchange="uploadFileAndDisplay('group-image-input', 'create-group-photo')" />
+
+                    <figure class="group-select-holder" id="open-file-group-create-btn">
+                        <img src="~/img/profile.jpg" id="create-group-photo" />
+
+                    </figure>
                 </div>
 
-                <input type="text" id="groupname" name="groupname" class="form-field form-field-dark" placeholder="Group name"/>
+                <div class="group-input-holder">
+
+                    <input type="text" id="groupname" name="groupname" class="form-field form-field-dark group-input" placeholder="Group name" />
+                    <input type="text" id="groupDescription" name="groupDescription" class="form-field form-field-dark group-input" placeholder="Group description" />
+                </div>
 
 
                 <footer class="create-group-footer">
-                    <button class="cta-btn create-group-btn">Create group</button>
+                    <button class="cta-btn create-group-btn" id="create-group" onclick="createGroup()">Create group</button>
                 </footer>
             </div>
 
