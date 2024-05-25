@@ -171,6 +171,33 @@ namespace CommuniMerge.Library.Services
             }
         }
 
+        public async Task<ICollection<Group>> GetSharedGroups(string userId, string friendId)
+        {
+            try
+            {
+                ICollection<Group> sharedGroups = new List<Group>();
+                var groups = await groupRepository.GetAllGroupsByUserIdAsync(userId);
+                
+                
+                foreach (var group in groups)
+                {
+                    bool userIsInGroup = group.UserGroupsLinks.Any(x => x.UserId == userId);
+                    bool friendIsInGroup = group.UserGroupsLinks.Any(x => x.UserId == friendId);
+
+                    if(userIsInGroup && friendIsInGroup)
+                    {
+                        sharedGroups.Add(group);
+                    }
+                }
+
+                return sharedGroups;
+            }catch(Exception ex)
+            {
+                logger.LogError(ex.Message, GetType().Name, nameof(IsUserGroupMember));
+                return null;
+            }
+        }
+
         public async Task<bool> IsUserGroupMember(string loggedInUserId, int groupId)
         {
             try

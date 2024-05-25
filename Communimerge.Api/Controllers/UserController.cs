@@ -21,12 +21,14 @@ namespace Communimerge.Api.Controllers
         private readonly IAccountService accountService;
         private readonly IMessageService messageService;
         private readonly IHubContext<FriendHub, IFriendClient> friendHub;
+        private readonly IGroupService groupService;
 
-        public UserController(IAccountService accountService, IMessageService messageService, IHubContext<FriendHub, IFriendClient> friendHub)
+        public UserController(IAccountService accountService, IMessageService messageService, IHubContext<FriendHub, IFriendClient> friendHub, IGroupService groupService)
         {
             this.accountService = accountService;
             this.messageService = messageService;
             this.friendHub = friendHub;
+            this.groupService = groupService;
         }
 
         [HttpPost("sendFriendRequest/{receiverUsername}")]
@@ -273,6 +275,55 @@ namespace Communimerge.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("friend/{username}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> GetFriend([FromRoute] string username)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var friend = await accountService.GetUserByUsernameAsync(username);
+            bool userExists = friend != null;
 
+            if (!userExists)
+            {
+                return NotFound("User does not exist.");
+            }
+            var currentlyLoggedInUserId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            ICollection<Group> sharedGroups = await groupService.GetSharedGroups(currentlyLoggedInUserId, friend.Id);
+
+            if(sharedGroups == null)
+            {
+                return StatusCode(500, "Something went wrong while retreiving shared groups.");
+            }
+
+            var latestMessage = await messageService.GetLatestMessage(currentlyLoggedInUserId, friend.Id);
+
+
+            var sharedGroupsWithLatestMessage = await Task.WhenAll(sharedGroups
+                 .Select(async group =>
+                 {
+                     var groupDto = Map.ToGroupDto(group);
+                     var latestMessage = await messageService.GetLatestGroupMessage(groupDto.Id);
+                     groupDto.LatestMessage = latestMessage == null ? null : Map.ToMessageDisplayDto(latestMessage);
+                     return groupDto;
+                 }));
+
+            var friendDto = new FriendDisplayDto()
+            {
+                Id = friend.Id,
+                Username = friend.UserName,
+                About = friend.About,
+                LatestMessage = latestMessage == null ? null : Map.ToMessageDisplayDto(latestMessage),
+                ProfilePath = friend.ProfilePath,
+                SharedGroups = sharedGroupsWithLatestMessage,
+            };
+
+            return Ok(friendDto);
+        }
     }
 }

@@ -12,6 +12,6 @@ namespace CommuniMerge.Library.Data.Dtos
         public string GroupName { get; set; }
         public string Description { get; set; }
         public string? ProfilePath { get; set; }
-        public MessageDisplayDto LatestMessage { get; set; }
+        public MessageDisplayDto? LatestMessage { get; set; }
     }
 }

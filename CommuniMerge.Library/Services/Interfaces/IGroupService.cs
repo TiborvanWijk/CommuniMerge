@@ -15,6 +15,7 @@ namespace CommuniMerge.Library.Services.Interfaces
         Task<ICollection<Group>> GetAllGroups(string userId);
         Task<ICollection<User>?> GetAllUsersOfGroupById(int groupId);
         Task<Group?> GetGroupById(int groupId);
+        Task<ICollection<Group>> GetSharedGroups(string userId, string friendId);
         Task<bool> IsUserGroupMember(string userId, int groupId);
     }
 }

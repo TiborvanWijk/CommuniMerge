@@ -10,7 +10,9 @@ namespace CommuniMerge.Library.Data.Dtos
     {
         public string Id { get; set; }
         public string Username { get; set; }
+        public string About { get; set; }
         public string ProfilePath { get; set; }
-        public MessageDisplayDto LatestMessage { get; set; }
+        public MessageDisplayDto? LatestMessage { get; set; }
+        public ICollection<GroupDto>? SharedGroups { get; set; }
     }
 }

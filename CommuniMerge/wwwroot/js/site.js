@@ -451,7 +451,7 @@ async function openGroupConversation(event, group) {
     hideScreenBlocker();
     selectTab(event);
 
-    updateInfoHeader(group.Name, group.ProfilePath);
+    updateInfoHeader(group.GroupName, group.ProfilePath);
 
     updateReceiver(group.Id, true);
 
